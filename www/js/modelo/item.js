@@ -8,7 +8,12 @@ Y.add('itemModelo',function(Y){
                 },
                 descripcion: {
                     value: 'UnaDescripción'
-                }            }
+                },            
+                
+                campos:{
+                  value: []  
+                },
+            }
         }
     );
-}, '0.0.1', { requires: ['model']});
+}, '0.0.1', { requires: ['model','propiedadModelo']});

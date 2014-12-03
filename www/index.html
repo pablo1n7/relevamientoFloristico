@@ -49,6 +49,18 @@
         <script src="xhr.js"></script>
         <!-- phantom library, needed for XDK "legacy" container CORS -->
 
+        <script type="application/javascript" src="app_framework/2.1/appframework.js"></script>
+        <script type="application/javascript" src="app_framework/2.1/appframework.ui.js" data-ver="1"></script>
+        <script src="js/yui-min.js"></script>
+        <script src="js/af.mvc.js"></script>
+        <!--MODELO -->
+        <script src="js/modelo/item.js"></script>
+        <script src="js/modelo/planta.js"></script>
+        <script src="js/modelo/propiedad.js"></script>
+        <script src="js/modelo/tipo.js"></script>
+        <script src="js/modelo/alfanumerico.js"></script>
+        <script src="js/modelo/numerico.js"></script>
+        <!-- FIN MODELO -->
         <script src="js/app.js"></script>
         <script src="js/init-app.js"></script>
         <script src="js/init-dev.js"></script>
@@ -56,8 +68,7 @@
                         You may substitute jQuery for the App Framework selector library.
                         See http://app-framework-software.intel.com/documentation.php#afui/afui_jquery
                 -->
-        <script type="application/javascript" src="app_framework/2.1/appframework.js"></script>
-        <script type="application/javascript" src="app_framework/2.1/appframework.ui.js" data-ver="1"></script>
+
         <script type="application/javascript" src="js/index_user_scripts.js"></script>
         <script type="application/javascript" src="js/af_subpage.js"></script>
     </head>
@@ -72,7 +83,7 @@
             <div class="upage panel" id="mainpage" data-header="af-header-0" data-footer="af-footer-0">
                 <div class="upage-outer">
                     <header class="container-group inner-element uib_w_1" data-uib="app_framework/header" data-ver="1" id="af-header-0">
-                        <h1>Title</h1>
+                        <h1>Inicio</h1>
                         <div class="widget-container wrapping-col single-centered"></div>
                         <div class="widget-container content-area horiz-area wrapping-col left"></div>
                         <div class="widget-container content-area horiz-area wrapping-col right"></div>
@@ -86,10 +97,10 @@
                                     <div class="widget uib_w_2 d-margins" data-uib="media/text" data-ver="0">
                                         <div class="widget-container left-receptacle"></div>
                                         <div class="widget-container right-receptacle"></div>
-                                        <div>
+                                        <div id="main">
                                             <p>This is the view for the first Tab.</p>
                                         </div>
-                                    </div><a class="button widget uib_w_11 d-margins icon clock green" data-uib="app_framework/button" data-ver="1">hora</a><span class="uib_shim"></span>
+                                    </div><span class="uib_shim"></span>
                                 </div>
                             </div>
                             <span class="uib_shim"></span>
@@ -151,8 +162,8 @@
                     </div>
                     <!-- /upage-content -->
 
-                    <footer class="inner-element uib_w_3" data-uib="app_framework/footer" data-ver="1" id="af-footer-0"><a class="widget uib_w_7 d-margins icon home" data-uib="app_framework/button" data-ver="1">Home</a><a class="widget uib_w_6 d-margins icon heart" data-uib="app_framework/button" data-ver="1">Favorites</a><a class="widget uib_w_5 d-margins icon chat"
-                        data-uib="app_framework/button" data-ver="1">Messages</a><a class="widget uib_w_4 d-margins icon user" data-uib="app_framework/button" data-ver="1">Profile</a>
+                    <footer class="inner-element uib_w_3" data-uib="app_framework/footer" data-ver="1" id="af-footer-0"><a class="widget uib_w_7 d-margins icon home" data-uib="app_framework/button" data-ver="1">Camapaña</a><a class="widget uib_w_6 d-margins icon warning" data-uib="app_framework/button" data-ver="1">Transecta</a><a class="widget uib_w_5 d-margins icon location"
+                        data-uib="app_framework/button" data-ver="1">Puntos</a><a class="widget uib_w_4 d-margins icon settings" data-uib="app_framework/button" data-ver="1">Configuración</a>
                     </footer>
                 </div>
                 <!-- /upage-outer -->
