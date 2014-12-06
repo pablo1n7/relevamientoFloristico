@@ -1,6 +1,6 @@
 var Y = Y || YUI();
 Y.add('alfanumericoModelo',function(Y){
-    Y.Alfanumerico = Y.Base.create('alfanumerico', Y.Tipo, [],{
+    Y.Alfanumerico = Y.Base.create('alfanumerico', Y.TipoPropiedad, [],{
             representacion:function(nombre){
                 var $div = $("<div/>");
                 var $label = $("<label/>");
@@ -25,4 +25,4 @@ Y.add('alfanumericoModelo',function(Y){
             return Y.Alfanumerico.instancia;
         };
 
-}, '0.0.1', { requires: ['model','tipoModelo']});
+}, '0.0.1', { requires: ['model','tipoPropiedadModelo']});

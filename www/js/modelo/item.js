@@ -3,17 +3,13 @@ var Y = Y || YUI();
 Y.add('itemModelo',function(Y){
     Y.Item = Y.Base.create('item', Y.Model, [],{},{
             ATTRS:{
-                nombre: {
-                    value: 'UnNombre'
-                },
-                descripcion: {
-                    value: 'UnaDescripción'
-                },            
-                
                 campos:{
-                  value: []  
+                    value: []  
                 },
+                perfil:{
+                    value: null
+                }
             }
         }
     );
-}, '0.0.1', { requires: ['model','propiedadModelo']});
+}, '0.0.1', { requires: ['model','propiedadModelo','perfilModelo']});

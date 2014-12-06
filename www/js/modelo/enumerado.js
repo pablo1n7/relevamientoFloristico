@@ -1,6 +1,6 @@
 var Y = Y || YUI();
 Y.add('enumeradoModelo',function(Y){
-    Y.Enumerado = Y.Base.create('enumerado', Y.Tipo, [],{},{
+    Y.Enumerado = Y.Base.create('enumerado', Y.TipoPropiedad, [],{},{
                 
             ATTRS:{
                 valores: {
@@ -9,4 +9,4 @@ Y.add('enumeradoModelo',function(Y){
             }
         }
     );
-}, '0.0.1', { requires: ['model','tipoModelo']});
+}, '0.0.1', { requires: ['model','tipoPropiedadModelo']});

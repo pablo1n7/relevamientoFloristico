@@ -24,14 +24,17 @@ var app = new $.mvc.app();
 app.controllersDir("js/controlador/");
 
 
-
+Y.use(['campaniaModelo','alfanumericoModelo','enumeradoModelo','especieModelo','familiaModelo','itemModelo','numericoModelo','perfilModelo','plantaModelo','propiedadModelo','tipoPropiedadModelo','puntoModelo','rangoModelo','sueloModelo','transectaModelo','visitaModelo'],function(){
 app.loadControllers(["aplicacion"]); //You can pass in array or a string.  You do not need to reference the .js extension.
+app.ready(function(){
+    $.mvc.route("aplicacion/");
+});
+});
+
 /*app.loadModels("pomodoro");
 app.loadModels("historiaUsuario");
 */
 
 //Now let's run code on app.ready and load the default action for the hello controller.
 
-app.ready(function(){
-    $.mvc.route("aplicacion/");
-});
+

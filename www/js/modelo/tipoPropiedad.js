@@ -1,6 +1,6 @@
 var Y = Y || YUI();
-Y.add('tipoModelo',function(Y){
-    Y.Tipo = Y.Base.create('tipo', Y.Model, [],{},{
+Y.add('tipoPropiedadModelo',function(Y){
+    Y.TipoPropiedad = Y.Base.create('tipoPropiedad', Y.Model, [],{},{
         
             ATTRS:{
                 nombre: {

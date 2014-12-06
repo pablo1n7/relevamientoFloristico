@@ -4,13 +4,16 @@ Y.add('especieModelo',function(Y){
                 
             ATTRS:{
                 nombre: {
-                    value: 'nombre propiedad'
+                    value: 'nombre'
                 },
-                descripcion: {
-                    value: 1
+                tipoBilogico: {
+                    value: 'unTipo'
+                },
+                formaBilogica: {
+                    value: 'unaForma'
                 }
             },
         
         }
     );
-}, '0.0.1', { requires: ['model']});
+}, '0.0.1', { requires: ['model','familiaModelo']});

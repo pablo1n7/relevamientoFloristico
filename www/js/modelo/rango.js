@@ -1,6 +1,6 @@
 var Y = Y || YUI();
 Y.add('rangoModelo',function(Y){
-    Y.Rango = Y.Base.create('rango', Y.Tipo, [],{},{
+    Y.Rango = Y.Base.create('rango', Y.TipoPropiedad, [],{},{
                 
             ATTRS:{
                 valorMax: {
@@ -12,4 +12,4 @@ Y.add('rangoModelo',function(Y){
             }
         }
     );
-}, '0.0.1', { requires: ['model','tipoModelo']});
+}, '0.0.1', { requires: ['model','tipoPropiedadModelo']});

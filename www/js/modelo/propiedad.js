@@ -19,4 +19,4 @@ Y.add('propiedadModelo',function(Y){
         
         }
     );
-}, '0.0.1', { requires: ['model','tipoModelo']});
+}, '0.0.1', { requires: ['model','tipoPropiedadModelo']});

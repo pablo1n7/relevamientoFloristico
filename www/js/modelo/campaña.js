@@ -1,6 +1,6 @@
 var Y = Y || YUI();
-Y.add('campañaModelo',function(Y){
-    Y.Campaña = Y.Base.create('campaña', Y.Model, [],{},{
+Y.add('campaniaModelo',function(Y){
+    Y.Campania = Y.Base.create('campania', Y.Model, [],{},{
                 
             ATTRS:{
                 fecha: {
