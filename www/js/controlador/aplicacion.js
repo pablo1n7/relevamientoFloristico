@@ -1,63 +1,50 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/pruebaItems.tpl','js/vista/crearPerfil.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarItem.tpl','js/vista/crearPerfil.tpl'], //These are the views we will use with the controller
     init:function(){
     },
     default:function(){
-       /* Y.use(["plantaModelo","itemModelo"],function(){
-            planta = new Y.Planta();
-            planta.set("nombre","Plantirius");
-            item = new Y.Item();
-            $("#main").html($.template('js/vista/main.tpl',{item:item,planta:planta}));
-        });*/
-
-        var tiposPropiedad=["Alfanumerico","Enumerado","Numerico","Rango"];
+        var tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
         $("#main").html($.template('js/vista/crearPerfil.tpl',{tipos:tiposPropiedad}));
 
     },
-    crearPropiedad:function(){
-        var tipo = $("#tipoPropiedad").val();
-        var item = null;
-        switch (tipo){
-           case "Numerico":
-//                Y.use(['numericoModelo'],function(){
-                    item = Y.Numerico.getInstancia();
-                    return item;
-                    //$("#propiedades").append(item.representacion("Propiedad"));
-                //});
-                break;
-           case "Alfanumerico":
-//                Y.use(['alfanumericoModelo'],function(){
-                    item = Y.Alfanumerico.getInstancia();
-                    return item;
-                    //$("#propiedades").append(item.representacion("Propiedad"));
-
-                //});
-                break;
-           default:
-               alert('Cree un tipo');
-               break;
-        }
-        $("#propiedades").append("<br>");
-    },
     crearPerfil:function(){
+        var tiposConstantes = ["Alfanumerico","Enumerado","Numerico","Rango"];
+        console.log("Funcion Crear Perfil");
         var campos = $("#campos").children();
         var nombrePerfil = $("#nombrePerfil").val();
         perfil = new Y.Perfil({'nombre':nombrePerfil});
         for (var i = 0; i<campos.length;i++){
             var item = campos[i];
-            var tipo = $(item).find('[name|=tipoPropiedad]').val();
+            var tipo = tiposConstantes[$(item).find('[name|=tipoPropiedad]').get(0).selectedIndex];
             var nombre =  $(item).find('[name|=nombre]').val();
+            var tipoPropiedad = null;
             switch (tipo){
                 case "Numerico":
-                    tipo = Y.Numerico.getInstancia();
+                    tipoPropiedad = Y.Numerico.getInstancia();
                     break;
-                case "Alfa":
-                    tipo = Y.Alfanumerico.getInstancia();
+                case "Alfanumerico":
+                    tipoPropiedad = Y.Alfanumerico.getInstancia();
+                    break;
+                case "Rango":
+                    var valorMin = $(item).find('[name|=valorMin]').val();
+                    var valorMax = $(item).find('[name|=valorMax]').val();
+                    tipoPropiedad = new Y.Rango({'valorMin':valorMin,'valorMax':valorMax});
+                    break;
+                case "Enumerado":
+                    var valores = $(item).find('[name|=valores]').val().split(',');
+                    tipoPropiedad = new Y.Enumerado({'valores':valores});
+
                     break;
             }
-            var propiedad = new Y.Propiedad({'nombre':nombre,'tipo':tipo});
+            var propiedad = new Y.Propiedad({'nombre':nombre,'tipo':tipoPropiedad});
             perfil.agregarPropiedad(propiedad);
         }
 
-    }
+    },
+        crearItem:function(){
+            camposClonados = (perfil.get("campos")).map(function(prop){return prop.clonar();});
+            item = new Y.Item({campos:camposClonados});
+            $("#main").html($.template('js/vista/cargarItem.tpl',{item:item}));
+
+        }
 });

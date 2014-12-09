@@ -1,0 +1,13 @@
+.anchorBoton{
+    border-color: rgba(82,155,234,255);
+    border-style: solid;
+    border-radius: 3px;
+    padding: 3px;
+    border-width: 2px;
+    color: rgba(82,155,234,255);
+    text-decoration: none;
+}
+
+.inputRango{
+    background-color: black !important;
+}

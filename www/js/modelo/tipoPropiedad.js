@@ -14,4 +14,6 @@ Y.add('tipoPropiedadModelo',function(Y){
         
         }
     );
+
+
 }, '0.0.1', { requires: ['model']});

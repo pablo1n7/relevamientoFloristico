@@ -1,17 +1,29 @@
 {{
 
+cargarModoCreacion = function(e){
+    var tipos = e.target;
+    var tipoSeleccionado = Object.keys(it.tipos)[tipos.selectedIndex];
+    var $div = $(tipos.parentElement).find('[name|=divTipo]');
+    $div.empty();
+    $div.append(it.tipos[tipoSeleccionado].call());
+};
+
 agregarPropiedad=function(){
     var $div = $('<div/>');
     $div.attr({"class":"input-group"});
+    $div.append('<div style="text-align: right;"><span class="icon close" onclick="remover(this.parentElement);"></span></div>');
     $div.append('<input name="nombre" type="text" placeholder="nombre Propiedad"/>');
-    var list = $("<select/>");
+    var $list = $("<select name='tipoPropiedad' />");
 
-    $.each(it.tipos, function(indice, tipo){ 
-        list.append(new Option(tipo,indice));
+    $.each(Object.keys(it.tipos), function(indice, tipo){
+        $list.append(new Option(tipo,indice));
     });
-    $div.append(list);
-    $div.append('<button onclick="remover(this);">-</button>');
+    $list.change(cargarModoCreacion);
+    $div.append($list);
+    $div.append($('<div name="divTipo"/>'));
     $("#campos").append($div);
+
+
 };
 
 remover = function(elem){
@@ -21,8 +33,11 @@ remover = function(elem){
 }}
 
 <div id="perfil">
-<label>Nombre Perfil</label> <input id="nombrePerfil" type="text"/>
-    <button onclick="agregarPropiedad()">+</button>
+<input id="nombrePerfil" type="text" placeHolder="Nombre Perfil"/>
+    <br>
+    <div id="campos"></div>
+    <br>
+    <span class="icon add" onclick="agregarPropiedad()">Añadir Campo</span>
 </div>
-<div id="campos"></div>
-<a href="/aplicacion/crearPerfil">Crear Perfil</a>
+<br>
+<div style="text-align:center" ><a class="anchorBoton" href="/aplicacion/crearPerfil">Crear Perfil</a><a class="anchorBoton" href="/aplicacion/crearItem">Crear Item</a></div>
