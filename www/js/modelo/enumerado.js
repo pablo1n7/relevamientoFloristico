@@ -1,6 +1,14 @@
 var Y = Y || YUI();
 Y.add('enumeradoModelo',function(Y){
     Y.Enumerado = Y.Base.create('enumerado', Y.TipoPropiedad, [],{
+
+
+
+            obtenerValor: function(campo){
+                return this.get("valores")[campo.find("select")[0].selectedIndex];
+            },
+
+
             representacion:function(){
                 var $list = $("<select/>");
                 $.each(this.get("valores"), function(indice, tipo){

@@ -1,13 +1,55 @@
 .anchorBoton{
-    border-color: rgba(82,155,234,255);
+    border-color: rgb(35,35,35);
     border-style: solid;
     border-radius: 3px;
-    padding: 3px;
+    padding: 9px;
     border-width: 2px;
-    color: rgba(82,155,234,255);
+    color: rgb(255,255,255);
     text-decoration: none;
+    background-color: rgb(35,35,35);
+    margin: 10px;
 }
 
-.inputRango{
-    background-color: black !important;
+.divBoton{
+    padding-top: 30px;
+    text-align: center;
 }
+
+input[type='range']{
+    background-color: black !important;
+    width: 100% !important;
+}
+
+.input-group{
+    text-align: center;
+}
+
+.input-group label{
+    text-align: left !important;
+}
+
+.range-value{
+ display: inline-block;
+    position: relative;
+    width: 60px;
+    color: #fff;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 3px;
+    background: #353535;
+    padding: 5px 10px;
+    margin-left: 7px;
+
+    &:after {
+      position: absolute;
+      top: 8px;
+      left: -7px;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-right: 7px solid #353535;
+      border-bottom: 7px solid transparent;
+      content: '';
+    }
+  }

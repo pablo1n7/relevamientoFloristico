@@ -39,5 +39,7 @@ remover = function(elem){
     <br>
     <span class="icon add" onclick="agregarPropiedad()">Añadir Campo</span>
 </div>
-<br>
-<div style="text-align:center" ><a class="anchorBoton" href="/aplicacion/crearPerfil">Crear Perfil</a><a class="anchorBoton" href="/aplicacion/crearItem">Crear Item</a></div>
+<div class="divBoton" >
+    <a class="anchorBoton" href="/aplicacion/crearPerfil">Crear Perfil</a>
+    <a class="anchorBoton" href="/aplicacion/seleccionarItem">Crear Item</a>
+</div>

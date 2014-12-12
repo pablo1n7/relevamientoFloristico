@@ -5,12 +5,18 @@ Y.add('itemModelo',function(Y){
 
             representacion: function(){
                 var $div = $('<div/>');
-                $div.attr({"class":"input-group"});
                 for(var i = 0 ; i<this.get("campos").length;i++){
                     $div.append(this.get("campos")[i].representacion());
                 }
                 return $div;
 
+            },
+
+            completarCampos: function(campos){
+                $.each(this.get("campos"),function(indice,propiedad){
+                    propiedad.asignarValor($(campos[indice]));
+
+                });
             }
 
 

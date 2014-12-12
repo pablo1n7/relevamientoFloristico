@@ -2,7 +2,6 @@ var Y = Y || YUI();
 Y.add('propiedadModelo',function(Y){
     Y.Propiedad = Y.Base.create('propiedad', Y.Model, [],{
         clonar:function(){
-            console.log(this.get("tipo").get("valores"));
             var clon = new Y.Propiedad({'nombre':this.get('nombre'),'descripcion':this.get('descripcion'),'tipo':this.get('tipo')});
             return clon;
         },
@@ -14,6 +13,13 @@ Y.add('propiedadModelo',function(Y){
             $div.append($label);
             $div.append(this.get("tipo").representacion());
             return $div;
+        },
+
+        asignarValor: function(campo){
+            var tipo = this.get("tipo");
+            this.set("valor",tipo.obtenerValor(campo));
+            console.log(this);
+
         }
 
     },{
