@@ -4,6 +4,8 @@ $.mvc.controller.create("aplicacion", {
         perfiles=[];
     },
     default:function(){
+
+        Y.Perfil.obtenerPerfiles();
         var tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
         $("#main").html($.template('js/vista/crearPerfil.tpl',{tipos:tiposPropiedad}));
 
@@ -12,11 +14,13 @@ $.mvc.controller.create("aplicacion", {
         var tiposConstantes = ["Alfanumerico","Enumerado","Numerico","Rango"];
         var campos = $("#campos").children();
         var nombrePerfil = $("#nombrePerfil").val();
-        var perfil = new Y.Perfil({'nombre':nombrePerfil});
+        var descripcionPerfil = $("#descripcionPerfil").val();
+        var perfil = new Y.Perfil({'nombre':nombrePerfil,'descripcion':descripcionPerfil});
         for (var i = 0; i<campos.length;i++){
             var item = campos[i];
             var tipo = tiposConstantes[$(item).find('[name|=tipoPropiedad]').get(0).selectedIndex];
             var nombre =  $(item).find('[name|=nombre]').val();
+            var descripcion = $(item).find('[name|=descripcion]').val();
             var tipoPropiedad = null;
             switch (tipo){
                 case "Numerico":
@@ -36,12 +40,11 @@ $.mvc.controller.create("aplicacion", {
 
                     break;
             }
-            var propiedad = new Y.Propiedad({'nombre':nombre,'tipo':tipoPropiedad});
+            var propiedad = new Y.Propiedad({'nombre':nombre,'descripcion':descripcion,'tipo':tipoPropiedad});
             perfil.agregarPropiedad(propiedad);
-            perfiles.push(perfil);
-
         }
-
+        perfil.save();
+        perfiles.push(perfil);
     },
 
     seleccionarItem: function(){
@@ -53,8 +56,9 @@ $.mvc.controller.create("aplicacion", {
         console.log("Funcion Crear Item");
         indexPerfil = $("#perfiles").get(0).selectedIndex;
         var seleccion = perfiles[indexPerfil];
-        var camposClonados = (seleccion.get("campos")).map(function(prop){return prop.clonar();});
-        item = new Y.Item({campos:camposClonados});
+        item = new Y.ObjetoDeInteres();
+        item.crearCampos(seleccion.get("campos"));
+        console.log("HOLAA");
         $("#item").empty();
         $("#item").append(item.representacion());
 

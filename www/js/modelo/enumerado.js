@@ -15,10 +15,31 @@ Y.add('enumeradoModelo',function(Y){
                     $list.append(new Option(tipo,indice));
                 });
                 return $list;
+            },
+            save:function(callback){
+                alert("SOY EL Enumerado");
+                var _this = this;
+                if(_this.get("id")== -1){
+                    db.transaction(function(t){
+                        t.executeSql("INSERT INTO Enumerado('valores') values('"+(_this.get("valores").join(","))+"');", [],
+                        function (t, data) {
+                            console.log(data);
+                            _this.set('id',data.insertId);
+                            _this.savePadre("NULL",data.insertId,callback);
+                        },null);
+                    });
+
+
+
+                };
+
             }
     },{
                 
             ATTRS:{
+                id:{
+                    value:-1
+                },
                 valores: {
                     value:[]
                 }
@@ -35,5 +56,26 @@ Y.add('enumeradoModelo',function(Y){
         return $div;
     };
 
+    Y.Enumerado.enumerados = [];
 
+    Y.Enumerado.obtenerEnumerado= function(idEnumerado,callback){
+        var enumerados = Y.Enumerado.enumerados.filter(function(x){return x.get("id")==idEnumerado});
+        if(enumerados.length != 0){
+            callback(enumerados[0]);
+            return;
+        }
+
+        var q = "select * from Enumerado where id="+idEnumerado;
+        var enumerado = {};
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+                for (var i = 0; i < data.rows.length; i++) {
+                    console.log(data.rows.item(i));
+                    enumerado = new Y.Enumerado({"id":data.rows.item(i).id,"valores":data.rows.item(i).valores.split(",")});
+                    Y.Enumerado.enumerados.push(enumerado);
+                    callback(enumerado);
+                }
+            });
+        });
+    };
 }, '0.0.1', { requires: ['model','tipoPropiedadModelo']});

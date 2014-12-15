@@ -20,6 +20,13 @@ input[type='range']{
     width: 100% !important;
 }
 
+textarea{
+    resize: none;
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: normal;
+}
+
 .input-group{
     text-align: center;
 }

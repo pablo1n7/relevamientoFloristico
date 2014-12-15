@@ -15,7 +15,7 @@ Y.add('numericoModelo',function(Y){
     Y.Numerico.instancia = null;
         Y.Numerico.getInstancia = function(){
             if(Y.Numerico.instancia == null)
-                Y.Numerico.instancia = new Y.Numerico();
+                Y.Numerico.instancia = new Y.Numerico({'idPadre':2});
             return Y.Numerico.instancia;
         };
     

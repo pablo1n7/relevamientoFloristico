@@ -13,6 +13,7 @@ agregarPropiedad=function(){
     $div.attr({"class":"input-group"});
     $div.append('<div style="text-align: right;"><span class="icon close" onclick="remover(this.parentElement);"></span></div>');
     $div.append('<input name="nombre" type="text" placeholder="nombre Propiedad"/>');
+    $div.append('<textarea name="descripcion" rows="3" cols="20" placeholder="Ingrese una Descripción (opcional)"></textarea>');
     var $list = $("<select name='tipoPropiedad' />");
 
     $.each(Object.keys(it.tipos), function(indice, tipo){
@@ -34,6 +35,7 @@ remover = function(elem){
 
 <div id="perfil">
 <input id="nombrePerfil" type="text" placeHolder="Nombre Perfil"/>
+<textarea id ="descripcionPerfil" rows="3" cols="20" placeholder="Ingrese una Descripción"></textarea>
     <br>
     <div id="campos"></div>
     <br>
