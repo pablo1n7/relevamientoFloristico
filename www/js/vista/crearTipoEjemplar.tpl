@@ -33,9 +33,9 @@ remover = function(elem){
 
 }}
 
-<div id="perfil">
-<input id="nombrePerfil" type="text" placeHolder="Nombre Perfil"/>
-<textarea id ="descripcionPerfil" rows="3" cols="20" placeholder="Ingrese una Descripción"></textarea>
+<div id="tipoEjemplar">
+<input id="nombreTipoEjemplar" type="text" placeHolder="Nombre TipoEjemplar"/>
+<textarea id ="descripcionTipoEjemplar" rows="3" cols="20" placeholder="Ingrese una Descripción"></textarea>
     <br>
     <div id="campos"></div>
     <br>
@@ -47,6 +47,6 @@ remover = function(elem){
 
 </div>
 <div class="divBoton" >
-    <a class="anchorBoton" href="/aplicacion/crearPerfil">Crear Perfil</a>
-    <a class="anchorBoton" href="/aplicacion/seleccionarItem">Crear Item</a>
+    <a class="anchorBoton" href="/aplicacion/crearTipoEjemplar">Crear TipoEjemplar</a>
+    <a class="anchorBoton" href="/aplicacion/seleccionarEjemplar">Crear Ejemplar</a>
 </div>

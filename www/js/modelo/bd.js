@@ -2,11 +2,11 @@ var db = db || window.openDatabase('RFBD', '1.0', 'my db', 2*1024*1024);
 
 function borrarBD(){
      db.transaction(function (t) {
-        t.executeSql('DROP TABLE PerfilPropiedad',[],null,null);
+        t.executeSql('DROP TABLE TipoEjemplarPropiedad',[],null,null);
     });
 
     db.transaction(function (t) {
-        t.executeSql('DROP TABLE Perfil',[],null,null);
+        t.executeSql('DROP TABLE TipoEjemplar',[],null,null);
     });
 
 
@@ -44,14 +44,14 @@ function borrarBD(){
 
 function createTablas(){
 
-    /*borrarBD();*/
+    //borrarBD();
 
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS Perfil(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL,descripcion TEXT NOT NULL);', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS TipoEjemplar(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL,descripcion TEXT NOT NULL);', [], null, null);
     });
 
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS ObjetoDeInteres(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,idPerfil INTEGER NOT NULL,FOREIGN KEY (idPerfil) REFERENCES Perfil(id));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS ObjetoDeInteres(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,idTipoEjemplar INTEGER NOT NULL,FOREIGN KEY (idTipoEjemplar) REFERENCES TipoEjemplar(id));', [], null, null);
     });
 
     db.transaction(function (t) {
@@ -85,11 +85,11 @@ function createTablas(){
     });
 
     /*db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS Propiedad(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, descripcion TEXT NOT NULL, idPerfil INTEGER NOT NULL, idTipoPropiedad INTEGER NOT NULL, FOREIGN KEY (idPerfil) REFERENCES Perfil(id),FOREIGN KEY (idTipoPropiedad) REFERENCES TipoPropiedad(id));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS Propiedad(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, descripcion TEXT NOT NULL, idTipoEjemplar INTEGER NOT NULL, idTipoPropiedad INTEGER NOT NULL, FOREIGN KEY (idTipoEjemplar) REFERENCES TipoEjemplar(id),FOREIGN KEY (idTipoPropiedad) REFERENCES TipoPropiedad(id));', [], null, null);
     });*/
 
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS PerfilPropiedad(idPerfil INTEGER NOT NULL, idPropiedad INTEGER NOT NULL, FOREIGN KEY (idPerfil) REFERENCES Perfil(id),FOREIGN KEY (idPropiedad) REFERENCES Propiedad(id),PRIMARY KEY(idPerfil,idPropiedad));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS TipoEjemplarPropiedad(idTipoEjemplar INTEGER NOT NULL, idPropiedad INTEGER NOT NULL, FOREIGN KEY (idTipoEjemplar) REFERENCES TipoEjemplar(id),FOREIGN KEY (idPropiedad) REFERENCES Propiedad(id),PRIMARY KEY(idTipoEjemplar,idPropiedad));', [], null, null);
     });
 
     db.transaction(function (t) {

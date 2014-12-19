@@ -1,7 +1,7 @@
 //typeof Y != "undefined" ? Y : Y = YUI();
 var Y = Y || YUI();
-Y.add('objetoDeInteresModelo',function(Y){
-    Y.ObjetoDeInteres = Y.Base.create('objetoDeInteres', Y.Model, [],{
+Y.add('ejemplarModelo',function(Y){
+    Y.Ejemplar = Y.Base.create('Ejemplar', Y.Model, [],{
 
             representacion: function(){
                 var $div = $('<div/>');
@@ -39,10 +39,10 @@ Y.add('objetoDeInteresModelo',function(Y){
                 valores:{
                     value: []
                 },
-                perfil:{
+                tipoEjemplar:{
                     value: null
                 }
             }
         }
     );
-}, '0.0.1', { requires: ['model','propiedadModelo','perfilModelo']});
+}, '0.0.1', { requires: ['model','propiedadModelo','tipoEjemplarModelo']});

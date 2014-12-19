@@ -96,8 +96,16 @@ select:disabled,input:disabled{
 
 .backButton{
     color: #353535 !important;
-/*    visibility: initial !important;*/
+    /*visibility: initial !important;*/
     top:0% !important;
+}
+
+.botonAtras{
+    float: left;
+}
+
+.nextButton{
+    color: #353535 !important;
 }
 
 .funcionalidad{
@@ -116,6 +124,5 @@ select:disabled,input:disabled{
 }
 
 .contenedorBarraInicio{
-    padding-top: 24px;
     z-index: 10000;
 }

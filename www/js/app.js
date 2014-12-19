@@ -25,7 +25,7 @@ var app = new $.mvc.app();
 app.controllersDir("js/controlador/");
 
 
-Y.use(['campaniaModelo','alfanumericoModelo','enumeradoModelo','especieModelo','familiaModelo','objetoDeInteresModelo','numericoModelo','perfilModelo','plantaModelo','propiedadModelo','tipoPropiedadModelo','valorModelo','puntoModelo','rangoModelo','sueloModelo','transectaModelo','visitaModelo'],function(){
+Y.use(['campaniaModelo','alfanumericoModelo','enumeradoModelo','especieModelo','familiaModelo','ejemplarModelo','numericoModelo','tipoEjemplarModelo','ejemplarEspecieModelo','propiedadModelo','tipoPropiedadModelo','valorModelo','puntoModelo','rangoModelo','sueloModelo','transectaModelo','visitaModelo'],function(){
 app.loadControllers(["aplicacion"]); //You can pass in array or a string.  You do not need to reference the .js extension.
 app.ready(function(){
     $.mvc.route("aplicacion/");

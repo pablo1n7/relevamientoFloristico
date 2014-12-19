@@ -1,11 +1,11 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarItem.tpl','js/vista/crearPerfil.tpl','js/vista/listaPerfiles.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl'], //These are the views we will use with the controller
     init:function(){
-        perfiles=[];
+        tipoEjemplares=[];
     },
     default:function(){
 
-        Y.Perfil.obtenerPerfiles();
+        Y.TipoEjemplar.obtenerTipoEjemplares();
         tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
 
 
@@ -65,20 +65,20 @@ $.mvc.controller.create("aplicacion", {
         $.ui.hideModal("#seleccionarPropiedad");
     },
 
-    crearPerfil:function(){
+    crearTipoEjemplar:function(){
         var tiposConstantes = ["Alfanumerico","Enumerado","Numerico","Rango"];
         var campos = $("#campos").children();
-        var nombrePerfil = $("#nombrePerfil").val();
-        var descripcionPerfil = $("#descripcionPerfil").val();
-        var perfil = new Y.Perfil({'nombre':nombrePerfil,'descripcion':descripcionPerfil});
+        var nombreTipoEjemplar = $("#nombreTipoEjemplar").val();
+        var descripcionTipoEjemplar = $("#descripcionTipoEjemplar").val();
+        var tipoEjemplar = new Y.TipoEjemplar({'nombre':nombreTipoEjemplar,'descripcion':descripcionTipoEjemplar});
         var propiedad = {};
         for (var i = 0; i<campos.length;i++){
-            var item = campos[i];
-            if(item.id == ""){
+            var ejemplar = campos[i];
+            if(ejemplar.id == ""){
                 console.log("Propiedad no Existe!");
-                var tipo = tiposConstantes[$(item).find('[name|=tipoPropiedad]').get(0).selectedIndex];
-                var nombre =  $(item).find('[name|=nombre]').val();
-                var descripcion = $(item).find('[name|=descripcion]').val();
+                var tipo = tiposConstantes[$(ejemplar).find('[name|=tipoPropiedad]').get(0).selectedIndex];
+                var nombre =  $(ejemplar).find('[name|=nombre]').val();
+                var descripcion = $(ejemplar).find('[name|=descripcion]').val();
                 var tipoPropiedad = null;
                 switch (tipo){
                     case "Numerico":
@@ -88,54 +88,54 @@ $.mvc.controller.create("aplicacion", {
                         tipoPropiedad = Y.Alfanumerico.getInstancia();
                         break;
                     case "Rango":
-                        var valorMin = $(item).find('[name|=valorMin]').val();
-                        var valorMax = $(item).find('[name|=valorMax]').val();
+                        var valorMin = $(ejemplar).find('[name|=valorMin]').val();
+                        var valorMax = $(ejemplar).find('[name|=valorMax]').val();
                         tipoPropiedad = new Y.Rango({'valorMin':valorMin,'valorMax':valorMax});
                         break;
                     case "Enumerado":
-                        var valores = $(item).find('[name|=valores]').val().split(',');
+                        var valores = $(ejemplar).find('[name|=valores]').val().split(',');
                         tipoPropiedad = new Y.Enumerado({'valores':valores});
 
                         break;
                 }
                 propiedad = new Y.Propiedad({'nombre':nombre,'descripcion':descripcion,'tipo':tipoPropiedad});
-                perfil.agregarPropiedad(propiedad);
+                tipoEjemplar.agregarPropiedad(propiedad);
             }else{
                 console.log("Propiedad Existente: ");
-                console.log("id: "+item.id);
-                propiedad = Y.Propiedad.obtenerPropiedad(item.id,function(prop){console.log("GUARDANDO PROPIEDAD IDPROP: "+prop.get("id"));perfil.agregarPropiedad(prop);});
+                console.log("id: "+ejemplar.id);
+                propiedad = Y.Propiedad.obtenerPropiedad(ejemplar.id,function(prop){console.log("GUARDANDO PROPIEDAD IDPROP: "+prop.get("id"));tipoEjemplar.agregarPropiedad(prop);});
             }
         }
-        perfil.save();
-        perfiles.push(perfil);
-        $.mvc.route("aplicacion/listaPerfiles");
+        tipoEjemplar.save();
+        tipoEjemplares.push(tipoEjemplar);
+        $.mvc.route("aplicacion/listaTipoEjemplares");
     },
 
-    seleccionarItem: function(){
-        $("#main").html($.template('js/vista/cargarItem.tpl',{perfiles:perfiles}));
-        $.mvc.route("aplicacion/crearItem");
+    seleccionarEjemplar: function(){
+        $("#main").html($.template('js/vista/cargarEjemplar.tpl',{tipoEjemplares:tipoEjemplares}));
+        $.mvc.route("aplicacion/crearEjemplar");
     },
 
-    crearItem:function(){
-        console.log("Funcion Crear Item");
-        indexPerfil = $("#selectPerfiles").get(0).selectedIndex;
-        var seleccion = perfiles[indexPerfil];
-        item = new Y.ObjetoDeInteres();
-        item.crearCampos(seleccion.get("campos"));
+    crearEjemplar:function(){
+        console.log("Funcion Crear ejemplar");
+        indexTipoEjemplar = $("#selectTipoEjemplares").get(0).selectedIndex;
+        var seleccion = tipoEjemplares[indexTipoEjemplar];
+        ejemplar = new Y.Ejemplar();
+        ejemplar.crearCampos(seleccion.get("campos"));
         console.log("HOLAA");
-        $("#item").empty();
-        $("#item").append(item.representacion());
+        $("#ejemplar").empty();
+        $("#ejemplar").append(ejemplar.representacion());
 
     },
 
-    cargarItem:function(){
-        campos = $("#item").find(".input-group");
-        item.completarCampos(campos);
+    cargarEjemplar:function(){
+        campos = $("#ejemplar").find(".input-group");
+        ejemplar.completarCampos(campos);
     },
 
-    listaPerfiles:function(){
-        activate_subpage("#perfiles");
-        $("#mainPerfiles").html($.template('js/vista/listaPerfiles.tpl',{perfiles:perfiles}));
+    listaTipoEjemplares:function(){
+        activate_subpage("#tipoEjemplares");
+        $("#mainTipoEjemplares").html($.template('js/vista/listaTipoEjemplar.tpl',{tipoEjemplares:tipoEjemplares}));
         $("#backButton").css({"visibility":"initial"});
         $("#backButton").click(function(){
             activate_subpage("#uib_page_3");
@@ -145,7 +145,8 @@ $.mvc.controller.create("aplicacion", {
             $("#funcionalidad").empty();
             $("#funcionalidad").unbind();
         });
-        $("#funcionalidad").append("<div style='font-size: 30px'>+<div>");
+        //$("#funcionalidad").append("<div style='font-size: 30px'>+<div>");
+        $("#funcionalidad").append("Mas");
         $("#funcionalidad").css({"visibility":"initial"});
         $("#funcionalidad").click(function(){
             $("#backButton").css({"visibility":"hidden"});
@@ -153,8 +154,8 @@ $.mvc.controller.create("aplicacion", {
             $("#funcionalidad").css({"visibility":"hidden"});
             $("#funcionalidad").empty();
             $("#funcionalidad").unbind();
-            $("#mainCrearPerfil").html($.template('js/vista/crearPerfil.tpl',{tipos:tiposPropiedad}));
-            activate_subpage("#crearPerfil");
+            $("#mainCrearTipoEjemplar").html($.template('js/vista/crearTipoEjemplar.tpl',{tipos:tiposPropiedad}));
+            activate_subpage("#crearTipoEjemplar");
         });
 
     }
