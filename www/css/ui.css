@@ -60,3 +60,62 @@ textarea{
       content: '';
     }
   }
+
+#afui.ios7 .header .button {
+    color: #53575E;
+}
+
+.divResaltado{
+    box-shadow: 0px 0px 10px 4px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 10px 4px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 0px 0px 10px 4px rgba(0, 0, 0, 0.75);
+}
+
+.divCheckbox{
+    float: left;
+}
+
+.divCheckbox label {
+    color: white !important;
+}
+
+#afui input[type=radio]:checked+label:before, #afui input[type=checkbox]:checked+label:before {
+background: black;
+}
+
+#propiedades{
+    padding-top: 10px !important;
+}
+
+
+
+
+select:disabled,input:disabled{
+	background-color:#eee !important;
+}
+
+.backButton{
+    color: #353535 !important;
+/*    visibility: initial !important;*/
+    top:0% !important;
+}
+
+.funcionalidad{
+    position: absolute;
+    right: 5px;
+    top: 0%;
+    color: #353535 !important;
+    height: 44px;
+    width: 50px;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 44px;
+    font-size: 14px;
+    font-family: HelveticaNeue,'Helvetica Neue',Helvetica,Arial,sans-serif;
+    visibility: hidden;
+}
+
+.contenedorBarraInicio{
+    padding-top: 24px;
+    z-index: 10000;
+}

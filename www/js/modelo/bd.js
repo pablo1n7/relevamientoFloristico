@@ -44,7 +44,7 @@ function borrarBD(){
 
 function createTablas(){
 
-    //borrarBD();
+    /*borrarBD();*/
 
     db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS Perfil(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL,descripcion TEXT NOT NULL);', [], null, null);

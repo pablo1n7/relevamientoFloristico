@@ -39,7 +39,12 @@ remover = function(elem){
     <br>
     <div id="campos"></div>
     <br>
-    <span class="icon add" onclick="agregarPropiedad()">Añadir Campo</span>
+
+
+        <span class="icon add" onclick="agregarPropiedad()">Añadir Propiedad</span>
+        <br>
+        <span class="icon add" onclick="$.mvc.route('/aplicacion/seleccionarPropiedad')">Añadir Existente</span>
+
 </div>
 <div class="divBoton" >
     <a class="anchorBoton" href="/aplicacion/crearPerfil">Crear Perfil</a>

@@ -17,7 +17,6 @@ Y.add('enumeradoModelo',function(Y){
                 return $list;
             },
             save:function(callback){
-                alert("SOY EL Enumerado");
                 var _this = this;
                 if(_this.get("id")== -1){
                     db.transaction(function(t){

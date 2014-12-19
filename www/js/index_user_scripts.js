@@ -24,6 +24,12 @@
         {
          activate_subpage("#uib_page_3");
         });
+
+        $(document).on("click", ".uib_w_11", function(evt)
+        {
+             /*$.mvc.route("aplicacion/listaPerfiles");
+             activate_subpage("#perfiles"); */
+        });
 }
 
     $.ui.useOSThemes=false;

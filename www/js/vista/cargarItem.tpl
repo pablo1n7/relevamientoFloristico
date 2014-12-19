@@ -1,6 +1,6 @@
 <div class="input-group">
 <label for="perfiles">Perfil</label>
-<select id="perfiles" name="perfiles" onchange='$.mvc.route("aplicacion/crearItem");'>
+<select id="selectPerfiles" name="perfiles" onchange='$.mvc.route("aplicacion/crearItem");'>
     {{for(var i=0; i<= it.perfiles.length-1;i++){ }}
             <option>{{=it.perfiles[i].get("nombre")}}</option>
     {{ } }}

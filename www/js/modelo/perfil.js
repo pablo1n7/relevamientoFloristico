@@ -17,6 +17,7 @@ Y.add('perfilModelo',function(Y){
                     for(var i=0;i<=_this.get("campos").length-1;i++){
                         _this.get("campos")[i].save(function(idPropiedad){
                             db.transaction(function(t){
+                                console.log("GUARDANDO PROPIEDAD: "+idPropiedad);
                                 t.executeSql("INSERT INTO PerfilPropiedad('idPerfil','idPropiedad') values("+_this.get("id")+","+idPropiedad+");", [],null,null);
                             });
                         });

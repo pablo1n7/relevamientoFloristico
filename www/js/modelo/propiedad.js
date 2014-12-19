@@ -2,6 +2,8 @@ var Y = Y || YUI();
 Y.add('propiedadModelo',function(Y){
     Y.Propiedad = Y.Base.create('propiedad', Y.Model, [],{
 
+
+        /*previsualizar:function(){},*/
         representacion:function(){
             var $div = $('<div/>');
             $div.attr({"class":"input-group"});
@@ -13,6 +15,10 @@ Y.add('propiedadModelo',function(Y){
 
         save:function(callback){
             var _this = this;
+            if(_this.get("id")!=-1){
+                callback(_this.get("id"));
+                return;
+            }
             this.get("tipo").save(function(){
                 var idTipoPropiedad = _this.get("tipo").get("idPadre");
                 var nombre = _this.get("nombre");
@@ -50,6 +56,20 @@ Y.add('propiedadModelo',function(Y){
 
     Y.Propiedad.propiedades = [];
 
+    Y.Propiedad.obtenerPropiedades= function(callback){
+        var q = "select id from Propiedad";
+        var propiedad = {};
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+                console.log('data.rows.item(i)');
+                for (var i = 0; i < data.rows.length; i++) {
+                    console.log(data.rows.item(i));
+                    Y.Propiedad.obtenerPropiedad(data.rows.item(i).id,callback);
+                }
+            });
+        });
+    };
+
     Y.Propiedad.obtenerPropiedad= function(id,callback){
         var propiedades = Y.Propiedad.propiedades.filter(function(x){return x.get("id")==id});
         if(propiedades.length != 0){
@@ -74,4 +94,5 @@ Y.add('propiedadModelo',function(Y){
             });
         });
     };
+
 }, '0.0.1', { requires: ['model','tipoPropiedadModelo']});

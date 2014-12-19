@@ -11,8 +11,6 @@ Y.add('tipoPropiedadModelo',function(Y){
             },
 
             savePadre:function(idRango,idEnumerado,callback){
-                 alert(idRango);
-                 alert(idEnumerado);
                 var _this = this;
                 if(_this.get("idPadre") == -1 ){
                     db.transaction(function(t){

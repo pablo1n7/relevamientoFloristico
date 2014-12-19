@@ -14,7 +14,6 @@ Y.add('rangoModelo',function(Y){
             },
 
             save:function(callback){
-                alert("SOY EL Rango");
                 var _this = this;
                 if(_this.get("id")== -1){
                     db.transaction(function(t){
