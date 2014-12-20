@@ -34,8 +34,7 @@ $.mvc.controller.create("aplicacion", {
         };
 
         Y.Propiedad.obtenerPropiedades(callback);
-        $.ui.showModal("#seleccionarPropiedad","fade");
-
+        mostrarModal("#seleccionarPropiedad","fade","Seleccionar");
         if(device.platform == "Android"){
             $("#propiedades").css({"height": "80%",
                                    "overflowY":"hidden"});
@@ -122,7 +121,6 @@ $.mvc.controller.create("aplicacion", {
         var seleccion = tipoEjemplares[indexTipoEjemplar];
         ejemplar = new Y.Ejemplar();
         ejemplar.crearCampos(seleccion.get("campos"));
-        console.log("HOLAA");
         $("#ejemplar").empty();
         $("#ejemplar").append(ejemplar.representacion());
 
@@ -133,30 +131,24 @@ $.mvc.controller.create("aplicacion", {
         ejemplar.completarCampos(campos);
     },
 
+
+    creacionTipoEjemplar:function(){
+        //activate_subpage("#crearTipoEjemplar");
+        activarSubPagina("#crearTipoEjemplar","Nuevo Tipo")
+        activarBotonAtras(function(){$.mvc.route("aplicacion/listaTipoEjemplares");});
+        $("#mainCrearTipoEjemplar").html($.template('js/vista/crearTipoEjemplar.tpl',{tipos:tiposPropiedad}));
+
+    },
+
     listaTipoEjemplares:function(){
-        activate_subpage("#tipoEjemplares");
+        //activate_subpage("#tipoEjemplares");
+        activarSubPagina("#tipoEjemplares","Tipos Existentes");
         $("#mainTipoEjemplares").html($.template('js/vista/listaTipoEjemplar.tpl',{tipoEjemplares:tipoEjemplares}));
-        $("#backButton").css({"visibility":"initial"});
-        $("#backButton").click(function(){
-            activate_subpage("#uib_page_3");
-            $("#backButton").css({"visibility":"hidden"});
-            $("#backButton").unbind();
-            $("#funcionalidad").css({"visibility":"hidden"});
-            $("#funcionalidad").empty();
-            $("#funcionalidad").unbind();
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Configuración");});
+        activarBotonFuncionalidad('<i class="fa fa-plus"></i>',function(){
+            $.mvc.route("aplicacion/creacionTipoEjemplar");
         });
-        //$("#funcionalidad").append("<div style='font-size: 30px'>+<div>");
-        $("#funcionalidad").append("Mas");
-        $("#funcionalidad").css({"visibility":"initial"});
-        $("#funcionalidad").click(function(){
-            $("#backButton").css({"visibility":"hidden"});
-            $("#backButton").unbind();
-            $("#funcionalidad").css({"visibility":"hidden"});
-            $("#funcionalidad").empty();
-            $("#funcionalidad").unbind();
-            $("#mainCrearTipoEjemplar").html($.template('js/vista/crearTipoEjemplar.tpl',{tipos:tiposPropiedad}));
-            activate_subpage("#crearTipoEjemplar");
-        });
+
 
     }
 

@@ -126,3 +126,8 @@ select:disabled,input:disabled{
 .contenedorBarraInicio{
     z-index: 10000;
 }
+
+/* iconos */
+li .fa{
+    padding-right: 10px;
+}

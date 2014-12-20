@@ -36,6 +36,7 @@
 
         <link rel="stylesheet" href="css/old-android.css">
         <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
+        <link rel="stylesheet" type="text/css" href="css/awesome/css/font-awesome.min.css">
 
         <!-- IMPORTANT: Do not include your weinre script tag as part of your release builds! -->
         <!-- Place your remote debugging (weinre) script URL from the Test tab here, if it does not work below -->
@@ -75,6 +76,7 @@
         <script src="js/modelo/transecta.js"></script>
         <script src="js/modelo/campa%C3%B1a.js"></script>
         <!-- FIN MODELO -->
+        <script src="js/controlador/utiles.js"></script>
         <script src="js/app.js"></script>
         <script src="js/init-app.js"></script>
         <script src="js/init-dev.js"></script>
@@ -100,128 +102,135 @@
             <div class="upage panel" id="mainpage" data-header="af-header-0" data-footer="af-footer-0">
                 <div class="upage-outer">
                     <header class="container-group inner-element uib_w_1" data-uib="app_framework/header" data-ver="1" id="af-header-0">
-                        <h1>Inicio</h1>
+                        <h1 id="tituloSubPagina">Inicio</h1>
 
                         <div class="widget-container wrapping-col single-centered"></div>
                         <div class="widget-container content-area horiz-area wrapping-col left with-back botonAtras"><a id="backButton" class="button backButton">Atras</a>
                         </div>
-                        <div class="widget-container content-area horiz-area wrapping-col right"> <a id="funcionalidad" class="button nextButton"></a>
-                        </div> </div>
+                        <div class="widget-container content-area horiz-area wrapping-col right">
+                            <a id="funcionalidad" class="button nextButton"></a>
+                        </div>
                     </header>
-
-                    <div class="upage-content" id="mainsub">
-
-                        <div class="grid grid-pad urow uib_row_1 row-height-1" data-uib="layout/row" data-ver="0">
-                            <div class="col uib_col_1 col-0_12-12" data-uib="layout/col" data-ver="0">
-                                <div class="widget-container content-area vertical-col">
-
-                                    <div class="widget uib_w_2 d-margins" data-uib="media/text" data-ver="0">
-                                        <div class="widget-container left-receptacle"></div>
-                                        <div class="widget-container right-receptacle"></div>
-                                        <div id="main">
-                                            <p>This is the view for the first Tab.</p>
-                                        </div>
-                                    </div><span class="uib_shim"></span>
-                                </div>
-                            </div>
-                            <span class="uib_shim"></span>
-                        </div>
-                    </div>
-                    <div id="crearTipoEjemplar" class="upage-content hidden">
-
-                        <div class="grid grid-pad urow uib_row_5 row-height-5" data-uib="layout/row" data-ver="0">
-                            <div class="col uib_col_5 col-0_12-12" data-uib="layout/col" data-ver="0">
-                                <div class="widget-container content-area vertical-col">
-                                    <div id="mainCrearTipoEjemplar">
-
-                                    </div>
-                                    <div id="seleccionarPropiedad" style="display:none;">
-
-                                        <div class="divBoton"><a class="anchorBoton" href="/aplicacion/cargarPropiedadesSeleccionadas"> Seleccionar </a></div>
-
-                                    </div>
-
-                                    <span class="uib_shim"></span>
-                                </div>
-                            </div>
-                            <span class="uib_shim"></span>
-                        </div>
-                    </div>
-                    <div id="tipoEjemplares" class="upage-content hidden">
-
-                        <div class="grid grid-pad urow uib_row_6 row-height-6" data-uib="layout/row" data-ver="0">
-                            <div class="col uib_col_6 col-0_12-12" data-uib="layout/col" data-ver="0">
-                                <div class="widget-container content-area vertical-col">
-                                    <div id="mainTipoEjemplares"></div>
-                                    <span class="uib_shim"></span>
-                                </div>
-                            </div>
-                            <span class="uib_shim"></span>
-                        </div>
-                    </div>
-                    <div id="uib_page_3" class="upage-content hidden">
-
-                        <div class="grid grid-pad urow uib_row_4 row-height-4" data-uib="layout/row" data-ver="0">
-                            <div class="col uib_col_4 col-0_12-12" data-uib="layout/col" data-ver="0">
-                                <div class="widget-container content-area vertical-col">
-
-                                    <ul class="list widget uib_w_10 d-margins" data-uib="app_framework/listview" data-ver="1">
-                                        <li class="widget uib_w_11" data-uib="app_framework/listitem" data-ver="1"><a class="icon down" href="/aplicacion/listaTipoEjemplares">TipoEjemplares</a>
-                                        </li>
-                                    </ul><span class="uib_shim"></span>
-                                </div>
-                            </div>
-                            <span class="uib_shim"></span>
-                        </div>
-                    </div>
-                    <div id="uib_page_2" class="upage-content hidden">
-
-                        <div class="grid grid-pad urow uib_row_3 row-height-3" data-uib="layout/row" data-ver="0">
-                            <div class="col uib_col_3 col-0_12-12" data-uib="layout/col" data-ver="0">
-                                <div class="widget-container content-area vertical-col">
-
-                                    <div class="widget uib_w_9 d-margins" data-uib="media/text" data-ver="0">
-                                        <div class="widget-container left-receptacle"></div>
-                                        <div class="widget-container right-receptacle"></div>
-                                        <div>
-                                            <p>This is the view for the third Tab.</p>
-                                        </div>
-                                    </div><span class="uib_shim"></span>
-                                </div>
-                            </div>
-                            <span class="uib_shim"></span>
-                        </div>
-                    </div>
-                    <div id="uib_page_1" class="upage-content hidden">
-
-                        <div class="grid grid-pad urow uib_row_2 row-height-2" data-uib="layout/row" data-ver="0">
-                            <div class="col uib_col_2 col-0_12-12" data-uib="layout/col" data-ver="0">
-                                <div class="widget-container content-area vertical-col">
-
-                                    <div class="widget uib_w_8 d-margins" data-uib="media/text" data-ver="0">
-                                        <div class="widget-container left-receptacle"></div>
-                                        <div class="widget-container right-receptacle"></div>
-                                        <div id="cargarItem">
-                                            <p>This is the view for the second Tab.</p>
-                                        </div>
-                                    </div><span class="uib_shim"></span>
-                                </div>
-                            </div>
-                            <span class="uib_shim"></span>
-                        </div>
-                    </div>
-                    <!-- /upage-content -->
-
-                    <footer class="inner-element uib_w_3" data-uib="app_framework/footer" data-ver="1" id="af-footer-0"><a class="widget uib_w_7 d-margins icon home" data-uib="app_framework/button" data-ver="1">Inicio</a><a class="widget uib_w_6 d-margins icon warning" data-uib="app_framework/button" data-ver="1">Campaña</a><a class="widget uib_w_5 d-margins icon location"
-                        data-uib="app_framework/button" data-ver="1">Puntos</a><a class="widget uib_w_4 d-margins icon settings" data-uib="app_framework/button" data-ver="1">Configuración</a>
-                    </footer>
                 </div>
-                <!-- /upage-outer -->
 
+                <div class="upage-content" id="mainsub">
+
+                    <div class="grid grid-pad urow uib_row_1 row-height-1" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_1 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+
+                                <div class="widget uib_w_2 d-margins" data-uib="media/text" data-ver="0">
+                                    <div class="widget-container left-receptacle"></div>
+                                    <div class="widget-container right-receptacle"></div>
+                                    <div id="main">
+                                        <p>This is the view for the first Tab.</p>
+                                    </div>
+                                </div><span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="crearTipoEjemplar" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_5 row-height-5" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_5 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+                                <div id="mainCrearTipoEjemplar">
+
+                                </div>
+                                <div id="seleccionarPropiedad" style="display:none;">
+
+                                    <div class="divBoton"><a class="anchorBoton" href="/aplicacion/cargarPropiedadesSeleccionadas"> Seleccionar </a>
+                                    </div>
+
+                                </div>
+
+                                <span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="tipoEjemplares" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_6 row-height-6" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_6 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+                                <div id="mainTipoEjemplares"></div>
+                                <span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="uib_page_3" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_4 row-height-4" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_4 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+
+                                <ul class="list widget uib_w_10 d-margins" data-uib="app_framework/listview" data-ver="1">
+                                    <li class="widget uib_w_11" data-uib="app_framework/listitem" data-ver="1"><a class="" href="/aplicacion/listaTipoEjemplares"><i class="fa fa-paperclip"></i>Tipos de Ejemplares Recolectables</a>
+                                    </li>
+                                    <li class="widget uib_w_12" data-uib="app_framework/listitem" data-ver="1"><a>
+
+<i class="fa fa-leaf"></i>
+Especies</a>
+                                    </li>
+                                </ul><span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="uib_page_2" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_3 row-height-3" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_3 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+
+                                <div class="widget uib_w_9 d-margins" data-uib="media/text" data-ver="0">
+                                    <div class="widget-container left-receptacle"></div>
+                                    <div class="widget-container right-receptacle"></div>
+                                    <div>
+                                        <p>This is the view for the third Tab.</p>
+                                    </div>
+                                </div><span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="uib_page_1" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_2 row-height-2" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_2 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+
+                                <div class="widget uib_w_8 d-margins" data-uib="media/text" data-ver="0">
+                                    <div class="widget-container left-receptacle"></div>
+                                    <div class="widget-container right-receptacle"></div>
+                                    <div id="cargarItem">
+                                        <p>This is the view for the second Tab.</p>
+                                    </div>
+                                </div><span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <!-- /upage-content -->
+
+                <footer class="inner-element uib_w_3" data-uib="app_framework/footer" data-ver="1" id="af-footer-0"><a class="widget uib_w_7 d-margins icon home" data-uib="app_framework/button" data-ver="1">Inicio</a><a class="widget uib_w_6 d-margins icon warning" data-uib="app_framework/button" data-ver="1">Campaña</a><a class="widget uib_w_5 d-margins icon location"
+                    data-uib="app_framework/button" data-ver="1">Puntos</a><a class="widget uib_w_4 d-margins icon settings" data-uib="app_framework/button" data-ver="1">Configuración</a>
+                </footer>
             </div>
-            <!-- /upage -->
+            <!-- /upage-outer -->
 
         </div>
+        <!-- /upage -->
+
         <!-- /uwrap -->
 
     </body>

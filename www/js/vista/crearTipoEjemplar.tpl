@@ -47,6 +47,6 @@ remover = function(elem){
 
 </div>
 <div class="divBoton" >
-    <a class="anchorBoton" href="/aplicacion/crearTipoEjemplar">Crear TipoEjemplar</a>
+    <a class="anchorBoton" href="/aplicacion/crearTipoEjemplar">Crear Tipo</a>
     <a class="anchorBoton" href="/aplicacion/seleccionarEjemplar">Crear Ejemplar</a>
 </div>

@@ -8,25 +8,31 @@
  {
 
 
-         $(document).on("click", ".uib_w_7", function(evt)
-        {
-         activate_subpage("#mainsub");
+         $(document).on("click", ".uib_w_7", function(evt){
+            /*activate_subpage("#mainsub");
+            desactivarBotonesHeader();
+            */
+             activarSubPagina("#mainsub","Inicio");
+
         });
-        $(document).on("click", ".uib_w_6", function(evt)
-        {
-         activate_subpage("#uib_page_1");
+        $(document).on("click", ".uib_w_6", function(evt){
+            /*activate_subpage("#uib_page_1");
+            desactivarBotonesHeader();*/
+             activarSubPagina("#uib_page_1","Campaña");
         });
-        $(document).on("click", ".uib_w_5", function(evt)
-        {
-         activate_subpage("#uib_page_2");
+        $(document).on("click", ".uib_w_5", function(evt){
+            /*activate_subpage("#uib_page_2");
+            desactivarBotonesHeader();*/
+             activarSubPagina("#uib_page_2","Puntos");
+
         });
-        $(document).on("click", ".uib_w_4", function(evt)
-        {
-         activate_subpage("#uib_page_3");
+        $(document).on("click", ".uib_w_4", function(evt){
+            /*activate_subpage("#uib_page_3");
+            desactivarBotonesHeader();*/
+            activarSubPagina("#uib_page_3","Configuración");
         });
 
-        $(document).on("click", ".uib_w_11", function(evt)
-        {
+        $(document).on("click", ".uib_w_11", function(evt){
              /*$.mvc.route("aplicacion/listaPerfiles");
              activate_subpage("#perfiles"); */
         });
