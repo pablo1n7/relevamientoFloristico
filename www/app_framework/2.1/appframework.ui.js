@@ -3590,12 +3590,20 @@ if (!Date.now)
                     queue[0].show();
             },
 
-            positionPopup: function () {
-                var popup = $.query("#" + this.id);
+            // positionPopup: function () {
+            //     var popup = $.query("#" + this.id);
 
+            //     popup.css("top", ((window.innerHeight / 2.5) + window.pageYOffset) - (popup[0].clientHeight / 2) + "px");
+            //     popup.css("left", (window.innerWidth / 2) - (popup[0].clientWidth / 2) + "px");
+            // }
+                positionPopup: function () {
+                var popup = $.query("#" + this.id);
+                var temp_value = $.query("#" + this.id).css("width");
+                temp_value = temp_value.replace("px","");
                 popup.css("top", ((window.innerHeight / 2.5) + window.pageYOffset) - (popup[0].clientHeight / 2) + "px");
-                popup.css("left", (window.innerWidth / 2) - (popup[0].clientWidth / 2) + "px");
+                popup.css("left", (window.innerWidth / 2) - (temp_value / 2) + "px");
             }
+
         };
 
         return popup;

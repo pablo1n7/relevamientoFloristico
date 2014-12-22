@@ -40,6 +40,19 @@ function mostrarModal(div,efecto,titulo){
     $.ui.showModal(div,efecto);
     $("#modalHeader h1 ").append(titulo);
 
+}
 
+//function(){console.log("Done for!");}
+//
 
+function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
+    $.ui.popup( {
+       title:titulo,
+       message:mensaje,
+       doneText:"Aceptar",
+       doneCallback: funcionAceptar,
+       cancelText:"Cancelar",
+       cancelCallback: funcionCancelar,
+       cancelOnly:false
+    });
 }

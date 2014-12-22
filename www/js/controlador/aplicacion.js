@@ -1,5 +1,5 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl'], //These are the views we will use with the controller
     init:function(){
         tipoEjemplares=[];
     },
@@ -148,6 +148,26 @@ $.mvc.controller.create("aplicacion", {
         activarBotonFuncionalidad('<i class="fa fa-plus"></i>',function(){
             $.mvc.route("aplicacion/creacionTipoEjemplar");
         });
+
+
+    },
+
+    verTipoEjemplar:function(idTipoEjemplar){
+        var tipoEjemplar = (tipoEjemplares.filter(function(tipo){return tipo.get("id")==idTipoEjemplar}))[0];
+        var propiedades = tipoEjemplar.get("campos");
+        activarSubPagina("#verTipoEjemplar",tipoEjemplar.get("nombre"));
+        activarBotonAtras(function(){$.mvc.route("aplicacion/listaTipoEjemplares");});
+        activarBotonFuncionalidad('<i class="fa fa-minus"></i>',function(){
+            mensajeConfirmacion("Mensaje de Confirmación","¿Estas seguro que desea eliminar?",function(){
+                $.mvc.route("aplicacion/listaTipoEjemplares");
+            },function(){
+                $.mvc.route("aplicacion/verTipoEjemplar/"+idTipoEjemplar);
+            });
+        });
+        $("#mainVerTipoEjemplar").html($.template('js/vista/verTipoEjemplar.tpl',{tipoEjemplar:tipoEjemplar}));
+        for(var i = 0; i<propiedades.length;i++){
+            $("#propiedadesTipoEjemplar").append(propiedades[i].representacion());
+        }
 
 
     }

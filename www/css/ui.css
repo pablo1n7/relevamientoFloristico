@@ -131,3 +131,7 @@ select:disabled,input:disabled{
 li .fa{
     padding-right: 10px;
 }
+
+footer .button{
+    color: #353535 !important;
+}
