@@ -20,7 +20,7 @@ $.mvc.controller.create("aplicacion", {
 
 
         var callback = function(propiedad){
-            var $contenedor = $("<div/>");
+            var $contenedor = $("<div class='divSeleccion' />");
             $contenedor.append('<div class="widget uib_w_11 d-margins divCheckbox" data-ver="1"><input type="checkbox" value="'+propiedad.get("id")+'" id="checkbox'+propiedad.get("id")+'"><label class="content-box" for="checkbox'+propiedad.get("id")+'"></label></div>');
             $($contenedor.find("input")).change(function(e){
                 if(e.target.checked){
@@ -54,7 +54,8 @@ $.mvc.controller.create("aplicacion", {
         $.each(idPropiedades,function(indice,id){
             Y.Propiedad.obtenerPropiedad(id,function(propiedad){
                 var $div =  propiedad.representacion();
-                $div.prepend('<div style="text-align: right;"><span class="icon close" onclick="remover(this.parentElement);"></span></div>');
+                //$div.prepend('<div style="text-align: right;"><span class="icon close" onclick="remover(this.parentElement);"></span></div>');
+                $div.prepend('<div class="widget-container content-area horiz-area wrapping-col right"><span class="icon close" onclick="remover(this.parentElement);"></span></div>');
                 $div.attr({"id":propiedad.get("id")});
                 var variable = $div.find("select")[0]!=null ? $div.find("select")[0]:$div.find("input")[0];
                 variable.disabled=true;
@@ -105,9 +106,13 @@ $.mvc.controller.create("aplicacion", {
                 propiedad = Y.Propiedad.obtenerPropiedad(ejemplar.id,function(prop){console.log("GUARDANDO PROPIEDAD IDPROP: "+prop.get("id"));tipoEjemplar.agregarPropiedad(prop);});
             }
         }
-        tipoEjemplar.save();
-        tipoEjemplares.push(tipoEjemplar);
-        $.mvc.route("aplicacion/listaTipoEjemplares");
+        $.ui.showMask('Guardando...');
+        tipoEjemplar.save(function(){
+            $.ui.hideMask();
+            tipoEjemplares.push(tipoEjemplar);
+            $.mvc.route("aplicacion/listaTipoEjemplares");
+        });
+
     },
 
     seleccionarEjemplar: function(){

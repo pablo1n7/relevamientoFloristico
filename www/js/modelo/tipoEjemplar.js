@@ -6,7 +6,7 @@ Y.add('tipoEjemplarModelo',function(Y){
         agregarPropiedad:function(propiedad){
             this.get('campos').push(propiedad);
         },
-        save:function(){
+        save:function(callback){
             var nombre = this.get("nombre");
             var descripcion = this.get("descripcion");
             var _this = this;
@@ -22,6 +22,7 @@ Y.add('tipoEjemplarModelo',function(Y){
                             });
                         });
                     }
+                    callback();
             },
             null);
         });

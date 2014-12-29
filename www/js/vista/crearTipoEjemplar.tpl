@@ -11,7 +11,10 @@ cargarModoCreacion = function(e){
 agregarPropiedad=function(){
     var $div = $('<div/>');
     $div.attr({"class":"input-group"});
-    $div.append('<div style="text-align: right;"><span class="icon close" onclick="remover(this.parentElement);"></span></div>');
+
+
+
+    $div.append('<div class="widget-container content-area horiz-area wrapping-col right" ><span class="icon close" onclick="remover(this.parentElement);"></span></div>');
     $div.append('<input name="nombre" type="text" placeholder="nombre Propiedad"/>');
     $div.append('<textarea name="descripcion" rows="3" cols="20" placeholder="Ingrese una Descripción (opcional)"></textarea>');
     var $list = $("<select name='tipoPropiedad' />");

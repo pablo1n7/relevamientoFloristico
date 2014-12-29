@@ -1,3 +1,15 @@
+input{
+    border-width: 0px !important;
+}
+
+.input-group input{
+    border-width: 1px !important;
+}
+
+.input-group textarea{
+    border-width: 1px !important;
+}
+
 .anchorBoton{
     border-color: rgb(35,35,35);
     border-style: solid;
@@ -25,10 +37,13 @@ textarea{
     font-family: Arial;
     font-size: 14px;
     font-weight: normal;
+    border-width: 0px !important;
+
 }
 
 .input-group{
     text-align: center;
+    border-width: 0px !important;
 }
 
 .input-group label{
@@ -134,4 +149,21 @@ li .fa{
 
 footer .button{
     color: #353535 !important;
+}
+
+.afPopup{
+    border-width: 0px !important;
+}
+
+.divSeleccion{
+    padding-right: 10px;
+}
+
+.divAyuda{
+    position:absolute;
+    width:100%;
+    height:100%;
+    top:0px;
+    z-index:1000;
+    background-color:rgba(0,0,0,0.5);
 }

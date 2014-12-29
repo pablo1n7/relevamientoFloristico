@@ -42,6 +42,25 @@ function mostrarModal(div,efecto,titulo){
 
 }
 
+function activarModoAyuda(contexto,diccionario){
+    $("body").append('<div id="divAyuda" class="divAyuda"/>');
+    $("#divAyuda").bind("doubleTap",function(){
+        $("#divAyuda").remove();
+    });
+
+    $.each(Object.keys(diccionario),function(indice,elemento){
+        var elementos = $(contexto).find("[name|="+elemento+"]");
+        var posicion = $(elementos[0]).offset();
+        var $ayudaElemento = $("<div class='icon question'> </div>");
+        $ayudaElemento.css(posicion);
+        $ayudaElemento.css({"position":"absolute", "color":"rgba(82,155,234,255)"});
+        $ayudaElemento.click(function(){ console.log(diccionario[elemento])});
+        $("#divAyuda").append($ayudaElemento);
+    });
+
+}
+
+
 //function(){console.log("Done for!");}
 //
 
