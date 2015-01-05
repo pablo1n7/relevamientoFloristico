@@ -6,6 +6,37 @@ Y.add('tipoEjemplarModelo',function(Y){
         agregarPropiedad:function(propiedad){
             this.get('campos').push(propiedad);
         },
+
+        delete:function(callback,callbackError){
+            var id = this.get("id");
+            var campos = this.get("campos");
+            var q = "select * from Ejemplar where idTipoEjemplar="+id;
+            db.transaction(function (t) {
+                t.executeSql(q, null, function (t, data) {
+                    if(data.rows.length != 0){
+                        callbackError();
+                        return;
+                    }
+                    q = "delete from TipoEjemplarPropiedad where idTipoEjemplar="+id;
+                    db.transaction(function (t) {
+                        t.executeSql(q, null, function (t, data) {
+                            console.log("Tipo Eliminado de TipoEjemplarPropiedad");
+                            q = "delete from TipoEjemplar where id="+id;
+                            db.transaction(function (t) {
+                                t.executeSql(q, null, function (t, data){
+                                    console.log("Tipo Ejemplar Eliminado");
+                                    campos.map(function(propiedad){propiedad.delete();});
+
+                                    callback();
+                                });
+                            });
+                        });
+                    });
+
+                });
+            });
+        },
+
         save:function(callback){
             var nombre = this.get("nombre");
             var descripcion = this.get("descripcion");

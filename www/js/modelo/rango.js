@@ -13,13 +13,24 @@ Y.add('rangoModelo',function(Y){
                 return $div;
             },
 
+            delete: function(){
+                var q = "delete from Rango where id="+this.get("id");
+                this.deletePadre(function(){
+                    db.transaction(function (t){
+                        t.executeSql(q, null, function (t, data){
+                        },function(a){
+                            console.log(a);
+                        });
+                    });
+                });
+            },
+
             save:function(callback){
                 var _this = this;
                 if(_this.get("id")== -1){
                     db.transaction(function(t){
                         t.executeSql("INSERT INTO Rango('valorMin','valorMax') values("+_this.get("valorMin")+","+_this.get("valorMax")+");", [],
                         function (t, data) {
-                            console.log(data);
                             _this.set('id',data.insertId);
                             _this.savePadre(data.insertId,"NULL",callback);
                         },null);
@@ -57,7 +68,7 @@ Y.add('rangoModelo',function(Y){
     };
     Y.Rango.rangos = [];
 
-    Y.Rango.obtenerRango= function(idRango,callback){
+    Y.Rango.obtenerRango= function(idRango,idPadre,callback){
         var rangos = Y.Rango.rangos.filter(function(x){return x.get("id")==idRango});
         if(rangos.length != 0){
             callback(rangos[0]);
@@ -70,7 +81,7 @@ Y.add('rangoModelo',function(Y){
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
                     console.log(data.rows.item(i));
-                    rango = new Y.Rango({"id":data.rows.item(i).id,"valorMin":data.rows.item(i).valorMin,"valorMax":data.rows.item(i).valorMax});
+                    rango = new Y.Rango({"idPadre":idPadre,"id":data.rows.item(i).id,"valorMin":data.rows.item(i).valorMin,"valorMax":data.rows.item(i).valorMax});
                     Y.Rango.rangos.push(rango);
                     callback(rango);
                 }

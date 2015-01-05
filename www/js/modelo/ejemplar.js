@@ -3,6 +3,21 @@ var Y = Y || YUI();
 Y.add('ejemplarModelo',function(Y){
     Y.Ejemplar = Y.Base.create('Ejemplar', Y.Model, [],{
 
+            save:function(callback){
+                var _this = this;
+                var q = "INSERT INTO Ejemplar('idTipoEjemplar') values("+this.get("tipoEjemplar").get("id")+");";
+                db.transaction(function(t){
+                    t.executeSql(q, [],
+                    function (t, data) {
+                        _this.set('id',data.insertId);
+                        _this.get("valores").map(function(valor){
+                            valor.save(data.insertId);
+                        });
+                        callback();
+                    },null);
+                });
+            },
+
             representacion: function(){
                 var $div = $('<div/>');
                 for(var i = 0 ; i<this.get("valores").length;i++){

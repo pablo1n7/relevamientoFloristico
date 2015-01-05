@@ -13,6 +13,35 @@ Y.add('propiedadModelo',function(Y){
             return $div;
         },
 
+        delete:function(){
+            var id = this.get("id");
+            var tipoPropiedad = this.get("tipo");
+            var q = "select * from TipoEjemplarPropiedad where idPropiedad="+id;
+            db.transaction(function (t) {
+                t.executeSql(q, null, function (t, data) {
+                    if(data.rows.length != 0){
+                        return;
+                    }else{
+                        q = "select * from Valor where idPropiedad="+id;
+                        db.transaction(function (t) {
+                            t.executeSql(q, null, function (t, data) {
+                                if(data.rows.length != 0){
+                                    return;
+                                }else{
+                                    q = "delete from Propiedad where id="+id;
+                                    db.transaction(function (t) {
+                                        t.executeSql(q, null, function (t, data) {
+                                            tipoPropiedad.delete();
+                                        });
+                                    });
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+        },
+
         save:function(callback){
             var _this = this;
             if(_this.get("id")!=-1){
@@ -61,9 +90,7 @@ Y.add('propiedadModelo',function(Y){
         var propiedad = {};
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
-                console.log('data.rows.item(i)');
                 for (var i = 0; i < data.rows.length; i++) {
-                    console.log(data.rows.item(i));
                     Y.Propiedad.obtenerPropiedad(data.rows.item(i).id,callback);
                 }
             });
@@ -82,7 +109,6 @@ Y.add('propiedadModelo',function(Y){
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
-//                    console.log(data.rows.item(i));
                     (function(i){
                         Y.TipoPropiedad.obtenerTipoPropiedad(data.rows.item(i).idTipoPropiedad,function(tipo){
                             propiedad = new Y.Propiedad({"id":data.rows.item(i).id,"nombre":data.rows.item(i).nombre,"descripcion":data.rows.item(i).descripcion,"tipo":tipo});

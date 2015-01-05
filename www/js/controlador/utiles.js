@@ -28,12 +28,14 @@ function desactivarBotonesHeader(){
     $("#funcionalidad").unbind();
 }
 
-
 function activarSubPagina(nombreSubPagina,titulo){
+    $($(nombreSubPagina).parent()[0]).unbind("doubleTap");
     $("#tituloSubPagina").empty()
     $("#tituloSubPagina").append(titulo);
     activate_subpage(nombreSubPagina);
     desactivarBotonesHeader();
+    if(diccionarioAyuda[nombreSubPagina])
+        $($(nombreSubPagina).parent()[0]).bind("doubleTap",function(){activarModoAyuda(nombreSubPagina,diccionarioAyuda[nombreSubPagina])});
 }
 
 function mostrarModal(div,efecto,titulo){
@@ -43,21 +45,55 @@ function mostrarModal(div,efecto,titulo){
 }
 
 function activarModoAyuda(contexto,diccionario){
+    console.log("SE JSUTIVIFACA");
     $("body").append('<div id="divAyuda" class="divAyuda"/>');
     $("#divAyuda").bind("doubleTap",function(){
         $("#divAyuda").remove();
     });
-
+    var referenciaTop = $("#header").offset().height;
+    if(contexto == "#modalContainer")
+        referenciaTop = 43;
+    var referenciaBottom = $("#navbar").offset().top - 5;
+    if(contexto == "#modalContainer")
+        referenciaBottom = 10000;
     $.each(Object.keys(diccionario),function(indice,elemento){
         var elementos = $(contexto).find("[name|="+elemento+"]");
-        var posicion = $(elementos[0]).offset();
-        var $ayudaElemento = $("<div class='icon question'> </div>");
-        $ayudaElemento.css(posicion);
-        $ayudaElemento.css({"position":"absolute", "color":"rgba(82,155,234,255)"});
-        $ayudaElemento.click(function(){ console.log(diccionario[elemento])});
-        $("#divAyuda").append($ayudaElemento);
+        for (var i = 0; i<elementos.length;i++){
+            var posicion = $(elementos[i]).offset();
+            if((posicion.top > referenciaTop) && (posicion.top < referenciaBottom)){
+                var $ayudaElemento = $("<div class='icon question'> </div>");
+                $ayudaElemento.css(posicion);
+                $ayudaElemento.css({"position":"absolute", "color":"rgba(82,155,234,255)"});
+                $ayudaElemento.click(function(){
+                    lanzarTooltip(diccionario[elemento],$(this).offset());
+                });
+                $("#divAyuda").append($ayudaElemento);
+            }
+        }
     });
 
+}
+
+function lanzarTooltip(objetoAyuda, posicion){
+    $("#mensajeAyuda").remove();
+    $divMensaje = $('<div id="mensajeAyuda" class="divMensajeAyuda"> <div class="widget-container content-area horiz-area wrapping-col right" > <span class="icon close" onclick="borrarMensajeAyuda(this)"></span> </div> <div class="divMensajeAyudaHeader">'+objetoAyuda.titulo+'</div></div>');
+    $divMensaje.append('<p>'+ objetoAyuda.mensaje+ '</p>');
+/*    posicion.width = "50";
+    posicion.height = "";
+    posicion.bottom = "";
+    posicion.top = "";
+    $divMensaje.css(posicion);*/
+    $("#divAyuda").append($divMensaje);
+}
+
+function borrarMensajeAyuda(elemento){
+    remover(elemento.parentElement);
+};
+
+function agregarAyuda(contexto,diccionario){
+    console.log(contexto);
+    var $contexto = $(contexto);
+    $contexto.doubleTap(function(){activarModoAyuda(contexto,diccionario)});
 }
 
 

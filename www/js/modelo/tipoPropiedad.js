@@ -2,12 +2,29 @@ var Y = Y || YUI();
 Y.add('tipoPropiedadModelo',function(Y){
     Y.TipoPropiedad = Y.Base.create('tipoPropiedad', Y.Model, [],{
 
+
             obtenerValor: function(campo){
                 return campo.find("input")[0].value;
             },
 
             save: function(callback){
                 this.savePadre("NULL","NULL",callback);
+            },
+
+            delete: function(){
+
+            },
+
+            deletePadre:function(callback){
+                var q = "delete from TipoPropiedad where id="+this.get("idPadre");
+                db.transaction(function(t){
+                    t.executeSql(q, [],function (t, data){
+                        callback();
+                    });
+                },function(a){
+                    console.log("Error");
+                    console.log(a);
+                });
             },
 
             savePadre:function(idRango,idEnumerado,callback){
@@ -60,10 +77,10 @@ Y.add('tipoPropiedadModelo',function(Y){
                         t.executeSql(q, null, function (t, data) {
                             for (var i = 0; i < data.rows.length; i++) {
                                 if(data.rows.item(i).idRango != "null"){
-                                    Y.Rango.obtenerRango(data.rows.item(i).idRango,callback);
+                                    Y.Rango.obtenerRango(data.rows.item(i).idRango,data.rows.item(i).id,callback);
                                 };
                                 if(data.rows.item(i).idEnumerado != "null"){
-                                    Y.Enumerado.obtenerEnumerado(data.rows.item(i).idEnumerado,callback);
+                                    Y.Enumerado.obtenerEnumerado(data.rows.item(i).idEnumerado,data.rows.item(i).id,callback);
                                 }
 
                             }

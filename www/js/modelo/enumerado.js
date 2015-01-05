@@ -8,6 +8,18 @@ Y.add('enumeradoModelo',function(Y){
                 return this.get("valores")[campo.find("select")[0].selectedIndex];
             },
 
+            delete: function(){
+                var q = "delete from Enumerado where id="+this.get("id");
+                this.deletePadre(function(){
+                        db.transaction(function (t) {
+                            t.executeSql(q, null, function (t, data){
+
+                            });
+                        });
+                    }
+                );
+            },
+
 
             representacion:function(){
                 var $list = $("<select/>");
@@ -22,7 +34,6 @@ Y.add('enumeradoModelo',function(Y){
                     db.transaction(function(t){
                         t.executeSql("INSERT INTO Enumerado('valores') values('"+(_this.get("valores").join(","))+"');", [],
                         function (t, data) {
-                            console.log(data);
                             _this.set('id',data.insertId);
                             _this.savePadre("NULL",data.insertId,callback);
                         },null);
@@ -57,7 +68,7 @@ Y.add('enumeradoModelo',function(Y){
 
     Y.Enumerado.enumerados = [];
 
-    Y.Enumerado.obtenerEnumerado= function(idEnumerado,callback){
+    Y.Enumerado.obtenerEnumerado= function(idEnumerado,idPadre,callback){
         var enumerados = Y.Enumerado.enumerados.filter(function(x){return x.get("id")==idEnumerado});
         if(enumerados.length != 0){
             callback(enumerados[0]);
@@ -69,8 +80,7 @@ Y.add('enumeradoModelo',function(Y){
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
-                    console.log(data.rows.item(i));
-                    enumerado = new Y.Enumerado({"id":data.rows.item(i).id,"valores":data.rows.item(i).valores.split(",")});
+                    enumerado = new Y.Enumerado({"idPadre":idPadre,"id":data.rows.item(i).id,"valores":data.rows.item(i).valores.split(",")});
                     Y.Enumerado.enumerados.push(enumerado);
                     callback(enumerado);
                 }

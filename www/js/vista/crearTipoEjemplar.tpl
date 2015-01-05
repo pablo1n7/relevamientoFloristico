@@ -37,19 +37,19 @@ remover = function(elem){
 }}
 
 <div id="tipoEjemplar">
-<input id="nombreTipoEjemplar" type="text" placeHolder="Nombre TipoEjemplar"/>
-<textarea id ="descripcionTipoEjemplar" rows="3" cols="20" placeholder="Ingrese una Descripción"></textarea>
+<input name="nombreTipo" id="nombreTipoEjemplar" type="text" placeHolder="Nombre TipoEjemplar"/>
+<textarea name="descripcionTipo" id ="descripcionTipoEjemplar" rows="3" cols="20" placeholder="Ingrese una Descripción"></textarea>
     <br>
     <div id="campos"></div>
     <br>
 
 
-        <span class="icon add" onclick="agregarPropiedad()">Añadir Propiedad</span>
+        <span name="agregarPropiedad" class="icon add" onclick="agregarPropiedad()">Añadir Propiedad</span>
         <br>
-        <span class="icon add" onclick="$.mvc.route('/aplicacion/seleccionarPropiedad')">Añadir Existente</span>
+        <span name="agregarPropiedadExistente" class="icon add" onclick="$.mvc.route('/aplicacion/seleccionarPropiedad')">Añadir Existente</span>
 
 </div>
 <div class="divBoton" >
-    <a class="anchorBoton" href="/aplicacion/crearTipoEjemplar">Crear Tipo</a>
-    <a class="anchorBoton" href="/aplicacion/seleccionarEjemplar">Crear Ejemplar</a>
+    <a name="crearTipo" class="anchorBoton" href="/aplicacion/crearTipoEjemplar">Crear Tipo</a>
+    <a name= "crearEjemplar" class="anchorBoton" href="/aplicacion/seleccionarEjemplar">Crear Ejemplar</a>
 </div>

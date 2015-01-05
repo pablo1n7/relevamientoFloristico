@@ -16,12 +16,13 @@ $.mvc.controller.create("aplicacion", {
         //$("#propiedades").empty();
         if($("#propiedades"))
             $("#propiedades").remove();
-        $("#seleccionarPropiedad").prepend('<div id="propiedades"></div>');
+        $("#seleccionarPropiedad").prepend('<div name="propiedades" id="propiedades"></div>');
+
 
 
         var callback = function(propiedad){
             var $contenedor = $("<div class='divSeleccion' />");
-            $contenedor.append('<div class="widget uib_w_11 d-margins divCheckbox" data-ver="1"><input type="checkbox" value="'+propiedad.get("id")+'" id="checkbox'+propiedad.get("id")+'"><label class="content-box" for="checkbox'+propiedad.get("id")+'"></label></div>');
+            $contenedor.append('<div class="widget uib_w_11 d-margins divCheckbox" data-ver="1"><input name="tilde" type="checkbox" value="'+propiedad.get("id")+'" id="checkbox'+propiedad.get("id")+'"><label class="content-box" for="checkbox'+propiedad.get("id")+'"></label></div>');
             $($contenedor.find("input")).change(function(e){
                 if(e.target.checked){
                     $(e.target.parentNode.nextSibling).addClass("divResaltado");
@@ -46,6 +47,8 @@ $.mvc.controller.create("aplicacion", {
                     });
             },1000);
         }
+         $("#modalContainer").unbind("doubleTap");
+         agregarAyuda("#modalContainer",{"seleccionarPropiedad":{titulo:"Boton Selección",mensaje:"Boton que confirma la adición de las propiedades seleccionadas de la lista."},"propiedades":{titulo:"Lista de Propiedades",mensaje:"Pantalla de seleccion de propiedades existentes. En esta pantalla, puede probar el funcionamiento de las propiedades ya creadas, para un mejor criterio de selección. Seleccione tocando en el cuadro de la izquierda de la propiedad que desea agregar"}});
     },
 
     cargarPropiedadesSeleccionadas: function(){
@@ -124,7 +127,7 @@ $.mvc.controller.create("aplicacion", {
         console.log("Funcion Crear ejemplar");
         indexTipoEjemplar = $("#selectTipoEjemplares").get(0).selectedIndex;
         var seleccion = tipoEjemplares[indexTipoEjemplar];
-        ejemplar = new Y.Ejemplar();
+        ejemplar = new Y.Ejemplar({"tipoEjemplar":seleccion});
         ejemplar.crearCampos(seleccion.get("campos"));
         $("#ejemplar").empty();
         $("#ejemplar").append(ejemplar.representacion());
@@ -134,16 +137,16 @@ $.mvc.controller.create("aplicacion", {
     cargarEjemplar:function(){
         campos = $("#ejemplar").find(".input-group");
         ejemplar.completarCampos(campos);
+        ejemplar.save(function(){console.log("Ejemplar Guardado con Exito")});
     },
 
 
     creacionTipoEjemplar:function(){
-        //activate_subpage("#crearTipoEjemplar");
-        activarSubPagina("#crearTipoEjemplar","Nuevo Tipo")
+        activarSubPagina("#crearTipoEjemplar","Nuevo Tipo");
         activarBotonAtras(function(){$.mvc.route("aplicacion/listaTipoEjemplares");});
         $("#mainCrearTipoEjemplar").html($.template('js/vista/crearTipoEjemplar.tpl',{tipos:tiposPropiedad}));
-
     },
+
 
     listaTipoEjemplares:function(){
         //activate_subpage("#tipoEjemplares");
@@ -164,7 +167,19 @@ $.mvc.controller.create("aplicacion", {
         activarBotonAtras(function(){$.mvc.route("aplicacion/listaTipoEjemplares");});
         activarBotonFuncionalidad('<i class="fa fa-minus"></i>',function(){
             mensajeConfirmacion("Mensaje de Confirmación","¿Estas seguro que desea eliminar?",function(){
-                $.mvc.route("aplicacion/listaTipoEjemplares");
+                $.ui.showMask('Eliminando...');
+                tipoEjemplar.delete(function(){
+                    $.ui.hideMask();
+                    tipoEjemplares.splice(tipoEjemplares.indexOf(tipoEjemplar),1);
+                    $.mvc.route("aplicacion/listaTipoEjemplares");
+                },function(){
+                    console.log("fallo");
+                    $.ui.hideMask();
+                    $.mvc.route("aplicacion/verTipoEjemplar/"+idTipoEjemplar);
+
+
+                });
+
             },function(){
                 $.mvc.route("aplicacion/verTipoEjemplar/"+idTipoEjemplar);
             });
