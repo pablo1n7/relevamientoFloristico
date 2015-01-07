@@ -57,7 +57,15 @@ function activarModoAyuda(contexto,diccionario){
     if(contexto == "#modalContainer")
         referenciaBottom = 10000;
     $.each(Object.keys(diccionario),function(indice,elemento){
-        var elementos = $(contexto).find("[name|="+elemento+"]");
+        var elementos = {};
+        if( elemento=="botonFuncionalidad"){
+            elementos = $("body").find("[name|="+elemento+"]");
+            referenciaTop=0;
+            referenciaBottom=10000;
+        }else{
+            elementos = $(contexto).find("[name|="+elemento+"]");
+        }
+
         for (var i = 0; i<elementos.length;i++){
             var posicion = $(elementos[i]).offset();
             if((posicion.top > referenciaTop) && (posicion.top < referenciaBottom)){
@@ -109,5 +117,24 @@ function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
        cancelText:"Cancelar",
        cancelCallback: funcionCancelar,
        cancelOnly:false
+    });
+
+}
+
+function mensajeExitoso(mensaje){
+      $.ui.popup( {
+       title:"<div class='icon check exito' >Éxito</div>",
+       message:mensaje,
+       cancelText:"Aceptar",
+       cancelOnly:true
+    });
+}
+
+function mensajeError(mensaje){
+      $.ui.popup( {
+       title:"<div class='icon warning error' >Error</div>",
+       message:mensaje,
+       cancelText:"Aceptar",
+       cancelOnly:true
     });
 }

@@ -19,7 +19,9 @@
 
 // ...additional event handlers here...
 
-createTablas();
+//createTablas();
+vaciarBD();
+createTablasPlantas();
 var app = new $.mvc.app();
 //app.controllersDir("../controllers/"); //Set the directory to your controllers folder if it is not named "controllers".
 app.controllersDir("js/controlador/");
@@ -30,7 +32,9 @@ Y.use(['campaniaModelo','alfanumericoModelo','enumeradoModelo','especieModelo','
 app.loadControllers(["aplicacion"]); //You can pass in array or a string.  You do not need to reference the .js extension.
 app.ready(function(){
 
-    diccionarioAyuda = {"#crearTipoEjemplar":{"agregarPropiedadExistente":{titulo:"Agregar Propiedad Existente",mensaje: "Permite agregar una propiedad creada con anterioridad."},"agregarPropiedad":{titulo:"Agregar Propiedad",mensaje: "Permite crear una nueva propiedad y asociarla al tipo"},"crearTipo":{titulo:"Crear Tipo",mensaje: "Permite crear un tipo nuevo de ejemplar."},"nombre":{titulo:"Nombre de Propiedad",mensaje:"Nombre que identifica/rá a la propiedad "},"descripcion":{titulo:"Descripción de Propiedad",mensaje:"Breve descripción de lo que representa la propiedad (opcional)"},"tipoPropiedad":{titulo:"Tipos de Propiedades",mensaje:"Selección del tipo de propiedad que se desea crear. Los tipos admitidos son:<br>Alfanumerico: Admite cualquier tipo de caracter.<br>Numérico: Solo valores Numéricos.<br>Rango:Permite definir la selección de un valor numérico entre 2 extremos (inferior y superior) dados.<br>Enumerado: Define una lista de elementos entre los que se podrá seleccionar solo uno"},"nombreTipo":{titulo:"Nombre de Tipo",mensaje:"El nombre que define al Tipo de Ejemplar"},"descripcionTipo":{titulo:"Descripción del Tipo Ejemplar",mensaje:"Una breve descripción de lo que se quiere representar con el Tipo actual"}}};
+    diccionarioAyuda = {"#crearFamilia":{"nombreFamilia":{titulo:"Nombre de la familia biologica",mensaje:"Nombre que representara a la familia biologica"},"crearFamilia":{titulo:"Crear Familia",mensaje:"Permite crear la nueva familia"}},"#crearTipoEjemplar":{"agregarPropiedadExistente":{titulo:"Agregar Propiedad Existente",mensaje: "Permite agregar una propiedad creada con anterioridad."},"agregarPropiedad":{titulo:"Agregar Propiedad",mensaje: "Permite crear una nueva propiedad y asociarla al tipo"},"crearTipo":{titulo:"Crear Tipo",mensaje: "Permite crear un tipo nuevo de ejemplar."},"nombre":{titulo:"Nombre de Propiedad",mensaje:"Nombre que identifica/rá a la propiedad "},"descripcion":{titulo:"Descripción de Propiedad",mensaje:"Breve descripción de lo que representa la propiedad (opcional)"},"tipoPropiedad":{titulo:"Tipos de Propiedades",mensaje:"Selección del tipo de propiedad que se desea crear. Los tipos admitidos son:<br>Alfanumerico: Admite cualquier tipo de caracter.<br>Numérico: Solo valores Numéricos.<br>Rango:Permite definir la selección de un valor numérico entre 2 extremos (inferior y superior) dados.<br>Enumerado: Define una lista de elementos entre los que se podrá seleccionar solo uno"},"nombreTipo":{titulo:"Nombre de Tipo",mensaje:"El nombre que define al Tipo de Ejemplar"},"descripcionTipo":{titulo:"Descripción del Tipo Ejemplar",mensaje:"Una breve descripción de lo que se quiere representar con el Tipo actual"}},"#familias":{"botonFuncionalidad":{titulo:"Agregar una Familia",mensaje:"Permite agregar una nueva familia"},"listaFamilias":{titulo:"Lista de Familias",mensaje:"Lista todas las familias agregadas"} }};
+
+
 
     $.mvc.route("aplicacion/");
 });

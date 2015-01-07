@@ -1,11 +1,14 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl'], //These are the views we will use with the controller
     init:function(){
         tipoEjemplares=[];
+        familias = [];
+        especies=[];
     },
     default:function(){
 
         Y.TipoEjemplar.obtenerTipoEjemplares();
+        Y.Familia.obtenerFamilias();
         tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
 
 
@@ -114,6 +117,7 @@ $.mvc.controller.create("aplicacion", {
             $.ui.hideMask();
             tipoEjemplares.push(tipoEjemplar);
             $.mvc.route("aplicacion/listaTipoEjemplares");
+            mensajeExitoso("El tipo ejemplar ha sido agregado con éxito");
         });
 
     },
@@ -171,10 +175,12 @@ $.mvc.controller.create("aplicacion", {
                 tipoEjemplar.delete(function(){
                     $.ui.hideMask();
                     tipoEjemplares.splice(tipoEjemplares.indexOf(tipoEjemplar),1);
+                    mensajeExitoso("El tipo ejemplar ha sido eliminado con Éxito");
                     $.mvc.route("aplicacion/listaTipoEjemplares");
                 },function(){
                     console.log("fallo");
                     $.ui.hideMask();
+                    mensajeError("El tipo ejemplar no puede ser eliminado: Tiene asociados ejemplares recolectados.");
                     $.mvc.route("aplicacion/verTipoEjemplar/"+idTipoEjemplar);
 
 
@@ -190,6 +196,68 @@ $.mvc.controller.create("aplicacion", {
         }
 
 
+    },
+
+    listaFamilias:function(){
+        activarSubPagina("#familias","Familias");
+        $("#mainFamilias").html($.template('js/vista/listaFamilias.tpl',{familias:familias}));
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Configuración");});
+        activarBotonFuncionalidad('<i class="fa fa-plus"></i>',function(){
+            $.mvc.route("aplicacion/creacionFamilia");
+        });
+    },
+
+    creacionFamilia: function(){
+        activarSubPagina("#crearFamilia","Nueva Familia");
+        activarBotonAtras(function(){$.mvc.route("aplicacion/listaFamilias");});
+        $("#mainCrearFamilia").html($.template('js/vista/crearFamilia.tpl'));
+    },
+
+    crearFamilia:function(){
+        var nombreFamilia = $("#nombreFamilia").val();
+        var familia = new Y.Familia ({"nombre":nombreFamilia});
+        $.ui.showMask('Guardando...');
+        familia.save(function(){
+            $.ui.hideMask();
+            familias.push(familia);
+            mensajeExitoso("La familia ha sido agregado con éxito");
+            $.mvc.route("aplicacion/listaFamilias");
+        },function(){
+            $.ui.hideMask();
+            mensajeError("Error al guardar familia: Ya se encuentra una familia registrada con ese nombre.");
+        });
+
+    },
+
+    listaEspecies:function(){
+        activarSubPagina("#especies","Especies");
+        $("#mainEspecies").html($.template('js/vista/listaEspecies.tpl',{especies:especies}));
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Configuración");});
+        activarBotonFuncionalidad('<i class="fa fa-plus"></i>',function(){
+            $.mvc.route("aplicacion/creacionEspecie");
+        });
+    },
+
+    creacionEspecie: function(){
+        activarSubPagina("#crearEspecie","Nueva Especie");
+        activarBotonAtras(function(){$.mvc.route("aplicacion/listaEspecies");});
+        $("#mainCrearEspecie").html($.template('js/vista/crearEspecie.tpl'));
+    },
+
+    crearEspecie:function(){
+        /*var nombreFamilia = $("#nombreFamilia").val();
+        var familia = new Y.Familia ({"nombre":nombreFamilia});
+        $.ui.showMask('Guardando...');
+        familia.save(function(){
+            $.ui.hideMask();
+            familias.push(familia);
+            mensajeExitoso("La familia ha sido agregado con éxito");
+            $.mvc.route("aplicacion/listaFamilias");
+        },function(){
+            $.ui.hideMask();
+            mensajeError("Error al guardar familia: Ya se encuentra una familia registrada con ese nombre.");
+        });
+*/
     }
 
 });

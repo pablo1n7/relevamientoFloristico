@@ -1,3 +1,4 @@
+{{if(it.tipoEjemplares.length!=0){ }}
 <div class="widget-container content-area vertical-col">
     <ul class="list widget uib_w_10 d-margins">
     {{for(var i=0; i<= it.tipoEjemplares.length-1;i++){ }}
@@ -8,3 +9,7 @@
     </ul><span class="uib_shim"></span>
 </div>
 
+{{ }
+    else{ }}
+    No se encuentran Tipos Ejemplares creados.
+{{ } }}

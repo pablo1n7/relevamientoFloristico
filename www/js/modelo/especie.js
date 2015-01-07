@@ -6,12 +6,25 @@ Y.add('especieModelo',function(Y){
                 nombre: {
                     value: 'nombre'
                 },
-                tipoBilogico: {
+                tipoBiologico: {
                     value: 'unTipo'
                 },
-                formaBilogica: {
+                formaBiologica: {
                     value: 'unaForma'
+                },
+                distribucionGeografica:{
+                    value: 'unaDistribucion'
+                },
+                indiceDeCalidad:{
+                    value: -1
+                },
+                estadoDeConservacion:{
+                    value: 'unEstado'
+                },
+                familia:{
+                    value: 'unaFamilia'
                 }
+
             },
         
         }

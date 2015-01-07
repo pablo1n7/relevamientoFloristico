@@ -39,6 +39,15 @@ function vaciarBD(){
         t.executeSql('DROP TABLE Enumerado',[],null,null);
     });
 
+    db.transaction(function (t) {
+        t.executeSql('DROP TABLE Especie',[],null,null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('DROP TABLE Familia',[],null,null);
+    });
+
+
     createTablas();
     cargarInstancias();
 }
@@ -61,8 +70,6 @@ function cargarInstancias(){
 
 
 function createTablas(){
-
-//    vaciarBD();
 
     db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS TipoEjemplar(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL,descripcion TEXT NOT NULL);', [], null, null);
@@ -95,5 +102,21 @@ function createTablas(){
 
     db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS Valor(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, idPropiedad INTEGER NOT NULL, idEjemplar INTEGER NOT NULL, valor TEXT NOT NULL, FOREIGN KEY (idPropiedad) REFERENCES Propiedad(id),FOREIGN KEY (idEjemplar) REFERENCES Ejemplar(id));', [], null, null);
+    });
+}
+
+
+function createTablasPlantas(){
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS Familia(nombre TEXT NOT NULL PRIMARY KEY);', [], null, null);
+    });
+
+    // Aca haría un TYPE para la  DISTRIBUCION GEOGRAFICA, y otro para el ESTADO DE CONSERVACION
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS Especie(nombreFamilia TEXT NOT NULL, nombre TEXT NOT NULL PRIMARY KEY,formaBiologica TEXT NOT NULL, tipoBiologica TEXT NOT NULL , distribucionGeografica TEXT NOT NULL, indiceDeCalidad INTEGER NOT NULL, estadoDeConservacion TEXT NOT NULL, FOREIGN KEY (nombreFamilia) REFERENCES Familia(nombre));', [], null, null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS Planta(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, idEspecie INTEGER NOT NULL, toques INTEGER NOT NULL, altura INTEGER NOT NULL, FOREIGN KEY (idEspecie) REFERENCES Especie(id));', [], null, null);
     });
 }

@@ -8,7 +8,6 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="app_framework/2.1/css/af.ui.min.css">
         <link rel="stylesheet" type="text/css" href="app_framework/2.1/css/icons.min.css">
-        <link rel="stylesheet" type="text/css" href="css/ui.css">
 
         <title>Blank App Designer Project Template</title>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -37,6 +36,7 @@
         <link rel="stylesheet" href="css/old-android.css">
         <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
         <link rel="stylesheet" type="text/css" href="css/awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/ui.css">
 
         <!-- IMPORTANT: Do not include your weinre script tag as part of your release builds! -->
         <!-- Place your remote debugging (weinre) script URL from the Test tab here, if it does not work below -->
@@ -56,8 +56,6 @@
         <script type="application/javascript" src="app_framework/2.1/appframework.ui.js" data-ver="1"></script>
         <script src="js/yui-min.js"></script>
         <script src="js/af.mvc.js"></script>
-
-
 
         <!--MODELO -->
         <script src="js/modelo/bd.js"></script>
@@ -108,10 +106,10 @@
                         <h1 id="tituloSubPagina">Inicio</h1>
 
                         <div class="widget-container wrapping-col single-centered"></div>
-                        <div class="widget-container content-area horiz-area wrapping-col left with-back botonAtras"><a id="backButton" class="button backButton">Atras</a>
+                        <div class="widget-container content-area horiz-area wrapping-col left with-back botonAtras"><a id="backButton" name="botonAtras" class="button backButton">Atras</a>
                         </div>
                         <div class="widget-container content-area horiz-area wrapping-col right">
-                            <a id="funcionalidad" class="button nextButton"></a>
+                            <a name="botonFuncionalidad" id="funcionalidad" class="button nextButton"></a>
                         </div>
                     </header>
                 </div>
@@ -128,10 +126,58 @@
                                     <div id="main">
                                         <p>This is the view for the first Tab.</p>
 
-
-
                                     </div>
                                 </div><span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="crearEspecie" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_10 row-height-10" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_10 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+                                <div id="mainCrearEspecie"></div>
+                                <span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="especies" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_11 row-height-11" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_11 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+                                <div id="mainEspecies"></div>
+                                <span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="crearFamilia" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_8 row-height-8" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_8 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+                                <div id="mainCrearFamilia">
+
+                                </div>
+                                <span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="familias" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_9 row-height-9" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_9 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+                                <div id="mainFamilias"></div>
+                                <span class="uib_shim"></span>
                             </div>
                         </div>
                         <span class="uib_shim"></span>
@@ -191,14 +237,17 @@
                             <div class="widget-container content-area vertical-col">
 
                                 <ul class="list widget uib_w_10 d-margins" data-uib="app_framework/listview" data-ver="1">
-                                    <li class="widget uib_w_11" data-uib="app_framework/listitem" data-ver="1"><a class="" href="/aplicacion/listaTipoEjemplares"><i class="fa fa-paperclip"></i>Tipos de Ejemplares Recolectables</a>
+                                    <li class="widget uib_w_11" data-uib="app_framework/listitem" data-ver="1"><a class="" href="/aplicacion/listaTipoEjemplares"><i class="fa fa-file-text"></i>Tipos de Ejemplares Recolectables</a>
                                     </li>
                                     <li class="widget uib_w_12" data-uib="app_framework/listitem" data-ver="1">
-                                        <a>
+                                        <a href="/aplicacion/listaEspecies">
 
                                             <i class="fa fa-leaf"></i>
                                             Especies
                                         </a>
+                                    </li>
+                                    <li class="widget uib_w_13" data-uib="app_framework/listitem" data-ver="1"><a href="/aplicacion/listaFamilias"><i class="fa fa-tree"></i>
+Familia</a>
                                     </li>
                                 </ul><span class="uib_shim"></span>
                             </div>
@@ -244,8 +293,8 @@
                 </div>
                 <!-- /upage-content -->
 
-                <footer class="inner-element uib_w_3" data-uib="app_framework/footer" data-ver="1" id="af-footer-0"><a class="widget uib_w_7 d-margins icon home" data-uib="app_framework/button" data-ver="1">Inicio</a><a class="widget uib_w_6 d-margins icon warning" data-uib="app_framework/button" data-ver="1">Campaña</a><a class="widget uib_w_5 d-margins icon location"
-                    data-uib="app_framework/button" data-ver="1">Puntos</a><a class="widget uib_w_4 d-margins icon settings" data-uib="app_framework/button" data-ver="1">Configuración</a>
+                <footer class="inner-element uib_w_3" data-uib="app_framework/footer" data-ver="1" id="af-footer-0"><a class="widget uib_w_7 d-margins" data-uib="app_framework/button" data-ver="1"><i class="fa fa-home"></i>Inicio</a><a class="widget uib_w_6 d-margins icon home" data-uib="app_framework/button" data-ver="1">Campaña</a><a class="widget uib_w_5 d-margins"
+                    data-uib="app_framework/button" data-ver="1"><i class="fa fa-compress"></i>Puntos</a><a class="widget uib_w_4 d-margins icon settings" data-uib="app_framework/button" data-ver="1">Configuración</a>
                 </footer>
             </div>
             <!-- /upage-outer -->
