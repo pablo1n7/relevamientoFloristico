@@ -1,14 +1,26 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl'], //These are the views we will use with the controller
     init:function(){
         tipoEjemplares=[];
         familias = [];
         especies=[];
+
+        estadosDeConservacion=[];
+        formasBiologicas=[];
+        tiposBiologicos =[];
+        distribuciones = [];
+
+        obtenerValoresBD("EstadoDeConservacion",estadosDeConservacion);
+        obtenerValoresBD("FormaBiologica",formasBiologicas);
+        obtenerValoresBD("TipoBiologico",tiposBiologicos);
+        obtenerValoresBD("DistribucionGeografica",distribuciones);
+
     },
     default:function(){
 
         Y.TipoEjemplar.obtenerTipoEjemplares();
         Y.Familia.obtenerFamilias();
+        Y.Especie.obtenerEspecies();
         tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
 
 
@@ -51,6 +63,9 @@ $.mvc.controller.create("aplicacion", {
             },1000);
         }
          $("#modalContainer").unbind("doubleTap");
+         if($("#propiedades").length == 0){
+            $("#propiedades").append("No se encuentran propiedades para listar");
+         }
          agregarAyuda("#modalContainer",{"seleccionarPropiedad":{titulo:"Boton Selección",mensaje:"Boton que confirma la adición de las propiedades seleccionadas de la lista."},"propiedades":{titulo:"Lista de Propiedades",mensaje:"Pantalla de seleccion de propiedades existentes. En esta pantalla, puede probar el funcionamiento de las propiedades ya creadas, para un mejor criterio de selección. Seleccione tocando en el cuadro de la izquierda de la propiedad que desea agregar"}});
     },
 
@@ -241,23 +256,40 @@ $.mvc.controller.create("aplicacion", {
     creacionEspecie: function(){
         activarSubPagina("#crearEspecie","Nueva Especie");
         activarBotonAtras(function(){$.mvc.route("aplicacion/listaEspecies");});
-        $("#mainCrearEspecie").html($.template('js/vista/crearEspecie.tpl'));
+        $("#mainCrearEspecie").html($.template('js/vista/crearEspecie.tpl',{familias:familias,estadosDeConservacion:estadosDeConservacion, formasBiologicas:formasBiologicas,tiposBiologicos:tiposBiologicos,distribuciones:distribuciones}));
     },
 
     crearEspecie:function(){
-        /*var nombreFamilia = $("#nombreFamilia").val();
-        var familia = new Y.Familia ({"nombre":nombreFamilia});
+        var nombreEspecie = $("#nombreEspecie").val();
+        var familia=$("#familia").val();
+        var formaBiologica =$("#formaBiologica").val();
+        var tipoBiologica =$("#tipoBiologica").val();
+        var estadoDeConservacion=$("#estadoDeConservacion").val();
+        var distribucionGeografica=$("#distribucionGeografica").val();
+        var indiceCalidad=$("#indiceDeCalidad").val();
+        var especie = new Y.Especie({"nombre":nombreEspecie,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologica,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceCalidad});
         $.ui.showMask('Guardando...');
-        familia.save(function(){
+        especie.save(function(){
             $.ui.hideMask();
-            familias.push(familia);
-            mensajeExitoso("La familia ha sido agregado con éxito");
-            $.mvc.route("aplicacion/listaFamilias");
+            especies.push(especie);
+            mensajeExitoso("La especie ha sido agregado con éxito");
+            $.mvc.route("aplicacion/listaEspecies");
         },function(){
             $.ui.hideMask();
-            mensajeError("Error al guardar familia: Ya se encuentra una familia registrada con ese nombre.");
+            mensajeError("Error al guardar especie: Ya se encuentra una especie registrada con ese nombre.");
         });
-*/
+
+    },
+
+    verEspecie:function(nombreEspecieCodificado){
+        var nombreEspecie = decodeURIComponent(nombreEspecieCodificado);
+        var especie = (especies.filter(function(esp){return esp.get("nombre")==nombreEspecie}))[0];
+        activarSubPagina("#verEspecie",especie.get("nombre"));
+        activarBotonAtras(function(){$.mvc.route("aplicacion/listaEspecies");});
+        $("#mainVerEspecie").html($.template('js/vista/verEspecie.tpl',{especie:especie}));
+
     }
+
+
 
 });

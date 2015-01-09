@@ -49,6 +49,7 @@ function vaciarBD(){
 
 
     createTablas();
+    createTablasPlantas();
     cargarInstancias();
 }
 
@@ -65,7 +66,112 @@ function cargarInstancias(){
                 //data.insertId
             },null);
         });
-    }
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO FormaBiologica('nombre') values('Arbusto');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO FormaBiologica('nombre') values('Hierba');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO FormaBiologica('nombre') values('Graminea');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO TipoBiologico('nombre') values('Eudicotiledónea');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO TipoBiologico('nombre') values('Monocotiledónea');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO EstadoDeConservacion('nombre') values('Preocupación Menor (LC)');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO EstadoDeConservacion('nombre') values('Casi Amenazada (NT)');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO EstadoDeConservacion('nombre') values('Vulnerable (VU)');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO EstadoDeConservacion('nombre') values('En Peligro (EN)');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO EstadoDeConservacion('nombre') values('En Peligro Critico (CR)');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO EstadoDeConservacion('nombre') values('Extinta (EW/EX)');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO DistribucionGeografica('nombre') values('Exótica');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO DistribucionGeografica('nombre') values('Nativa');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO DistribucionGeografica('nombre') values('Endémica');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+
+
+
+
+
+
+}
 
 
 
@@ -111,9 +217,26 @@ function createTablasPlantas(){
         t.executeSql('CREATE TABLE IF NOT EXISTS Familia(nombre TEXT NOT NULL PRIMARY KEY);', [], null, null);
     });
 
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS FormaBiologica(nombre TEXT NOT NULL PRIMARY KEY);', [], null, null);
+    });
+
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS TipoBiologico(nombre TEXT NOT NULL PRIMARY KEY);', [], null, null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS DistribucionGeografica(nombre TEXT NOT NULL PRIMARY KEY);', [], null, null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS EstadoDeConservacion(nombre TEXT NOT NULL PRIMARY KEY);', [], null, null);
+    });
+
     // Aca haría un TYPE para la  DISTRIBUCION GEOGRAFICA, y otro para el ESTADO DE CONSERVACION
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS Especie(nombreFamilia TEXT NOT NULL, nombre TEXT NOT NULL PRIMARY KEY,formaBiologica TEXT NOT NULL, tipoBiologica TEXT NOT NULL , distribucionGeografica TEXT NOT NULL, indiceDeCalidad INTEGER NOT NULL, estadoDeConservacion TEXT NOT NULL, FOREIGN KEY (nombreFamilia) REFERENCES Familia(nombre));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS Especie(familia TEXT NOT NULL, nombre TEXT NOT NULL PRIMARY KEY,formaBiologica TEXT NOT NULL, tipoBiologico TEXT NOT NULL , distribucionGeografica TEXT NOT NULL, indiceDeCalidad INTEGER NOT NULL, estadoDeConservacion TEXT NOT NULL, FOREIGN KEY (familia) REFERENCES Familia(nombre),FOREIGN KEY (formaBiologica) REFERENCES FormaBiologica(nombre),FOREIGN KEY (tipoBiologico) REFERENCES TipoBiologico(nombre),FOREIGN KEY (distribucionGeografica) REFERENCES DistribucionGeografica(nombre),FOREIGN KEY (estadoDeConservacion) REFERENCES EstadoDeConservacion(nombre));', [], null, null);
     });
 
     db.transaction(function (t) {

@@ -84,7 +84,7 @@ function activarModoAyuda(contexto,diccionario){
 
 function lanzarTooltip(objetoAyuda, posicion){
     $("#mensajeAyuda").remove();
-    $divMensaje = $('<div id="mensajeAyuda" class="divMensajeAyuda"> <div class="widget-container content-area horiz-area wrapping-col right" > <span class="icon close" onclick="borrarMensajeAyuda(this)"></span> </div> <div class="divMensajeAyudaHeader">'+objetoAyuda.titulo+'</div></div>');
+    $divMensaje = $('<div id="mensajeAyuda" class="divMensajeAyuda"> <div class="widget-container content-area horiz-area wrapping-col right" > <span class="icon close" onclick="borrarMensajeAyuda()"></span> </div> <div class="divMensajeAyudaHeader">'+objetoAyuda.titulo+'</div></div>');
     $divMensaje.append('<p>'+ objetoAyuda.mensaje+ '</p>');
 /*    posicion.width = "50";
     posicion.height = "";
@@ -94,8 +94,8 @@ function lanzarTooltip(objetoAyuda, posicion){
     $("#divAyuda").append($divMensaje);
 }
 
-function borrarMensajeAyuda(elemento){
-    remover(elemento.parentElement);
+function borrarMensajeAyuda(){
+    $("#mensajeAyuda").remove();
 };
 
 function agregarAyuda(contexto,diccionario){
@@ -122,7 +122,7 @@ function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
 }
 
 function mensajeExitoso(mensaje){
-      $.ui.popup( {
+    $.ui.popup( {
        title:"<div class='icon check exito' >Éxito</div>",
        message:mensaje,
        cancelText:"Aceptar",
@@ -131,10 +131,22 @@ function mensajeExitoso(mensaje){
 }
 
 function mensajeError(mensaje){
-      $.ui.popup( {
+    $.ui.popup( {
        title:"<div class='icon warning error' >Error</div>",
        message:mensaje,
        cancelText:"Aceptar",
        cancelOnly:true
     });
 }
+
+function obtenerValoresBD(nombreTabla,arreglo){
+    var q = "select * from "+nombreTabla;
+    db.transaction(function (t) {
+        t.executeSql(q, null, function (t, data) {
+            for (var i = 0; i < data.rows.length; i++) {
+                arreglo.push(data.rows.item(i).nombre);
+                //console.log(data.rows.item(i));
+            };
+        });
+    });
+};
