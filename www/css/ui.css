@@ -216,3 +216,98 @@ footer .button{
 .error{
     color:#D61B2A;
 }
+
+
+.contenedorListaTipos{
+    overflow-y: hidden !important;
+}
+
+.contenedorOpciones{
+    vertical-align: middle;
+    height: 17px !important;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    float: right;
+    width: 0%;
+    height: 20px;
+    position: relative;
+    top: -19px;
+    margin-top: 2px;
+}
+
+.nombreCampania{
+    width: 100%;
+}
+
+.botonActivar{
+    border-radius: 3px;
+    padding-left: 10px;
+    color: rgb(255,255,255);
+    border-color:#111;
+    /*background-color: #3e8f3e;*/
+    background-color: #000;
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.botonEliminar{
+    border-radius: 3px;
+    padding-left: 10px;
+    color: rgb(255,255,255);
+    border-color:#111;
+    background-color: #000;
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.contenedorTipos{
+    margin-top: 20px;
+    height: 0%;
+    overflow-y: hidden;
+}
+
+.contenedorDesplegado{
+
+    height: 100% !important;
+
+}
+
+.listaNoInteractiva{
+    color:rgb(255,255,255) !important;
+}
+
+.brujulaFija{
+    background-image: url("../img/flecha2.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 100%;
+}
+
+.brujulaMovil{
+    margin: 0 auto;
+    background-image: url("../img/brujula2.png");
+    background-repeat: no-repeat;
+    height: 100%;
+    text-align: center;
+    vertical-align: middle;
+    background-size: contain;
+}
+
+.columnaEspecies{
+    width: 49%;
+    float: left;
+}
+
+.divCheckboxEspecies label {
+    color: white !important;
+}
+
+.divCheckboxEspecies > div {
+    margin-top: -5%;
+}
+
+.contenedorEspecies{
+    margin-top: 20px;
+    height: 0%;
+    overflow-y: hidden;
+}

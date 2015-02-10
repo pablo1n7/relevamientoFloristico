@@ -92,14 +92,14 @@ Y.add('tipoEjemplarModelo',function(Y){
 
     };
 
-    Y.TipoEjemplar.obtenerTipoEjemplares= function(){
+    Y.TipoEjemplar.obtenerTipoEjemplares= function(callback){
         var q = "select * from TipoEjemplar";
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
                     var tipoEjemplar = new Y.TipoEjemplar({"id":data.rows.item(i).id,"nombre":data.rows.item(i).nombre,"descripcion":data.rows.item(i).descripcion});
                     Y.TipoEjemplar.obtenerPropiedades(tipoEjemplar);
-                    tipoEjemplares.push(tipoEjemplar)
+                    callback(tipoEjemplar);
                     //console.log(data.rows.item(i));
 
                 };

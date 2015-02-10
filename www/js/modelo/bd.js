@@ -47,9 +47,17 @@ function vaciarBD(){
         t.executeSql('DROP TABLE Familia',[],null,null);
     });
 
+    db.transaction(function (t) {
+        t.executeSql('DROP TABLE Campania',[],null,null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('DROP TABLE CampaniaTipoEjemplar',[],null,null);
+    });
 
     createTablas();
     createTablasPlantas();
+    createTablasMetodoTrabajo();
     cargarInstancias();
 }
 
@@ -174,6 +182,27 @@ function cargarInstancias(){
 }
 
 
+function createTablasMetodoTrabajo(){
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS Campania(nombre TEXT NOT NULL,descripcion TEXT, fecha INT NOT NULL, PRIMARY KEY(nombre,fecha));', [], null, null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS CampaniaTipoEjemplar(nombreCampania TEXT NOT NULL,idTipoEjemplar INT NOT NULL, fecha INT NOT NULL, PRIMARY KEY(nombreCampania,fecha,idTipoEjemplar),FOREIGN KEY (nombreCampania) REFERENCES Campania(nombre),FOREIGN KEY (fecha) REFERENCES Campania(fecha),FOREIGN KEY (idTipoEjemplar) REFERENCES TipoEjemplar(id));', [], null, null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS Transecta(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,nombreCampania TEXT NOT NULL,cuadro TEXT, fechaCampania INT NOT NULL,sentido FLOAT NOT NULL, ambiente TEXT NOT NULL, FOREIGN KEY (nombreCampania) REFERENCES Campania(nombre),FOREIGN KEY (fechaCampania) REFERENCES Campania(fecha));', [], null, null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS TransectaEspecie(idTransecta INTEGER NOT NULL ,nombreEspecie TEXT NOT NULL,FOREIGN KEY (idTransecta) REFERENCES Transecta(id),FOREIGN KEY (nombreEspecie) REFERENCES Especie(nombre));', [], null, null);
+    });
+
+
+}
+
 
 function createTablas(){
 
@@ -209,6 +238,9 @@ function createTablas(){
     db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS Valor(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, idPropiedad INTEGER NOT NULL, idEjemplar INTEGER NOT NULL, valor TEXT NOT NULL, FOREIGN KEY (idPropiedad) REFERENCES Propiedad(id),FOREIGN KEY (idEjemplar) REFERENCES Ejemplar(id));', [], null, null);
     });
+
+
+
 }
 
 
@@ -240,6 +272,16 @@ function createTablasPlantas(){
     });
 
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS Planta(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, idEspecie INTEGER NOT NULL, toques INTEGER NOT NULL, altura INTEGER NOT NULL, FOREIGN KEY (idEspecie) REFERENCES Especie(id));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS Planta(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nombreEspecie TEXT NOT NULL, toques INTEGER NOT NULL, altura INTEGER NOT NULL, FOREIGN KEY (nombeEspecie) REFERENCES Especie(nombre));', [], null, null);
     });
 }
+
+
+/*var q = "select name from sqlite_master where type = 'table';"
+                db.transaction(function (t) {
+                    t.executeSql(q, null, function (t, data) {
+                        for (var i = 0; i < data.rows.length; i++) {
+                            console.log(data.rows.item(i));
+                        };
+                    });
+                });*/

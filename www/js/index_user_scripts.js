@@ -18,7 +18,9 @@
         $(document).on("click", ".uib_w_6", function(evt){
             /*activate_subpage("#uib_page_1");
             desactivarBotonesHeader();*/
-             activarSubPagina("#uib_page_1","Campaña");
+            $.mvc.route("aplicacion/listaCampanias");
+
+            //activarSubPagina("#uib_page_1","Campaña");
         });
         $(document).on("click", ".uib_w_5", function(evt){
             /*activate_subpage("#uib_page_2");

@@ -20,7 +20,7 @@
 // ...additional event handlers here...
 
 //createTablas();
-vaciarBD();
+//vaciarBD();
 
 var app = new $.mvc.app();
 //app.controllersDir("../controllers/"); //Set the directory to your controllers folder if it is not named "controllers".

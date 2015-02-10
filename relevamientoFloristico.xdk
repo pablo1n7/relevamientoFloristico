@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "https://edge-intel.s3.amazonaws.com/jsapp/production/release-2014-ww37/template-tab-view-appdesigner/sample.zip",
       "projectGuid": "962a665a-38e2-4d93-8209-5a3218ca6c99",
-      "lastModifiedDate": 1414852525904,
+      "lastModifiedDate": 1423526266320,
       "creationDate": 1414852525848
     },
     "XDK-app-designer": "true",
@@ -44,6 +44,13 @@
         "id": "org.apache.cordova.splashscreen",
         "version": "0.2.5",
         "selectedState": "Auto",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "org.apache.cordova.device-orientation",
+        "version": "0.3.6",
+        "selectedState": "Included",
         "data": {},
         "paramvals": {}
       }

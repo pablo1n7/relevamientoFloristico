@@ -1,14 +1,18 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl'], //These are the views we will use with the controller
     init:function(){
         tipoEjemplares=[];
         familias = [];
-        especies=[];
+        especies = [];
+        campañas = [];
+        campañaActiva = null;
 
         estadosDeConservacion=[];
         formasBiologicas=[];
         tiposBiologicos =[];
         distribuciones = [];
+
+        idBrujula = -1;
 
         obtenerValoresBD("EstadoDeConservacion",estadosDeConservacion);
         obtenerValoresBD("FormaBiologica",formasBiologicas);
@@ -18,9 +22,10 @@ $.mvc.controller.create("aplicacion", {
     },
     default:function(){
 
-        Y.TipoEjemplar.obtenerTipoEjemplares();
-        Y.Familia.obtenerFamilias();
-        Y.Especie.obtenerEspecies();
+        Y.TipoEjemplar.obtenerTipoEjemplares(function(tipoEjemplar){tipoEjemplares.push(tipoEjemplar);});
+        Y.Familia.obtenerFamilias(function(familia){familias.push(familia);});
+        Y.Especie.obtenerEspecies(function(especie){especies.push(especie);});
+        Y.Campania.obtenerCampanias(function(campania){campañas.push(campania)});
         tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
 
 
@@ -133,6 +138,7 @@ $.mvc.controller.create("aplicacion", {
             tipoEjemplares.push(tipoEjemplar);
             $.mvc.route("aplicacion/listaTipoEjemplares");
             mensajeExitoso("El tipo ejemplar ha sido agregado con éxito");
+
         });
 
     },
@@ -287,6 +293,167 @@ $.mvc.controller.create("aplicacion", {
         activarSubPagina("#verEspecie",especie.get("nombre"));
         activarBotonAtras(function(){$.mvc.route("aplicacion/listaEspecies");});
         $("#mainVerEspecie").html($.template('js/vista/verEspecie.tpl',{especie:especie}));
+
+    },
+
+
+    creacionPlanta: function(){
+        activarSubPagina("#crearPlanta","Nueva Planta");
+        //activarBotonAtras(function(){$.mvc.route("aplicacion/listaEspecies");});
+        $("#mainCrearPlanta").html($.template('js/vista/crearPlanta.tpl',{especies:especies}));
+    },
+
+    crearPlanta:function(){
+      /*  var nombreEspecie = $("#nombreEspecie").val();
+        var familia=$("#familia").val();
+        var formaBiologica =$("#formaBiologica").val();
+        var tipoBiologica =$("#tipoBiologica").val();
+        var estadoDeConservacion=$("#estadoDeConservacion").val();
+        var distribucionGeografica=$("#distribucionGeografica").val();
+        var indiceCalidad=$("#indiceDeCalidad").val();
+        var especie = new Y.Especie({"nombre":nombreEspecie,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologica,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceCalidad});
+        $.ui.showMask('Guardando...');
+        especie.save(function(){
+            $.ui.hideMask();
+            especies.push(especie);
+            mensajeExitoso("La especie ha sido agregado con éxito");
+            $.mvc.route("aplicacion/listaEspecies");
+        },function(){
+            $.ui.hideMask();
+            mensajeError("Error al guardar especie: Ya se encuentra una especie registrada con ese nombre.");
+        });
+*/
+    },
+
+    listaCampanias:function(){
+        activarSubPagina("#uib_page_1","Campañas");
+        if(campañaActiva == null){
+            activarBotonFuncionalidad('<i class="fa fa-plus"></i>',function(){
+                $.mvc.route("aplicacion/creacionCampania");
+            });
+            $("#mainCampañas").html($.template('js/vista/listaCampania.tpl',{campanias:campañas}));
+        }else{
+            activarBotonFuncionalidad('Desactivar',function(){
+                $.mvc.route("aplicacion/desactivarCampania");
+            });
+            $("#mainCampañas").html($.template('js/vista/campaniaActiva.tpl',{campania:campañaActiva}));
+            toogleAlto("#contenedorTipos",$("#contenedorTipos").offset().height+"px");
+        }
+    },
+
+    creacionCampania:function(){
+        activarSubPagina("#crearCampaña","Nueva Campaña");
+        activarBotonAtras(function(){$.mvc.route("aplicacion/listaCampanias");});
+        $("#mainCrearCampaña").html($.template('js/vista/crearCampania.tpl',{tipoEjemplares:tipoEjemplares}));
+
+    },
+
+     crearCampania:function(){
+        var nombreCampania = $("#nombreCampaña").val();
+        var descripcion=$("#descripcionCampaña").val();
+
+        var tiposSeleccionados = ($("#contenedorListaTipos").find("[type|=checkbox]")).get().filter(function(x){return x.checked});
+        var idTipos = tiposSeleccionados.map(function(x){return x.value});
+        campania = new Y.Campania({"nombre":nombreCampania,"descripcion":descripcion,"fecha":Date.now()});
+        for(var i = 0; i< idTipos.length ;i++){
+            var tipoEjemplar = (tipoEjemplares.filter(function(tipo){return tipo.get("id")==idTipos[i]}))[0];
+            campania.get("tipoEjemplares").push(tipoEjemplar);
+        }
+
+         $.ui.showMask('Guardando...');
+        campania.save(function(){
+            $.ui.hideMask();
+            mensajeExitoso("La campaña ha sido agregado con éxito");
+            $.mvc.route("aplicacion/listaCampanias");
+            campañas.push({nombre: campania.get("nombre"),fecha:campania.get("fecha")});
+            $("#mainCampañas").html($.template('js/vista/listaCampania.tpl',{campanias:campañas}));
+        });
+    },
+
+
+    activarCampania:function(nombreCodificado,fecha){
+        var nombre = decodeURIComponent(nombreCodificado);
+        Y.Campania.obtenerCampania(nombre,fecha,function(camp){
+            campañaActiva=camp;
+            mensajeExitoso("Campaña Seleccionada");
+            activarSubPagina("#uib_page_1","Campaña "+camp.get("nombre"));
+            activarBotonFuncionalidad('Desactivar',function(){
+                $.mvc.route("aplicacion/desactivarCampania");
+            });
+
+            $("#mainCampañas").html($.template('js/vista/campaniaActiva.tpl',{campania:campañaActiva}));
+            toogleAlto("#contenedorTipos",$("#contenedorTipos").offset().height+"px");
+        });
+    },
+
+    desactivarCampania:function(){
+        campañaActiva = null;
+        $.mvc.route("aplicacion/listaCampanias");
+    },
+
+
+
+    creacionTransecta:function(){
+
+        activarSubPagina("#crearTransecta","Nueva Transecta");
+        activarBotonAtras(function(){$.mvc.route("aplicacion/listaCampanias");});
+        $("#mainCrearTransecta").html($.template('js/vista/crearTransecta.tpl',{screen:screen,especies:especies}));
+        activarBrujula(function(dir){
+            $("#valorSentido").empty();
+            $("#valorSentido").append(parseInt(dir.magneticHeading));
+            $("#brujulaMovil").css3Animate({previous:true,time:"300ms",rotateX:-dir.magneticHeading+"deg",origin:"50% 50%"});
+            $("#brujulaFija").css3Animate({previous:true,time:"300ms",rotateX:dir.magneticHeading+"deg",origin:"50% 50%"});
+        },function(watchId){
+            idBrujula = watchId;
+            $("#brujulaMovil").click(function(){
+                navigator.compass.clearWatch(watchId);
+                $(this).unbind();
+                $("#mensajeBrujula").empty();
+                $("#mensajeBrujula").append("Sentido fijado: toque para poder activar la brujula nuevamente");
+                $(this).click(
+                    function(){
+                        $("#mensajeBrujula").empty();
+                        $("#mensajeBrujula").append("Toque la brujula para fijar el sentido de la transecta.");
+                        activarBrujula(function(dir){
+                            $("#valorSentido").empty();
+                            $("#valorSentido").append(parseInt(dir.magneticHeading));
+                            $("#brujulaMovil").css3Animate({previous:true,time:"300ms",rotateX:-dir.magneticHeading+"deg",origin:"50% 50%"});
+                            $("#brujulaFija").css3Animate({previous:true,time:"300ms",rotateX:dir.magneticHeading+"deg",origin:"50% 50%"});
+                        },function(watchId){
+                            idBrujula = watchId;
+                            $("#brujulaMovil").click(function(){
+                                $("#mensajeBrujula").empty();
+                                $("#mensajeBrujula").append("Sentido Fijado");
+                                navigator.compass.clearWatch(watchId);
+
+                            });
+                        });
+
+
+
+                    }
+                );
+
+            });
+        });
+
+    },
+
+    crearTransecta: function(){
+        var ambiente= $("#ambiente").val();
+        var sentido = $("#valorSentido").text();
+        var cuadro = $("#cuadro").val();
+        var especiesSeleccionadas = ($("#contenedorEspecies").find("[type|=checkbox]")).get().filter(function(x){return x.checked});
+        var nombreEspecies = especiesSeleccionadas.map(function(x){return x.value});
+        var transecta = new Y.Transecta({"ambiente":ambiente,"sentido":sentido,"cuadro":cuadro,"campania":campañaActiva,"nombreEspecies":nombreEspecies});
+        $.ui.showMask('Guardando...');
+        transecta.save(function(){
+            $.ui.hideMask();
+            campañaActiva.get("transectas").push(transecta);
+            mensajeExitoso("La transecta ha sido agregado con éxito");
+            $.mvc.route("aplicacion/listaCampanias");
+        });
+
 
     }
 

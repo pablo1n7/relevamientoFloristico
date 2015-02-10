@@ -30,11 +30,12 @@ function desactivarBotonesHeader(){
 
 function activarSubPagina(nombreSubPagina,titulo){
     $($(nombreSubPagina).parent()[0]).unbind("doubleTap");
+    navigator.compass.clearWatch(idBrujula);
     $("#tituloSubPagina").empty()
     $("#tituloSubPagina").append(titulo);
     activate_subpage(nombreSubPagina);
     desactivarBotonesHeader();
-    if(diccionarioAyuda[nombreSubPagina])
+    if( (typeof diccionarioAyuda !== "undefined") && diccionarioAyuda[nombreSubPagina])
         $($(nombreSubPagina).parent()[0]).bind("doubleTap",function(){activarModoAyuda(nombreSubPagina,diccionarioAyuda[nombreSubPagina])});
 }
 
@@ -150,3 +151,70 @@ function obtenerValoresBD(nombreTabla,arreglo){
         });
     });
 };
+
+
+function toogleOpciones(elem){
+    if($($(elem).children()[0]).css("width") == "65%"){
+        $($(elem).children()[0]).css3Animate({
+            width: "100%",
+            time: "500ms",
+            origin: "width",
+        });
+
+        $($(elem).children()[1]).css3Animate({
+            width: "0%",
+            time: "500ms",
+            origin: "width"
+        });
+        return;
+    }
+    $($(elem).children()[0]).css3Animate({
+        width: "65%",
+        time: "500ms",
+        origin: "width"
+    });
+
+    $($(elem).children()[1]).css3Animate({
+        width: "35%",
+        time: "500ms",
+        origin: "width"
+    });
+}
+
+
+//$("#contenedorTipos")
+function toogleAlto(idElemento,height){
+    $(idElemento).parent().unbind();
+    $(idElemento).css({"height":"0px"});
+    $(idElemento).parent().click( function(){
+        $(idElemento).parent().unbind();
+        $(idElemento).css3Animate({
+            height: height,
+            time: "1000ms",
+            previous: true,
+            success: function(){
+                $(idElemento).parent().unbind();
+                $(idElemento).parent().click(function(){
+                    $(idElemento).parent().unbind();
+                    $(idElemento).css3Animate({
+                        height: "0%",
+                        time: "1000ms",
+                        previous: true,
+                        success:function(){
+                            toogleAlto(idElemento,height);
+                        }
+                    });
+                });
+            }
+        });
+    });
+
+}
+
+function activarBrujula(callback,listo){
+    var options = {
+        frequency: 300
+    };
+    var watchID = navigator.compass.watchHeading(callback, null, options);
+    listo(watchID);
+}

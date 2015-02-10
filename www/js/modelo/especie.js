@@ -43,13 +43,14 @@ Y.add('especieModelo',function(Y){
         }
     );
 
-    Y.Especie.obtenerEspecies= function(){
+    Y.Especie.obtenerEspecies= function(callback){
             var q = "select * from Especie";
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     for (var i = 0; i < data.rows.length; i++) {
                         var especie = new Y.Especie({"nombre":data.rows.item(i).nombre,"familia":data.rows.item(i).familia,"formaBiologica":data.rows.item(i).formaBiologica,"tipoBiologico":data.rows.item(i).tipoBiologico,"estadoDeConservacion":data.rows.item(i).estadoDeConservacion,"distribucionGeografica":data.rows.item(i).distribucionGeografica,"indiceDeCalidad":data.rows.item(i).indiceDeCalidad});
-                        especies.push(especie);
+                        //especies.push(especie);
+                        callback(especie);
                         //console.log(data.rows.item(i));
 
                     };

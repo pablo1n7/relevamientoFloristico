@@ -4,6 +4,14 @@ Y.add('ejemplarEspecieModelo',function(Y){
             ATTRS:{
                 especie: {
                     value: null
+                },
+
+                toques:{
+                    value: 0
+                },
+
+                altura:{
+                    value: 0
                 }
 
                 }

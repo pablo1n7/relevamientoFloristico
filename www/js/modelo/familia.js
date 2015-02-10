@@ -26,13 +26,13 @@ Y.add('familiaModelo',function(Y){
         }
     );
 
-     Y.Familia.obtenerFamilias= function(){
+     Y.Familia.obtenerFamilias= function(callback){
             var q = "select * from Familia";
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     for (var i = 0; i < data.rows.length; i++) {
                         var familia = new Y.Familia({"nombre":data.rows.item(i).nombre});
-                        familias.push(familia);
+                        callback(familia);
                         //console.log(data.rows.item(i));
 
                     };
