@@ -311,3 +311,97 @@ footer .button{
     height: 0%;
     overflow-y: hidden;
 }
+
+.botonGrande{
+    width: 100% !important;
+    border-color: rgb(35,35,35);
+    border-style: solid;
+    border-radius: 6px;
+    padding-top: 10%;
+    padding-bottom: 10%;
+    border-width: 2px;
+    color: rgb(255,255,255);
+    text-decoration: none;
+    background-color: rgb(35,35,35);
+    margin-bottom: 10px;
+    font-size: 32px;
+}
+
+#planta1 .right{
+    display: none;
+}
+
+.botonTipo2{
+    color: rgb(35,35,35);
+    text-decoration: none;
+}
+
+.divFoto{
+    background-color: rgb(35,35,35);
+    width: 50px;
+    height: 50px;
+    margin: 5px auto;
+    border-radius: 5px;
+}
+
+.iconoCamara{
+    color: #eee;
+    font-size: 26px;
+    margin: 0 auto;
+    padding-left: 5px;
+    padding-bottom: 10px;
+    position: relative;
+    top: 7px;
+}
+
+.divRecolectables{
+    border-radius: 5px;
+}
+
+.oculto{
+    display: none;
+}
+
+.visorImagen{
+    width:80%;
+    border-radius: 5px;
+    z-index: 9999;
+    margin: 80px auto;
+    position: relative;
+}
+
+.imagenAVisualizar{
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.desenlazar{
+    pointer-events: none;
+}
+
+.iconoVerFoto{
+    font-size: 20px;
+}
+
+.iconosFoto{
+    z-index:1;
+    position: absolute;
+    width: 100%;
+    padding:6px;
+}
+
+.trash{
+    color:#D9534F;
+    font-size: 50px;
+}
+
+.contenedorTrash{
+    margin-top: -70px;
+    text-align: center;
+}
+
+.iconoX{
+    text-align: center;
+    font-size: 50px
+}

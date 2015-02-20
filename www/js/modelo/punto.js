@@ -8,6 +8,12 @@ Y.add('puntoModelo',function(Y){
                 },
                 suelo: {
                     value: null
+                },
+                estado:{
+                    value: null
+                },
+                coordenada:{
+                    value: null
                 }
             },
         

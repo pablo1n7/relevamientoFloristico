@@ -218,3 +218,64 @@ function activarBrujula(callback,listo){
     var watchID = navigator.compass.watchHeading(callback, null, options);
     listo(watchID);
 }
+
+
+callbackPrueba = null;
+function prueba(e){
+
+    var rutaImg = intel.xdk.camera.getPictureURL(e.filename);
+    alert(e.filename);
+    callbackPrueba(rutaImg);
+
+}
+
+document.addEventListener("intel.xdk.camera.picture.add",prueba);
+
+function tomarFoto(callback){
+ //   document.removeEventListener("intel.xdk.camera.picture.add");
+   /* document.addEventListener("intel.xdk.camera.picture.add",function(e){
+        var rutaImg = intel.xdk.camera.getPictureURL(e.filename);
+        callback(rutaImg);
+    });*/
+
+    callbackPrueba = callback;
+
+
+    intel.xdk.camera.takePicture(80,true,"jpg");
+}
+
+
+function verImagen(urlImg,elemento){
+    var divFoto = $('<div id="visorImagen" class="visorImagen"/>');
+    divFoto.append('<div class="widget-container content-area horiz-area wrapping-col iconosFoto iconoX"><span class="icon close" onclick="$(this.parentElement).parent().parent().remove();"></span></div>');
+    var imagen = $('<img src='+urlImg+' class="imagenAVisualizar"/>');
+    divFoto.append(imagen);
+    divFoto.append('<div class="widget-container content-area horiz-area wrapping-col iconosFoto contenedorTrash"><span class="icon trash" onclick="$(this.parentElement).parent().parent().remove();"></span></div>');
+//    divFoto.css({'background-image':'url('+urlImg+')','backgroundSize':'contain','background-position':'50%','background-repeat':'no-repeat'});
+
+    $("body").append('<div id="divFondoImagen" class="divAyuda"/>');
+    $('#divFondoImagen').append(divFoto);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

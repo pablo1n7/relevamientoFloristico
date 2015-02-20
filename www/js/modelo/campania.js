@@ -64,7 +64,7 @@ Y.add('campaniaModelo',function(Y){
                     value: []
                 },
                 transectas:{
-                    value: null
+                    value: []
                 }
             },
 

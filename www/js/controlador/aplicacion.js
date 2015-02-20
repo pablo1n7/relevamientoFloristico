@@ -1,15 +1,16 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl'], //These are the views we will use with the controller
     init:function(){
         tipoEjemplares=[];
         familias = [];
         especies = [];
         campañas = [];
         campañaActiva = null;
-
+        estadoPunto=["Toque Directo","Muerto en Pie","Suelo Desnudo"];
         estadosDeConservacion=[];
         formasBiologicas=[];
         tiposBiologicos =[];
+        tiposSuelos=[];
         distribuciones = [];
 
         idBrujula = -1;
@@ -18,6 +19,7 @@ $.mvc.controller.create("aplicacion", {
         obtenerValoresBD("FormaBiologica",formasBiologicas);
         obtenerValoresBD("TipoBiologico",tiposBiologicos);
         obtenerValoresBD("DistribucionGeografica",distribuciones);
+        obtenerValoresBD("TipoSuelo",tiposSuelos);
 
     },
     default:function(){
@@ -143,19 +145,19 @@ $.mvc.controller.create("aplicacion", {
 
     },
 
-    seleccionarEjemplar: function(){
-        $("#main").html($.template('js/vista/cargarEjemplar.tpl',{tipoEjemplares:tipoEjemplares}));
-        $.mvc.route("aplicacion/crearEjemplar");
+    seleccionarEjemplar: function(numeroId){
+        $("#item"+numeroId).html($.template('js/vista/cargarEjemplar.tpl',{tipoEjemplares:tipoEjemplares,numeroId:numeroId}));
+        $.mvc.route("aplicacion/crearEjemplar/"+numeroId);
     },
 
-    crearEjemplar:function(){
+    crearEjemplar:function(numeroId){
         console.log("Funcion Crear ejemplar");
-        indexTipoEjemplar = $("#selectTipoEjemplares").get(0).selectedIndex;
+        indexTipoEjemplar = $("#selectTipoEjemplares"+numeroId).get(0).selectedIndex;
         var seleccion = tipoEjemplares[indexTipoEjemplar];
         ejemplar = new Y.Ejemplar({"tipoEjemplar":seleccion});
         ejemplar.crearCampos(seleccion.get("campos"));
-        $("#ejemplar").empty();
-        $("#ejemplar").append(ejemplar.representacion());
+        $("#ejemplar"+numeroId).empty();
+        $("#ejemplar"+numeroId).append(ejemplar.representacion());
 
     },
 
@@ -412,6 +414,7 @@ $.mvc.controller.create("aplicacion", {
                 $("#mensajeBrujula").append("Sentido fijado: toque para poder activar la brujula nuevamente");
                 $(this).click(
                     function(){
+                        $(this).unbind();
                         $("#mensajeBrujula").empty();
                         $("#mensajeBrujula").append("Toque la brujula para fijar el sentido de la transecta.");
                         activarBrujula(function(dir){
@@ -424,7 +427,7 @@ $.mvc.controller.create("aplicacion", {
                             $("#brujulaMovil").click(function(){
                                 $("#mensajeBrujula").empty();
                                 $("#mensajeBrujula").append("Sentido Fijado");
-                                navigator.compass.clearWatch(watchId);
+                                navigator.compass.clearWatch(idBrujula);
 
                             });
                         });
@@ -452,11 +455,78 @@ $.mvc.controller.create("aplicacion", {
             campañaActiva.get("transectas").push(transecta);
             mensajeExitoso("La transecta ha sido agregado con éxito");
             $.mvc.route("aplicacion/listaCampanias");
+            var visita = new Y.Visita({fecha:Date.now()});
+            transecta.get("visitas").push(visita);
+            visita.save(transecta.get("id"));
+            $.mvc.route("aplicacion/crearPunto/1");
         });
 
 
+    },
+    crearPunto:function(conMedicionGps){
+        if(parseInt(conMedicionGps) == 1){
+            console.log("aca obtengo posicion gps");
+        }
+        $("#mainCrearPunto").html($.template('js/vista/crearPunto.tpl',{}));
+        mostrarModal("#crearPunto","fade","Recolectar Punto");
+
+    },
+
+    creacionPunto:function(opcion){
+        $("#mainCrearPunto").html($.template('js/vista/recolectarPunto.tpl',{opcion:parseInt(opcion),estadoPunto:estadoPunto[opcion],suelos:tiposSuelos}));
+        $.mvc.route("aplicacion/cargarFormularioPlanta/1");
+    },
+
+    cargarFormularioPlanta:function(numeroId){
+        var divPlanta = $("<div id='planta"+numeroId+"' class='divRecolectables'/>");
+        $("#datosPlantas").append(divPlanta);
+        $(divPlanta).html($.template('js/vista/crearPlanta.tpl',{especies:especies}));
+        $("#botonAgregarPlanta").attr("href","/aplicacion/cargarFormularioPlanta/"+(parseInt(numeroId)+1));
+
+        if(device.platform == "Android"){
+            $("#mainCrearPunto").css({"height": "90%",
+                                   "overflowY":"hidden"});
+            setTimeout(function(){
+                    $("#mainCrearPunto").scroller({
+                        verticalScroll:true,
+                        horizontalScroll:false,
+                        autoEnable:true
+                    });
+            },1000);
+        }
+    },
+
+    cargarFormularioItem:function(numeroId){
+        var divItem = $("<div id='item"+numeroId+"' class='divRecolectables'/>");
+        $("#datosPlantas").append(divItem);
+        $.mvc.route("aplicacion/seleccionarEjemplar/"+numeroId);
+        $("#botonAgregarItem").attr("href","/aplicacion/cargarFormularioItem/"+(parseInt(numeroId)+1));
+
+        if(device.platform == "Android"){
+            $("#mainCrearPunto").css({"height": "90%",
+                                   "overflowY":"hidden"});
+            setTimeout(function(){
+                    $("#mainCrearPunto").scroller({
+                        verticalScroll:true,
+                        horizontalScroll:false,
+                        autoEnable:true
+                    });
+            },1000);
+        }
+    },
+
+
+        tomarFoto:function(){
+
+
+
+/*function foto(e){
+    console.log(e.filename);
+    var rutaImg = intel.xdk.camera.getPictureURL(e.filename);
+    $("#unaFoto").attr("src",rutaImg);
+}*/
+
+        document.addEventListener("intel.xdk.camera.picture.add",foto);
+        intel.xdk.camera.takePicture(80,false,"jpg");
     }
-
-
-
 });

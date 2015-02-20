@@ -200,6 +200,33 @@ function createTablasMetodoTrabajo(){
         t.executeSql('CREATE TABLE IF NOT EXISTS TransectaEspecie(idTransecta INTEGER NOT NULL ,nombreEspecie TEXT NOT NULL,FOREIGN KEY (idTransecta) REFERENCES Transecta(id),FOREIGN KEY (nombreEspecie) REFERENCES Especie(nombre));', [], null, null);
     });
 
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS Visita(idTransecta INTEGER NOT NULL ,fecha INT NOT NULL,FOREIGN KEY (idTransecta) REFERENCES Transecta(id), PRIMARY KEY (idTransecta,fecha));', [], null, null);
+    });
+
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS TipoSuelo(nombre TEXT NOT NULL, PRIMARY KEY (nombre));', [], null, null);
+    });
+
+    db.transaction(function(t){
+        t.executeSql("INSERT INTO TipoSuelo('nombre') values('Rocoso');", [],
+        function (t, data) {
+            //data.insertId
+        },null);
+    });
+    db.transaction(function(t){
+        t.executeSql("INSERT INTO TipoSuelo('nombre') values('Gravilla');", [],
+        function (t, data) {
+            //data.insertId
+        },null);
+    });
+    db.transaction(function(t){
+        t.executeSql("INSERT INTO TipoSuelo('nombre') values('Arenoso');", [],
+        function (t, data) {
+            //data.insertId
+        },null);
+    });
+
 
 }
 
