@@ -16,12 +16,19 @@
             <option>{{=it.especies[i].get("nombre")}}</option>
         {{ } }}
     </select>
+    <div name="imgUrl" class="oculto"></div>
     <div class="divFoto" onclick="
                                   _this=this;
                                   console.log('PASO');
                                   $(this).addClass('desenlazar');
-                                  tomarFoto(function(urlImg){
+                                  tomarFoto(function(nombre){
+                                  console.log(nombre);
+                                    var urlImg = intel.xdk.camera.getPictureURL(nombre);
                                     console.log(urlImg);
+                                  var fotoAnt = $($(_this).parent().find('[name|=imgUrl]')[0]).html();
+                                  intel.xdk.camera.deletePicture(fotoAnt);
+                                $($(_this).parent().find('[name|=imgUrl]')[0]).empty();
+                                $($(_this).parent().find('[name|=imgUrl]')[0]).append(nombre);
                                     $(_this).css({'background-image':'url('+urlImg+')',
                                         'backgroundSize':'cover',
                                         'background-position':'50%'});

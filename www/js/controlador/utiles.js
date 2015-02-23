@@ -223,24 +223,16 @@ function activarBrujula(callback,listo){
 callbackPrueba = null;
 function prueba(e){
 
-    var rutaImg = intel.xdk.camera.getPictureURL(e.filename);
+    /*var rutaImg = intel.xdk.camera.getPictureURL(e.filename);*/
     alert(e.filename);
-    callbackPrueba(rutaImg);
+    callbackPrueba(e.filename);
 
 }
 
 document.addEventListener("intel.xdk.camera.picture.add",prueba);
 
 function tomarFoto(callback){
- //   document.removeEventListener("intel.xdk.camera.picture.add");
-   /* document.addEventListener("intel.xdk.camera.picture.add",function(e){
-        var rutaImg = intel.xdk.camera.getPictureURL(e.filename);
-        callback(rutaImg);
-    });*/
-
     callbackPrueba = callback;
-
-
     intel.xdk.camera.takePicture(80,true,"jpg");
 }
 
@@ -250,7 +242,11 @@ function verImagen(urlImg,elemento){
     divFoto.append('<div class="widget-container content-area horiz-area wrapping-col iconosFoto iconoX"><span class="icon close" onclick="$(this.parentElement).parent().parent().remove();"></span></div>');
     var imagen = $('<img src='+urlImg+' class="imagenAVisualizar"/>');
     divFoto.append(imagen);
-    divFoto.append('<div class="widget-container content-area horiz-area wrapping-col iconosFoto contenedorTrash"><span class="icon trash" onclick="$(this.parentElement).parent().parent().remove();"></span></div>');
+    //divFoto.append('<div class="widget-container content-area horiz-area wrapping-col iconosFoto contenedorTrash"><span class="icon trash" onclick="confirmarEliminado(this,elemento)"></span></div>');
+    var otroDiv = $('<div class="widget-container content-area horiz-area wrapping-col iconosFoto contenedorTrash"><span class="icon trash"></span></div>')
+    otroDiv.click(function(){confirmarEliminado(otroDiv,elemento)});
+    divFoto.append(otroDiv);
+
 //    divFoto.css({'background-image':'url('+urlImg+')','backgroundSize':'contain','background-position':'50%','background-repeat':'no-repeat'});
 
     $("body").append('<div id="divFondoImagen" class="divAyuda"/>');
@@ -259,9 +255,22 @@ function verImagen(urlImg,elemento){
 }
 
 
+function eliminarFoto(elemento){
+    $(elemento).attr("style","");
+    $(elemento.parentElement).parent().attr("style","background-color:white");
+    var nombreFoto = $($(elemento.parentElement).find('[name|=imgUrl]')[0]).html();
+    intel.xdk.camera.deletePicture(nombreFoto);
+    $($(elemento.parentElement).find('[name|=imgUrl]')[0]).empty();
+
+    $($(elemento.parentElement).find('[name|=verFoto]')[0]).addClass('oculto');
+}
 
 
-
+function confirmarEliminado(botonEliminar,elemento){
+    var avisoTitulo = "Aviso";
+    var avisoMensaje = "Esta seguro que desea eliminar esta imagen?";
+    mensajeConfirmacion(avisoTitulo,avisoMensaje,function(){botonEliminar.parent().parent().remove();eliminarFoto(elemento);},function(){});
+}
 
 
 

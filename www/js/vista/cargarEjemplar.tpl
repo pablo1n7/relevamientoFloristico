@@ -17,7 +17,8 @@
                                   _this=this;
                                   console.log('PASO');
                                   $(this).addClass('desenlazar');
-                                  tomarFoto(function(urlImg){
+                                  tomarFoto(function(nombre){
+                                var urlImg = intel.xdk.camera.getPictureURL(nombre);
                                     console.log(urlImg);
                                     $(_this).css({'background-image':'url('+urlImg+')',
                                         'backgroundSize':'cover',
