@@ -7,28 +7,27 @@
     <div id="contenedorEspecies" class="widget-container content-area vertical-col">
         <div class="columnaEspecies">
 
-            {{for(var i=0; i<= it.especies.length-1;i=i+2){ }}
-<div class="divSeleccion">
-                        <div class="widget uib_w_11 d-margins divCheckboxEspecies" data-ver="1">
-                            <input name="tilde" type="checkbox" value="{{=it.especies[i].get('nombre')}}" id="{{=it.especies[i].get('nombre')}}">
-                            <label class="content-box" for="{{=it.especies[i].get('nombre')}}"></label>
-                            <div>{{=it.especies[i].get("nombre")}}</div>
-
-                        </div>
-</div>
-            {{ } }}
 
         </div>
-        <div class="columnaEspecies">
+        <div>
 
-            {{for(var i=1; i<= it.especies.length-1;i=i+2){ }}
+            {{for(var i=0; i<= it.especies.length-1;i=i+2){ }}
 <div class="divSeleccion">
-                        <div class="widget uib_w_11 d-margins divCheckboxEspecies" data-ver="1">
+                        <div class="widget uib_w_11 d-margins divCheckboxEspecies hijoDirecto div" data-ver="1">
                             <input name="tilde" type="checkbox" value="{{=it.especies[i].get('nombre')}}" id="{{=it.especies[i].get('nombre')}}">
                             <label class="content-box" for="{{=it.especies[i].get('nombre')}}"></label>
-                            <div>{{=it.especies[i].get("nombre")}}</div>
+                            <div class="div">{{=it.especies[i].get("nombre")}}</div>
 
                         </div>
+
+            {{ if((i+1)<= it.especies.length-1){ }}
+                        <div class="widget uib_w_11 d-margins divCheckboxEspecies hijoDirecto div" data-ver="1">
+                            <input name="tilde" type="checkbox" value="{{=it.especies[i+1].get('nombre')}}" id="{{=it.especies[i+1].get('nombre')}}">
+                            <label class="content-box" for="{{=it.especies[i+1].get('nombre')}}"></label>
+                            <div class="div">{{=it.especies[i+1].get("nombre")}}</div>
+
+                        </div>
+        {{ } }}
             </div>
             {{ } }}
         </div>

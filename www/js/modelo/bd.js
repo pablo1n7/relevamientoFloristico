@@ -1,60 +1,25 @@
 var db = db || window.openDatabase('RFBD', '1.0', 'my db', 2*1024*1024);
 
 function vaciarBD(){
-     db.transaction(function (t) {
-        t.executeSql('DROP TABLE TipoEjemplarPropiedad',[],null,null);
-    });
 
+    var q = "select name from sqlite_master where type = 'table';"
     db.transaction(function (t) {
-        t.executeSql('DROP TABLE TipoEjemplar',[],null,null);
+        t.executeSql(q, null, function (t, data) {
+            for (var i = 2; i < data.rows.length; i++) {
+                console.log(data.rows.item(i));
+                var eliminar = 'DROP TABLE '+data.rows.item(i).name;
+                (function(e){
+                    db.transaction(function (t) {
+                        t.executeSql(e,[],null,null);
+                    });
+
+                }(eliminar));
+            };
+        });
     });
+}
 
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE Valor',[],null,null);
-    });
-
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE Propiedad',[],null,null);
-    });
-
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE Ejemplar',[],null,null);
-    });
-
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE TipoPropiedad',[],null,null);
-    });
-
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE Rango',[],null,null);
-    });
-
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE Enumerado',[],null,null);
-    });
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE Especie',[],null,null);
-    });
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE Familia',[],null,null);
-    });
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE Campania',[],null,null);
-    });
-
-    db.transaction(function (t) {
-        t.executeSql('DROP TABLE CampaniaTipoEjemplar',[],null,null);
-    });
-
+function popularBD(){
     createTablas();
     createTablasPlantas();
     createTablasMetodoTrabajo();
@@ -199,10 +164,11 @@ function createTablasMetodoTrabajo(){
     db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS TransectaEspecie(idTransecta INTEGER NOT NULL ,nombreEspecie TEXT NOT NULL,FOREIGN KEY (idTransecta) REFERENCES Transecta(id),FOREIGN KEY (nombreEspecie) REFERENCES Especie(nombre));', [], null, null);
     });
-
+$
     db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS Visita(idTransecta INTEGER NOT NULL ,fecha INT NOT NULL,FOREIGN KEY (idTransecta) REFERENCES Transecta(id), PRIMARY KEY (idTransecta,fecha));', [], null, null);
     });
+
 
     db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS TipoSuelo(nombre TEXT NOT NULL, PRIMARY KEY (nombre));', [], null, null);
@@ -295,7 +261,7 @@ function createTablasPlantas(){
 
     // Aca haría un TYPE para la  DISTRIBUCION GEOGRAFICA, y otro para el ESTADO DE CONSERVACION
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS Especie(familia TEXT NOT NULL, nombre TEXT NOT NULL PRIMARY KEY,formaBiologica TEXT NOT NULL, tipoBiologico TEXT NOT NULL , distribucionGeografica TEXT NOT NULL, indiceDeCalidad INTEGER NOT NULL, estadoDeConservacion TEXT NOT NULL, FOREIGN KEY (familia) REFERENCES Familia(nombre),FOREIGN KEY (formaBiologica) REFERENCES FormaBiologica(nombre),FOREIGN KEY (tipoBiologico) REFERENCES TipoBiologico(nombre),FOREIGN KEY (distribucionGeografica) REFERENCES DistribucionGeografica(nombre),FOREIGN KEY (estadoDeConservacion) REFERENCES EstadoDeConservacion(nombre));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS Especie(familia TEXT NOT NULL, nombre TEXT NOT NULL PRIMARY KEY,formaBiologica TEXT NOT NULL, tipoBiologico TEXT NOT NULL , distribucionGeografica TEXT NOT NULL, indiceDeCalidad INTEGER NOT NULL, estadoDeConservacion TEXT NOT NULL,imagen TEXT, FOREIGN KEY (familia) REFERENCES Familia(nombre),FOREIGN KEY (formaBiologica) REFERENCES FormaBiologica(nombre),FOREIGN KEY (tipoBiologico) REFERENCES TipoBiologico(nombre),FOREIGN KEY (distribucionGeografica) REFERENCES DistribucionGeografica(nombre),FOREIGN KEY (estadoDeConservacion) REFERENCES EstadoDeConservacion(nombre));', [], null, null);
     });
 
     db.transaction(function (t) {

@@ -25,6 +25,7 @@ $.mvc.controller.create("aplicacion", {
     default:function(){
 
         Y.TipoEjemplar.obtenerTipoEjemplares(function(tipoEjemplar){tipoEjemplares.push(tipoEjemplar);});
+
         Y.Familia.obtenerFamilias(function(familia){familias.push(familia);});
         Y.Especie.obtenerEspecies(function(especie){especies.push(especie);});
         Y.Campania.obtenerCampanias(function(campania){campañas.push(campania)});
@@ -146,7 +147,7 @@ $.mvc.controller.create("aplicacion", {
     },
 
     seleccionarEjemplar: function(numeroId){
-        $("#item"+numeroId).html($.template('js/vista/cargarEjemplar.tpl',{tipoEjemplares:tipoEjemplares,numeroId:numeroId}));
+        $("#item"+numeroId).html($.template('js/vista/cargarEjemplar.tpl',{tipoEjemplares:campañaActiva.get("tipoEjemplares"),numeroId:numeroId}));
         $.mvc.route("aplicacion/crearEjemplar/"+numeroId);
     },
 
@@ -356,11 +357,14 @@ $.mvc.controller.create("aplicacion", {
 
         var tiposSeleccionados = ($("#contenedorListaTipos").find("[type|=checkbox]")).get().filter(function(x){return x.checked});
         var idTipos = tiposSeleccionados.map(function(x){return x.value});
+         idTipos.push("1");
         campania = new Y.Campania({"nombre":nombreCampania,"descripcion":descripcion,"fecha":Date.now()});
         for(var i = 0; i< idTipos.length ;i++){
             var tipoEjemplar = (tipoEjemplares.filter(function(tipo){return tipo.get("id")==idTipos[i]}))[0];
             campania.get("tipoEjemplares").push(tipoEjemplar);
         }
+
+
 
          $.ui.showMask('Guardando...');
         campania.save(function(){
@@ -460,8 +464,6 @@ $.mvc.controller.create("aplicacion", {
             visita.save(transecta.get("id"));
             $.mvc.route("aplicacion/crearPunto/1");
         });
-
-
     },
     crearPunto:function(conMedicionGps){
         if(parseInt(conMedicionGps) == 1){
@@ -474,6 +476,12 @@ $.mvc.controller.create("aplicacion", {
 
     creacionPunto:function(opcion){
         $("#mainCrearPunto").html($.template('js/vista/recolectarPunto.tpl',{opcion:parseInt(opcion),estadoPunto:estadoPunto[opcion],suelos:tiposSuelos}));
+        var botonClose = $($("a.close")[0]);
+        var nuevoBoton = $("<div id='botonCerrarModal'>");
+        nuevoBoton.css({'background-color':'rgba(0,0,0,0)','position':'absolute','zIndex':'3'});
+        nuevoBoton.css(botonClose.offset());
+        $("#modalHeader").append(nuevoBoton);
+        nuevoBoton.click(eliminarImagenes);
         $.mvc.route("aplicacion/cargarFormularioPlanta/1");
     },
 
@@ -513,20 +521,5 @@ $.mvc.controller.create("aplicacion", {
                     });
             },1000);
         }
-    },
-
-
-        tomarFoto:function(){
-
-
-
-/*function foto(e){
-    console.log(e.filename);
-    var rutaImg = intel.xdk.camera.getPictureURL(e.filename);
-    $("#unaFoto").attr("src",rutaImg);
-}*/
-
-        document.addEventListener("intel.xdk.camera.picture.add",foto);
-        intel.xdk.camera.takePicture(80,false,"jpg");
     }
 });

@@ -41,6 +41,7 @@ function activarSubPagina(nombreSubPagina,titulo){
 
 function mostrarModal(div,efecto,titulo){
     $.ui.showModal(div,efecto);
+    $("#modalHeader h1 ").empty();
     $("#modalHeader h1 ").append(titulo);
 
 }
@@ -220,40 +221,38 @@ function activarBrujula(callback,listo){
 }
 
 
-callbackPrueba = null;
-function prueba(e){
+callbackCapturaImg = null;
+function listenerCamara(e){
 
     /*var rutaImg = intel.xdk.camera.getPictureURL(e.filename);*/
     alert(e.filename);
-    callbackPrueba(e.filename);
+    callbackCapturaImg(e.filename);
 
 }
 
-document.addEventListener("intel.xdk.camera.picture.add",prueba);
+document.addEventListener("intel.xdk.camera.picture.add",listenerCamara);
 
 function tomarFoto(callback){
-    callbackPrueba = callback;
-    intel.xdk.camera.takePicture(80,true,"jpg");
+    callbackCapturaImg = callback;
+    intel.xdk.camera.takePicture(80,false,"jpg");
 }
 
 
-function verImagen(urlImg,elemento){
+function verImagen(urlImg,elemento,noEliminable){
+    var noEliminable = (noEliminable) ? noEliminable:false;
     var divFoto = $('<div id="visorImagen" class="visorImagen"/>');
     divFoto.append('<div class="widget-container content-area horiz-area wrapping-col iconosFoto iconoX"><span class="icon close" onclick="$(this.parentElement).parent().parent().remove();"></span></div>');
     var imagen = $('<img src='+urlImg+' class="imagenAVisualizar"/>');
     divFoto.append(imagen);
-    //divFoto.append('<div class="widget-container content-area horiz-area wrapping-col iconosFoto contenedorTrash"><span class="icon trash" onclick="confirmarEliminado(this,elemento)"></span></div>');
-    var otroDiv = $('<div class="widget-container content-area horiz-area wrapping-col iconosFoto contenedorTrash"><span class="icon trash"></span></div>')
-    otroDiv.click(function(){confirmarEliminado(otroDiv,elemento)});
-    divFoto.append(otroDiv);
-
-//    divFoto.css({'background-image':'url('+urlImg+')','backgroundSize':'contain','background-position':'50%','background-repeat':'no-repeat'});
-
+    if(!noEliminable){
+        var otroDiv = $('<div class="widget-container content-area horiz-area wrapping-col iconosFoto contenedorTrash"><span class="icon trash"></span></div>')
+        otroDiv.click(function(){confirmarEliminado(otroDiv,elemento)});
+        divFoto.append(otroDiv);
+    }
     $("body").append('<div id="divFondoImagen" class="divAyuda"/>');
     $('#divFondoImagen').append(divFoto);
 
 }
-
 
 function eliminarFoto(elemento){
     $(elemento).attr("style","");
@@ -273,8 +272,35 @@ function confirmarEliminado(botonEliminar,elemento){
 }
 
 
+function eliminarRecolectable(spanX){
+
+    var nombreFoto = $($(spanX).parent().parent().find('[name|=imgUrl]')[0]).html();
+    if(nombreFoto != '')
+        intel.xdk.camera.deletePicture(nombreFoto);
+    $(spanX.parentElement).parent().parent().remove();
+
+}
+
+function eliminarImagenes(){
+    var divsImg= $("#datosPlantas").find("[name |= imgUrl]");
+    for(var i=0; i<divsImg.length ; i++){
+        var nombreFoto = $(divsImg[i]).html();
+        if(nombreFoto != ""){
+            alert("Borre "+(i+1));
+            intel.xdk.camera.deletePicture(nombreFoto);
+        }
+    }
+
+    $.ui.hideModal();
+    $("#botonCerrarModal").remove();
+}
 
 
+function verImagenEspecie(selectEspecies){
+    var nombreEspecie = $(selectEspecies).val();
+    var especie = (especies.filter(function(esp){return esp.get("nombre")==nombreEspecie}))[0];
+    verImagen('data:image/jpeg;base64,'+especie.verImagen(),null,true);
+}
 
 
 

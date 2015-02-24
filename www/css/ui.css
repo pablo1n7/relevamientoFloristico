@@ -159,6 +159,15 @@ footer .button{
     padding-right: 10px;
 }
 
+.divSeleccion .div{
+    margin-left: 14px;
+}
+
+.divSeleccion > .hijoDirecto{
+    width: 45% !important;
+    float:left;
+}
+
 .divAyuda{
     position:absolute;
     width:100%;
@@ -303,7 +312,8 @@ footer .button{
 }
 
 .divCheckboxEspecies > div {
-    margin-top: -5%;
+    margin-top: -10%;
+    margin-left: 14px;
 }
 
 .contenedorEspecies{
@@ -404,4 +414,11 @@ footer .button{
 .iconoX{
     text-align: center;
     font-size: 50px
+}
+
+.verFotoEspecie{
+    float: right;
+    top: -30px;
+    position: relative;
+    font-size: 25px;
 }

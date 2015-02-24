@@ -4,7 +4,7 @@
         <i class="fa fa-eye iconoVerFoto"></i>
     </div>
     <div class="widget-container content-area horiz-area wrapping-col right">
-        <span class="icon close" onclick="$(this.parentElement).parent().remove();"></span>
+        <span class="icon close" onclick="eliminarRecolectable(this);"></span>
     </div>
     Planta
     <input name="toquesPlanta" type="number" placeholder="toques">
@@ -16,6 +16,7 @@
             <option>{{=it.especies[i].get("nombre")}}</option>
         {{ } }}
     </select>
+<div class="icon picture verFotoEspecie" onclick="verImagenEspecie(this.previousSibling)"></div>
     <div name="imgUrl" class="oculto"></div>
     <div class="divFoto" onclick="
                                   _this=this;
@@ -26,7 +27,8 @@
                                     var urlImg = intel.xdk.camera.getPictureURL(nombre);
                                     console.log(urlImg);
                                   var fotoAnt = $($(_this).parent().find('[name|=imgUrl]')[0]).html();
-                                  intel.xdk.camera.deletePicture(fotoAnt);
+
+
                                 $($(_this).parent().find('[name|=imgUrl]')[0]).empty();
                                 $($(_this).parent().find('[name|=imgUrl]')[0]).append(nombre);
                                     $(_this).css({'background-image':'url('+urlImg+')',
@@ -38,12 +40,15 @@
                                         'background-position':'50%'});
                                     $($(_this).parent().find('[name|=verFoto]')[0]).removeClass('oculto');
                                   $($(_this).parent().find('[name|=verFoto]')[0]).unbind();
-                                    $($(_this).parent().find('[name|=verFoto]')[0]).click(function(){
-                                        verImagen(urlImg,_this);
-                                        $(_this).removeClass('desenlazar');
-                                    });
 
-                                  });
+                                  $($(_this).parent().find('[name|=verFoto]')[0]).click(function(){
+                                        verImagen(urlImg,_this);
+
+                                    });
+                                    $(_this).removeClass('desenlazar');
+                                    if(fotoAnt != '')
+                                        intel.xdk.camera.deletePicture(fotoAnt);
+                                    });
 
                                   ">
         <div class="icon camera iconoCamara">

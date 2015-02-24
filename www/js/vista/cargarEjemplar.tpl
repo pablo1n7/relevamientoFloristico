@@ -3,7 +3,7 @@
         <i class="fa fa-eye iconoVerFoto"></i>
     </div>
     <div class="widget-container content-area horiz-area wrapping-col right">
-        <span class="icon close" onclick="$(this.parentElement).parent().remove();"></span>
+        <span class="icon close" onclick="eliminarRecolectable(this);"></span>
     </div>
     <p>Item</p>
 <label for="tipoEjemplares">Tipo</label>
@@ -13,12 +13,20 @@
     {{ } }}
 </select>
 <div id="ejemplar{{=it.numeroId}}"></div>
+<div name="imgUrl" class="oculto"></div>
   <div class="divFoto" onclick="
                                   _this=this;
                                   console.log('PASO');
                                   $(this).addClass('desenlazar');
                                   tomarFoto(function(nombre){
                                 var urlImg = intel.xdk.camera.getPictureURL(nombre);
+                                  var fotoAnt = $($(_this).parent().find('[name|=imgUrl]')[0]).html();
+                                if(fotoAnt != '')
+                                    intel.xdk.camera.deletePicture(fotoAnt);
+
+                                $($(_this).parent().find('[name|=imgUrl]')[0]).empty();
+                                $($(_this).parent().find('[name|=imgUrl]')[0]).append(nombre);
+
                                     console.log(urlImg);
                                     $(_this).css({'background-image':'url('+urlImg+')',
                                         'backgroundSize':'cover',
