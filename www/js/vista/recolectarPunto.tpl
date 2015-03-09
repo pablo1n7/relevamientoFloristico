@@ -6,7 +6,7 @@
             Estado de la aguja: {{=it.estadoPunto}}
             <br><br>
             <div class="input-group">
-                Suelo
+                <div class="headerElemento headerSuelo">Suelo</div>
                 <select name="tipoSuelo">
                     {{for(var i = 0; i<it.suelos.length; i++){ }}
                         <option> {{=it.suelos[i]}} </option>

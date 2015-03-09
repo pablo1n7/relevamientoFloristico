@@ -6,7 +6,10 @@
     <div class="widget-container content-area horiz-area wrapping-col right">
         <span class="icon close" onclick="eliminarRecolectable(this);"></span>
     </div>
-    Planta
+    <div class="headerElemento headerPlanta">
+        Planta
+    </div>
+    Toques
     <input name="toquesPlanta" type="number" placeholder="toques">
     <br>
     <br>

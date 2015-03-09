@@ -1,3 +1,9 @@
+body{
+    font-size: 30px;
+    font-family: fantasy;
+    letter-spacing: 0.1em;
+}
+
 input{
     border-width: 0px !important;
 }
@@ -92,6 +98,7 @@ textarea{
 
 .divCheckbox label {
     color: white !important;
+    letter-spacing: 0em;
 }
 
 #afui input[type=radio]:checked+label:before, #afui input[type=checkbox]:checked+label:before {
@@ -160,11 +167,11 @@ footer .button{
 }
 
 .divSeleccion .div{
-    margin-left: 14px;
+    margin-left: 23px;
 }
 
 .divSeleccion > .hijoDirecto{
-    width: 45% !important;
+    width: 40% !important;
     float:left;
 }
 
@@ -233,14 +240,13 @@ footer .button{
 
 .contenedorOpciones{
     vertical-align: middle;
-    height: 17px !important;
     overflow-y: hidden;
     overflow-x: hidden;
     float: right;
     width: 0%;
-    height: 20px;
+    height: 35px;
     position: relative;
-    top: -19px;
+    top: -40px;
     margin-top: 2px;
 }
 
@@ -309,10 +315,11 @@ footer .button{
 
 .divCheckboxEspecies label {
     color: white !important;
+    letter-spacing: 0em;
 }
 
 .divCheckboxEspecies > div {
-    margin-top: -10%;
+    margin-top: -14px;
     margin-left: 14px;
 }
 
@@ -392,6 +399,7 @@ footer .button{
 
 .iconoVerFoto{
     font-size: 20px;
+    margin-right: 2%;
 }
 
 .iconosFoto{
@@ -421,4 +429,42 @@ footer .button{
     top: -30px;
     position: relative;
     font-size: 25px;
+}
+
+.headerElemento{
+    width: 106%;
+    margin-top: -3%;
+    margin-left: -3%;
+    margin-bottom: 1%;
+    font-size: 24px;
+    padding-top: 2%;
+    padding-left: 10%;
+    font-family: serif;
+    text-align: left;
+    height: 39px;
+}
+
+.headerPlanta{
+    background-color: #A8F18B;
+}
+
+.headerItem{
+    background-color: #8BB8F1;
+}
+
+.headerSuelo{
+    background-color: darkgray;
+}
+
+.seleccionable{
+    width: 100%;
+}
+.propiedadEjemplar{
+    padding-top: 1%;
+    text-transform: capitalize;
+}
+
+#action, #cancel{
+    font-size: 24px;
+
 }

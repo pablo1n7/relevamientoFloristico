@@ -5,16 +5,19 @@
     <div class="widget-container content-area horiz-area wrapping-col right">
         <span class="icon close" onclick="eliminarRecolectable(this);"></span>
     </div>
-    <p>Item</p>
-<label for="tipoEjemplares">Tipo</label>
-<select id="selectTipoEjemplares{{=it.numeroId}}" name="tipoEjemplares" onchange='$.mvc.route("aplicacion/crearEjemplar/{{=it.numeroId}}");'>
-    {{for(var i=0; i<= it.tipoEjemplares.length-1;i++){ }}
-            <option>{{=it.tipoEjemplares[i].get("nombre")}}</option>
-    {{ } }}
-</select>
-<div id="ejemplar{{=it.numeroId}}"></div>
-<div name="imgUrl" class="oculto"></div>
-  <div class="divFoto" onclick="
+    <div class="headerItem headerElemento">
+        Item
+    </div>
+    Tipo Ejemplar
+    <br>
+    <select id="selectTipoEjemplares{{=it.numeroId}}" class="seleccionable" name="tipoEjemplares" onchange='$.mvc.route("aplicacion/crearEjemplar/{{=it.numeroId}}");'>
+        {{for(var i=0; i<= it.tipoEjemplares.length-1;i++){ }}
+                <option>{{=it.tipoEjemplares[i].get("nombre")}}</option>
+        {{ } }}
+    </select>
+    <div id="ejemplar{{=it.numeroId}}"></div>
+    <div name="imgUrl" class="oculto"></div>
+    <div class="divFoto" onclick="
                                   _this=this;
                                   console.log('PASO');
                                   $(this).addClass('desenlazar');

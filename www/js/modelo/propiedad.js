@@ -6,8 +6,8 @@ Y.add('propiedadModelo',function(Y){
         /*previsualizar:function(){},*/
         representacion:function(){
             var $div = $('<div/>');
-            $div.attr({"class":"input-group"});
-            var $label = $('<label>'+this.get("nombre")+'</label>');
+            $div.attr({"class":"input-group propiedadEjemplar"});
+            var $label = $(this.get("nombre")+' <br>');
             $div.append($label);
             $div.append(this.get("tipo").representacion());
             return $div;
