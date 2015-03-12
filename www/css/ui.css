@@ -468,3 +468,7 @@ footer .button{
     font-size: 24px;
 
 }
+
+.autosuggest{
+    z-index: 10000;
+}

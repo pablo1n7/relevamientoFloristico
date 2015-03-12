@@ -297,14 +297,28 @@ function eliminarImagenes(){
 
 
 function verImagenEspecie(selectEspecies){
-    var nombreEspecie = $(selectEspecies).val();
+    var nombreEspecie = $(selectEspecies.previousElementSibling).val();
     var especie = (especies.filter(function(esp){return esp.get("nombre")==nombreEspecie}))[0];
     verImagen('data:image/jpeg;base64,'+especie.verImagen(),null,true);
 }
 
 
+function autocompletadoEspecies(idElemento){
+    var especiesJson = [];
+    for (var i=0;i<especies.length;i++){
+        especiesJson.push({ 'id':especies[i].get("nombre"), 'value':especies[i].get("nombre"), 'info':especies[i].get("familia")});
+	}
 
-
+    var options = {
+        script: "inicio",
+        varname: "inicio",
+        json: true,
+        maxentries: 3,
+        noresults: "Sin Resultados!",
+        valores: especiesJson
+    };
+    var as = new AutoSuggest(idElemento, options);
+}
 
 
 

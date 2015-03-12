@@ -1,40 +1,6 @@
 <div id="datosTransecta">
     <textarea id="ambiente" name="ambiente" rows="3" cols="20" placeholder="Ingrese el Ambiente de la Transcta"></textarea>
 
-{{if(it.especies.length!=0){ }}
-<div class="input-group contenedorTipos">
-    <p>Seleccione las Especies Predominantes.</p>
-    <div id="contenedorEspecies" class="widget-container content-area vertical-col">
-        <div class="columnaEspecies">
-
-
-        </div>
-        <div>
-
-            {{for(var i=0; i<= it.especies.length-1;i=i+2){ }}
-<div class="divSeleccion">
-                        <div class="widget uib_w_11 d-margins divCheckboxEspecies hijoDirecto div" data-ver="1">
-                            <input name="tilde" type="checkbox" value="{{=it.especies[i].get('nombre')}}" id="{{=it.especies[i].get('nombre')}}">
-                            <label class="content-box" for="{{=it.especies[i].get('nombre')}}"></label>
-                            <div class="div">{{=it.especies[i].get("nombre")}}</div>
-
-                        </div>
-
-            {{ if((i+1)<= it.especies.length-1){ }}
-                        <div class="widget uib_w_11 d-margins divCheckboxEspecies hijoDirecto div" data-ver="1">
-                            <input name="tilde" type="checkbox" value="{{=it.especies[i+1].get('nombre')}}" id="{{=it.especies[i+1].get('nombre')}}">
-                            <label class="content-box" for="{{=it.especies[i+1].get('nombre')}}"></label>
-                            <div class="div">{{=it.especies[i+1].get("nombre")}}</div>
-
-                        </div>
-        {{ } }}
-            </div>
-            {{ } }}
-        </div>
-    </div>
-</div>
-{{ }}}
-
 
     <input id="cuadro" type="text" placeholder="Ingrese el nombre del Cuadro (opcional)"/>
 
@@ -45,6 +11,16 @@
         <div><p id="valorSentido">0</p>grados</div>
         <p id="mensajeBrujula">Toque la brujula para fijar el sentido de la transecta.</p></div>
 </div>
+
+<div class="input-group">
+    <div class="headerElemento headerPlanta">
+        Especies Predominantes
+    </div>
+    <input type="text" id="especiePredominante1" placeholder="Nombre Especie"/>
+    <input type="text" id="especiePredominante2" placeholder="Nombre Especie"/>
+    <input type="text" id="especiePredominante3" placeholder="Nombre Especie"/>
+</div>
+
 
 <div class="divBoton">
     <a name="crearTransecta" class="anchorBoton" href="/aplicacion/crearTransecta">Crear Transecta</a>

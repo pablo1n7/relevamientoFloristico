@@ -404,6 +404,9 @@ $.mvc.controller.create("aplicacion", {
         activarSubPagina("#crearTransecta","Nueva Transecta");
         activarBotonAtras(function(){$.mvc.route("aplicacion/listaCampanias");});
         $("#mainCrearTransecta").html($.template('js/vista/crearTransecta.tpl',{screen:screen,especies:especies}));
+        autocompletadoEspecies("especiePredominante1");
+        autocompletadoEspecies("especiePredominante2");
+        autocompletadoEspecies("especiePredominante3");
         activarBrujula(function(dir){
             $("#valorSentido").empty();
             $("#valorSentido").append(parseInt(dir.magneticHeading));
@@ -450,8 +453,31 @@ $.mvc.controller.create("aplicacion", {
         var ambiente= $("#ambiente").val();
         var sentido = $("#valorSentido").text();
         var cuadro = $("#cuadro").val();
-        var especiesSeleccionadas = ($("#contenedorEspecies").find("[type|=checkbox]")).get().filter(function(x){return x.checked});
-        var nombreEspecies = especiesSeleccionadas.map(function(x){return x.value});
+
+        /*var especiesSeleccionadas = ($("#contenedorEspecies").find("[type|=checkbox]")).get().filter(function(x){return x.checked});
+
+        var nombreEspecies = especiesSeleccionadas.map(function(x){return x.value});*/
+
+        var nombreEspecies = [];
+
+
+        if($("#especiePredominante1").val() != ""){
+            nombreEspecies.push($("#especiePredominante1").val());
+        }
+        if($("#especiePredominante2").val() != ""){
+            nombreEspecies.push($("#especiePredominante2").val());
+        }
+        if($("#especiePredominante3").val() != ""){
+            nombreEspecies.push($("#especiePredominante3").val());
+        }
+
+
+
+        for(var i=0; i< nombreEspecies.length;i++){
+            especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == nombreEspecies[i]})[0]),1)[0]);
+        }
+
+
         var transecta = new Y.Transecta({"ambiente":ambiente,"sentido":sentido,"cuadro":cuadro,"campania":campañaActiva,"nombreEspecies":nombreEspecies});
         $.ui.showMask('Guardando...');
         transecta.save(function(){
@@ -488,7 +514,7 @@ $.mvc.controller.create("aplicacion", {
     cargarFormularioPlanta:function(numeroId){
         var divPlanta = $("<div id='planta"+numeroId+"' class='divRecolectables'/>");
         $("#datosPlantas").append(divPlanta);
-        $(divPlanta).html($.template('js/vista/crearPlanta.tpl',{especies:especies}));
+        $(divPlanta).html($.template('js/vista/crearPlanta.tpl',{especies:especies,numeroId:numeroId}));
         $("#botonAgregarPlanta").attr("href","/aplicacion/cargarFormularioPlanta/"+(parseInt(numeroId)+1));
 
         if(device.platform == "Android"){
@@ -502,6 +528,11 @@ $.mvc.controller.create("aplicacion", {
                     });
             },1000);
         }
+
+
+        autocompletadoEspecies("autocompletado"+numeroId);
+
+
     },
 
     cargarFormularioItem:function(numeroId){

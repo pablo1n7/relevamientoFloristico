@@ -14,11 +14,10 @@
     <br>
     <br>
     <span>Especie</span>
-    <select name="especie">
-        {{for(var i=0; i<= it.especies.length-1;i++){ }}
-            <option>{{=it.especies[i].get("nombre")}}</option>
-        {{ } }}
-    </select>
+
+        <input name="especie" id="autocompletado{{=it.numeroId}}" type="text" placeholder="Especie">
+
+
 <div class="icon picture verFotoEspecie" onclick="verImagenEspecie(this.previousSibling)"></div>
     <div name="imgUrl" class="oculto"></div>
     <div class="divFoto" onclick="
