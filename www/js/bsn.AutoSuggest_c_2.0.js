@@ -62,6 +62,7 @@ _bsn.AutoSuggest = function (fldID, param)
 	this.nInputChars 	= 0;
 	this.aSuggestions 	= [];
 	this.iHighlighted 	= 0;
+    this.validSuggestion = "";
 
 
 
@@ -84,6 +85,7 @@ _bsn.AutoSuggest = function (fldID, param)
 	if (!this.oP.maxheight && this.oP.maxheight !== 0)		this.oP.maxheight = 250;
 	if (!this.oP.cache && this.oP.cache != false)			this.oP.cache = true;
     if (!this.oP.valores)									this.oP.valores = [];
+    if (!this.oP.alwaysSuggest && this.oP.alwaysSuggest != false) this.oP.alwaysSuggest = true;
 
 
 
@@ -111,7 +113,20 @@ _bsn.AutoSuggest = function (fldID, param)
         pointer.getSuggestions(busqueda);
     });
 	$(this.fld).blur(function(){
-        setTimeout(function(){_bsn.DOM.removeElement(pointer.idAs);},500);
+        setTimeout(function(){
+            _bsn.DOM.removeElement(pointer.idAs);
+            //alert(pointer.validSuggestion);
+            if(!pointer.oP.alwaysSuggest){
+                if (pointer.fld.value != "" ){
+                    pointer.fld.value = pointer.validSuggestion;
+                }
+            }
+            else{
+                pointer.fld.value = pointer.validSuggestion;
+            }
+
+        },500);
+
     });
 }
 
@@ -253,6 +268,7 @@ _bsn.AutoSuggest.prototype.getSuggestions = function (val)
 		//this.aSuggestions = arr;
 
 		//this.createList(this.aSuggestions);
+
         this.createList(arr);
 
 
@@ -337,6 +353,7 @@ document.getElementsByTagName("body")[0].appendChild(div);
 	// loop throught arr of suggestions
 	// creating an LI element for each suggestion
 	//
+
 	for (var i=0;i<arr.length;i++)
 	{
 		// format output with the input enclosed in a EM element
@@ -385,10 +402,15 @@ document.getElementsByTagName("body")[0].appendChild(div);
 	//
 	if (arr.length == 0)
 	{
+        if(!this.oP.alwaysSuggest)
+            this.validSuggestion = "";
+
 		var li 			= _bsn.DOM.createElement(  "li", {className:"as_warning"}, this.oP.noresults  );
 
 		ul.appendChild( li );
-	}
+	}else{
+        this.validSuggestion = arr[0].value;
+    }
 
 
 	div.appendChild( ul );
@@ -522,6 +544,7 @@ _bsn.AutoSuggest.prototype.setHighlightedValue = function (valor)
 	{
 
 		this.sInput = this.fld.value =valor;
+        this.validSuggestion = valor;
 		// move cursor to end of input (safari)
 		//
 		this.fld.focus();

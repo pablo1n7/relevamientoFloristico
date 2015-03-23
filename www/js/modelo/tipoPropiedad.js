@@ -4,7 +4,7 @@ Y.add('tipoPropiedadModelo',function(Y){
 
 
             obtenerValor: function(campo){
-                return campo.find("input")[0].value;
+                return $(campo).find("input")[0].value;
             },
 
             save: function(callback){

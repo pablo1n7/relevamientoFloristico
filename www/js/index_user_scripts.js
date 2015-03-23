@@ -26,6 +26,7 @@
             /*activate_subpage("#uib_page_2");
             desactivarBotonesHeader();*/
              activarSubPagina("#uib_page_2","Puntos");
+            $.mvc.route("aplicacion/verPuntos");
 
         });
         $(document).on("click", ".uib_w_4", function(evt){

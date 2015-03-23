@@ -1,11 +1,15 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl'], //These are the views we will use with the controller
     init:function(){
+
+        popularBD();
+        CANTIDAD_PUNTOS = 28;
         tipoEjemplares=[];
         familias = [];
         especies = [];
         campañas = [];
         campañaActiva = null;
+        transectaActiva = null;
         estadoPunto=["Toque Directo","Muerto en Pie","Suelo Desnudo"];
         estadosDeConservacion=[];
         formasBiologicas=[];
@@ -20,6 +24,11 @@ $.mvc.controller.create("aplicacion", {
         obtenerValoresBD("TipoBiologico",tiposBiologicos);
         obtenerValoresBD("DistribucionGeografica",distribuciones);
         obtenerValoresBD("TipoSuelo",tiposSuelos);
+
+
+
+
+
 
     },
     default:function(){
@@ -153,9 +162,9 @@ $.mvc.controller.create("aplicacion", {
 
     crearEjemplar:function(numeroId){
         console.log("Funcion Crear ejemplar");
-        indexTipoEjemplar = $("#selectTipoEjemplares"+numeroId).get(0).selectedIndex;
+        var indexTipoEjemplar = $("#selectTipoEjemplares"+numeroId).get(0).selectedIndex;
         var seleccion = tipoEjemplares[indexTipoEjemplar];
-        ejemplar = new Y.Ejemplar({"tipoEjemplar":seleccion});
+        var ejemplar = new Y.Ejemplar({"tipoEjemplar":seleccion});
         ejemplar.crearCampos(seleccion.get("campos"));
         $("#ejemplar"+numeroId).empty();
         $("#ejemplar"+numeroId).append(ejemplar.representacion());
@@ -306,28 +315,6 @@ $.mvc.controller.create("aplicacion", {
         $("#mainCrearPlanta").html($.template('js/vista/crearPlanta.tpl',{especies:especies}));
     },
 
-    crearPlanta:function(){
-      /*  var nombreEspecie = $("#nombreEspecie").val();
-        var familia=$("#familia").val();
-        var formaBiologica =$("#formaBiologica").val();
-        var tipoBiologica =$("#tipoBiologica").val();
-        var estadoDeConservacion=$("#estadoDeConservacion").val();
-        var distribucionGeografica=$("#distribucionGeografica").val();
-        var indiceCalidad=$("#indiceDeCalidad").val();
-        var especie = new Y.Especie({"nombre":nombreEspecie,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologica,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceCalidad});
-        $.ui.showMask('Guardando...');
-        especie.save(function(){
-            $.ui.hideMask();
-            especies.push(especie);
-            mensajeExitoso("La especie ha sido agregado con éxito");
-            $.mvc.route("aplicacion/listaEspecies");
-        },function(){
-            $.ui.hideMask();
-            mensajeError("Error al guardar especie: Ya se encuentra una especie registrada con ese nombre.");
-        });
-*/
-    },
-
     listaCampanias:function(){
         activarSubPagina("#uib_page_1","Campañas");
         if(campañaActiva == null){
@@ -380,7 +367,7 @@ $.mvc.controller.create("aplicacion", {
     activarCampania:function(nombreCodificado,fecha){
         var nombre = decodeURIComponent(nombreCodificado);
         Y.Campania.obtenerCampania(nombre,fecha,function(camp){
-            campañaActiva=camp;
+            campañaActiva = camp;
             mensajeExitoso("Campaña Seleccionada");
             activarSubPagina("#uib_page_1","Campaña "+camp.get("nombre"));
             activarBotonFuncionalidad('Desactivar',function(){
@@ -389,11 +376,14 @@ $.mvc.controller.create("aplicacion", {
 
             $("#mainCampañas").html($.template('js/vista/campaniaActiva.tpl',{campania:campañaActiva}));
             toogleAlto("#contenedorTipos",$("#contenedorTipos").offset().height+"px");
+
+
         });
     },
 
     desactivarCampania:function(){
         campañaActiva = null;
+        transectaActiva = null;
         $.mvc.route("aplicacion/listaCampanias");
     },
 
@@ -404,9 +394,9 @@ $.mvc.controller.create("aplicacion", {
         activarSubPagina("#crearTransecta","Nueva Transecta");
         activarBotonAtras(function(){$.mvc.route("aplicacion/listaCampanias");});
         $("#mainCrearTransecta").html($.template('js/vista/crearTransecta.tpl',{screen:screen,especies:especies}));
-        autocompletadoEspecies("especiePredominante1");
-        autocompletadoEspecies("especiePredominante2");
-        autocompletadoEspecies("especiePredominante3");
+        autocompletadoEspecies("especiePredominante1",false);
+        autocompletadoEspecies("especiePredominante2",false);
+        autocompletadoEspecies("especiePredominante3",false);
         activarBrujula(function(dir){
             $("#valorSentido").empty();
             $("#valorSentido").append(parseInt(dir.magneticHeading));
@@ -473,7 +463,7 @@ $.mvc.controller.create("aplicacion", {
 
 
 
-        for(var i=0; i< nombreEspecies.length;i++){
+        for(var i=nombreEspecies.length-1; i>=0 ;i--){
             especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == nombreEspecies[i]})[0]),1)[0]);
         }
 
@@ -483,20 +473,85 @@ $.mvc.controller.create("aplicacion", {
         transecta.save(function(){
             $.ui.hideMask();
             campañaActiva.get("transectas").push(transecta);
+
             mensajeExitoso("La transecta ha sido agregado con éxito");
-            $.mvc.route("aplicacion/listaCampanias");
-            var visita = new Y.Visita({fecha:Date.now()});
-            transecta.get("visitas").push(visita);
-            visita.save(transecta.get("id"));
-            $.mvc.route("aplicacion/crearPunto/1");
+            //$.mvc.route("aplicacion/listaCampanias");
+            $.mvc.route("aplicacion/activarTransecta/"+transecta.get("id"));
+
+            $.mvc.route("aplicacion/crearPunto");
+
+
         });
     },
-    crearPunto:function(conMedicionGps){
-        if(parseInt(conMedicionGps) == 1){
-            console.log("aca obtengo posicion gps");
-        }
+
+    activarTransecta: function(id){
+
+        Y.Transecta.obtenerTransecta(id,function(transecta){
+            transectaActiva = transecta;
+            var visita = new Y.Visita({fecha:Date.now()});
+            //visita.save(transecta.get("id"));
+            transecta.get("visitas").push(visita);
+            activarBrujulaSeguimiento(transectaActiva.get("sentido"));
+            activarSubPagina("#mainsub","Pagina Principal");
+             $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
+            justgageTransecta = new JustGage({ id: "justgageTransecta",value: 0,min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+            justgageCampania = new JustGage({ id: "justgageCampania",value: 0,min: 0,max: 100,title: "Progreso Campania", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white",humanFriendly:true,humanFriendlyDecimal:'1'});
+
+
+        });
+
+    },
+
+    crearPunto:function(){
+
         $("#mainCrearPunto").html($.template('js/vista/crearPunto.tpl',{}));
         mostrarModal("#crearPunto","fade","Recolectar Punto");
+    },
+
+    almacenarPunto:function(){
+        var estadoAguja = $("#estadoAguja").text().split(":")[1];
+        var tipoSuleo = $("#tipoSuelo").val();
+        var plantas = $("#datosPlantas").find("[name|=planta]");
+        var items = $("#datosPlantas").find("[name|=item]");
+        punto = new Y.Punto({"estado":estadoAguja,"suelo":tipoSuleo});
+        for(var i=0;i<items.length;i++){
+            //var unItem = new Y.Ejemplar({"tipo":});
+            var campos = $(items[i]).find(".input-group");
+            var foto = $(campos[0]).find("[name|=imgUrl]")[0].innerHTML || "";
+            var nombreTipoEjemplar = $($(campos[0]).find("[name|=tipoEjemplares]")[0]).val();
+            var tipoEjemplar = tipoEjemplares.filter(function(tE){return tE.get("nombre")== nombreTipoEjemplar})[0];
+            var ejemplar = new Y.Ejemplar({"tipoEjemplar":tipoEjemplar,"foto":foto});
+            ejemplar.crearCampos(tipoEjemplar.get("campos"));
+            ejemplar.completarCampos(campos.slice(1,campos.length));
+            //ejemplar.save(function(){console.log("Ejemplar Guardado con Exito")});
+            punto.get("items").push(ejemplar);
+        }
+
+        for(var i=0;i<plantas.length;i++){
+            var campo = $($(plantas[i]).find(".input-group")[0]);
+            var foto = campo.find("[name|=imgUrl]")[0].innerHTML || "";
+            var toques = campo.find("[name|=toquesPlanta]")[0].value;
+            var nombreEspecie = campo.find("[name|=especie]")[0].value;
+            var planta = new Y.Planta({"especie":nombreEspecie,"toques":toques,"foto":foto});
+            punto.get("items").push(planta);
+        }
+         /*$.ui.showMask('Guardando...');*/
+        var cantPuntos = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
+        if(cantPuntos ==0 || cantPuntos == CANTIDAD_PUNTOS){
+            console.log("aca obtengo posicion gps");
+        }
+        justgageTransecta.refresh(cantPuntos+1);
+        var valorTemporal = parseFloat(justgageCampania.originalValue);
+        justgageCampania.refresh((valorTemporal+0.1).toFixed(1));
+        transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
+        $.ui.hideModal();
+        /*punto.save(transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1],function(unPunto){
+            $.ui.hideMask();
+            $.ui.hideModal();
+            transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").push(unPunto);
+            console.log("GuARDO PUNTO");
+        });*/
+
 
     },
 
@@ -508,14 +563,14 @@ $.mvc.controller.create("aplicacion", {
         nuevoBoton.css(botonClose.offset());
         $("#modalHeader").append(nuevoBoton);
         nuevoBoton.click(eliminarImagenes);
-        $.mvc.route("aplicacion/cargarFormularioPlanta/1");
+        $.mvc.route("aplicacion/cargarFormularioPlanta/1/"+opcion);
     },
 
-    cargarFormularioPlanta:function(numeroId){
-        var divPlanta = $("<div id='planta"+numeroId+"' class='divRecolectables'/>");
+    cargarFormularioPlanta:function(numeroId,conToques){
+        var divPlanta = $("<div id='planta"+numeroId+"' name='planta' class='divRecolectables'/>");
         $("#datosPlantas").append(divPlanta);
-        $(divPlanta).html($.template('js/vista/crearPlanta.tpl',{especies:especies,numeroId:numeroId}));
-        $("#botonAgregarPlanta").attr("href","/aplicacion/cargarFormularioPlanta/"+(parseInt(numeroId)+1));
+        $(divPlanta).html($.template('js/vista/crearPlanta.tpl',{especies:especies,numeroId:numeroId,conToques:conToques}));
+        $("#botonAgregarPlanta").attr("href","/aplicacion/cargarFormularioPlanta/"+(parseInt(numeroId)+1)+"/0");
 
         if(device.platform == "Android"){
             $("#mainCrearPunto").css({"height": "90%",
@@ -530,13 +585,13 @@ $.mvc.controller.create("aplicacion", {
         }
 
 
-        autocompletadoEspecies("autocompletado"+numeroId);
+        autocompletadoEspecies("autocompletado"+numeroId,true);
 
 
     },
 
     cargarFormularioItem:function(numeroId){
-        var divItem = $("<div id='item"+numeroId+"' class='divRecolectables'/>");
+        var divItem = $("<div id='item"+numeroId+"' name='item' class='divRecolectables'/>");
         $("#datosPlantas").append(divItem);
         $.mvc.route("aplicacion/seleccionarEjemplar/"+numeroId);
         $("#botonAgregarItem").attr("href","/aplicacion/cargarFormularioItem/"+(parseInt(numeroId)+1));
@@ -551,6 +606,28 @@ $.mvc.controller.create("aplicacion", {
                         autoEnable:true
                     });
             },1000);
+        }
+    },
+
+    verPuntos:function(){
+        if(transectaActiva != null){
+            $("#vistaPuntos").html($.template('js/vista/vistaPuntos.tpl',{transecta:transectaActiva,visitas:transectaActiva.get("visitas")}));
+
+//                activarSliderPuntosVisita("visita"+transectaActiva.get("visitas")[0].get("fecha"),10,"sliderPuntosVisita",1);
+//                activarSliderPuntosVisita("vistaPuntos",26,"sliderVisita",0);
+            SlidersManager.vaciar();
+            SlidersManager.agregarSlider("visita"+transectaActiva.get("visitas")[0].get("fecha"),11,"sliderPuntosVisita",10,function(){});
+            SlidersManager.agregarSlider("vistaPuntos",transectaActiva.get("visitas").length,"sliderVisita",26,function(slid,siguiente){
+                console.log("manager:");
+                console.log(SlidersManager);
+                console.log(slid);
+                var idVisitaPunto = $(siguiente.find(".contenedorPuntosVisita")[0]).attr("id");
+                console.log(idVisitaPunto);
+                SlidersManager.agregarSlider(idVisitaPunto,11,"sliderPuntosVisita",10,function(){});
+            });
+/*            for(var i=1; i<transectaActiva.get("visitas").length;i++){
+                SlidersManager.agregarSlider("visita"+transectaActiva.get("visitas")[i].get("fecha"),11,"sliderPuntosVisita",10);
+            }    */
         }
     }
 });

@@ -9,8 +9,11 @@
     <div class="headerElemento headerPlanta">
         Planta
     </div>
+
+
     Toques
-    <input name="toquesPlanta" type="number" placeholder="toques">
+    <input name="toquesPlanta" type="number" placeholder="toques" {{ if(it.conToques != 0){  }}
+     value="0" disabled {{ } else{ }} value="1" {{ } }}>
     <br>
     <br>
     <span>Especie</span>

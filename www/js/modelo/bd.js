@@ -21,20 +21,41 @@ function vaciarBD(){
 
 function popularBD(){
     createTablas();
-    createTablasPlantas();
     createTablasMetodoTrabajo();
+    createTablasPlantas();
     cargarInstancias();
 }
 
 function cargarInstancias(){
         db.transaction(function(t){
-            t.executeSql("INSERT INTO TipoPropiedad('nombre','idRango','idEnumerado') values('Alfanumerico',NULL,NULL);", [],
+            t.executeSql("INSERT INTO TipoPropiedad('id','nombre','idRango','idEnumerado') values(1,'Alfanumerico',NULL,NULL);", [],
             function (t, data) {
                 //data.insertId
             },null);
         });
         db.transaction(function(t){
-            t.executeSql("INSERT INTO TipoPropiedad('nombre','idRango','idEnumerado') values('Numerico',NULL,NULL);", [],
+            t.executeSql("INSERT INTO TipoPropiedad('id','nombre','idRango','idEnumerado') values(2,'Numerico',NULL,NULL);", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO Propiedad('id','nombre','descripcion','idTipoPropiedad') values(1,'Nota','Agregue aqui sus ideas',1);", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO TipoEjemplar('id','nombre','descripcion') values(1,'Nota','una Nota');", [],
+            function (t, data) {
+                //data.insertId
+            },null);
+        });
+
+        db.transaction(function(t){
+            t.executeSql("INSERT INTO TipoEjemplarPropiedad('idTipoEjemplar','idPropiedad') values(1,1);", [],
             function (t, data) {
                 //data.insertId
             },null);
@@ -169,6 +190,10 @@ $
         t.executeSql('CREATE TABLE IF NOT EXISTS Visita(idTransecta INTEGER NOT NULL ,fecha INT NOT NULL,FOREIGN KEY (idTransecta) REFERENCES Transecta(id), PRIMARY KEY (idTransecta,fecha));', [], null, null);
     });
 
+    db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS Punto(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, idTransecta INTEGER NOT NULL, fecha INT NOT NULL, coordenada TEXT, estadoPunto TEXT NOT NULL, tipoSuelo TEXT NOT NULL, FOREIGN KEY (tipoSuelo) REFERENCES TipoSuelo(nombre),FOREIGN KEY (idTransecta, fecha) REFERENCES Visita(idTransecta,fecha));', [], null, null);
+    });
+
 
     db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS TipoSuelo(nombre TEXT NOT NULL, PRIMARY KEY (nombre));', [], null, null);
@@ -204,7 +229,7 @@ function createTablas(){
     });
 
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS Ejemplar(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,idTipoEjemplar INTEGER NOT NULL,FOREIGN KEY (idTipoEjemplar) REFERENCES TipoEjemplar(id));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS Ejemplar(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,idTipoEjemplar INTEGER NOT NULL,idTransecta INTEGER NOT NULL, idPunto INTEGER,fecha INT NOT NULL, foto TEXT,FOREIGN KEY (idTipoEjemplar) REFERENCES TipoEjemplar(id),FOREIGN KEY (idPunto) REFERENCES Punto(id),FOREIGN KEY(idTransecta,fecha) REFERENCES Visita(idTransecta,fecha));', [], null, null);
     });
 
     db.transaction(function (t) {
@@ -265,7 +290,7 @@ function createTablasPlantas(){
     });
 
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS Planta(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nombreEspecie TEXT NOT NULL, toques INTEGER NOT NULL, altura INTEGER NOT NULL, FOREIGN KEY (nombeEspecie) REFERENCES Especie(nombre));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS Planta(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, idTransecta INTEGER NOT NULL, fecha INT NOT NULL,idPunto INTEGER, nombreEspecie TEXT NOT NULL, estadoFenologico TEXT, toques INTEGER NOT NULL, foto TEXT, FOREIGN KEY (nombreEspecie) REFERENCES Especie(nombre),FOREIGN KEY(idTransecta,fecha) REFERENCES Visita(idTransecta,fecha),FOREIGN KEY (idPunto) REFERENCES Punto(id));', [], null, null);
     });
 }
 

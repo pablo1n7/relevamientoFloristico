@@ -51,5 +51,4 @@ remover = function(elem){
 </div>
 <div class="divBoton" >
     <a name="crearTipo" class="anchorBoton" href="/aplicacion/crearTipoEjemplar">Crear Tipo</a>
-    <a name= "crearEjemplar" class="anchorBoton" href="/aplicacion/seleccionarEjemplar">Crear Ejemplar</a>
 </div>

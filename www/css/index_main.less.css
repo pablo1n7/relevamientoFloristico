@@ -663,3 +663,8 @@ body:not(#afui) .upage-outer {
     min-height: 100px;
   }
 }
+@media all {
+  #afui .gauge {
+    max-height: 200px;
+  }
+}

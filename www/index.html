@@ -39,6 +39,9 @@
         <link rel="stylesheet" type="text/css" href="css/ui.css">
         <link rel="stylesheet" type="text/css" href="css/autosuggest_inquisitor.css">
 
+        <link rel="stylesheet" type="text/css" href="css/alertify/alertify.core.css">
+        <link rel="stylesheet" type="text/css" href="css/alertify/alertify.default.css">
+
         <!-- IMPORTANT: Do not include your weinre script tag as part of your release builds! -->
         <!-- Place your remote debugging (weinre) script URL from the Test tab here, if it does not work below -->
         <!-- <script src="http://debug-software.intel.com/target/target-script-min.js#insertabiglongfunkynumberfromthexdkstesttab"></script> -->
@@ -74,6 +77,7 @@
         <script src="js/modelo/tipoEjemplar.js"></script>
         <script src="js/modelo/ejemplar.js"></script>
         <script src="js/modelo/ejemplarEspecie.js"></script>
+        <script src="js/modelo/planta.js"></script>
         <script src="js/modelo/punto.js"></script>
         <script src="js/modelo/visita.js"></script>
         <script src="js/modelo/transecta.js"></script>
@@ -92,6 +96,19 @@
         <script type="application/javascript" src="js/af_subpage.js"></script>
 
         <script src="http://debug-software.intel.com/target/target-script-min.js#1qZqV32IHqTmzalwoZey_WC3gTlNcpCSuXFUmbGSXZU"></script>
+
+        <!--
+            You may substitute jQuery for the App Framework selector library.
+            See http://app-framework-software.intel.com/documentation.php#afui/afui_jquery
+        -->
+        <script type="application/javascript" src="justgage/js/raphael.min.js"></script>
+        <script type="application/javascript" src="justgage/js/justgage.min.js"></script>
+        <script type="application/javascript" src="justgage/gauges.js"></script>
+
+        <script type="application/javascript" src="js/alertify.min.js"></script>
+
+
+
 
     </head>
 
@@ -127,10 +144,11 @@
                                     <div class="widget-container right-receptacle"></div>
                                     <div id="main">
 
-                            <div id="crearPunto" style="display:none;">
-                                <div id="mainCrearPunto"></div>
-                            </div>
-                                        <p>This is the view for the first Tab.</p>
+                                        <div id="crearPunto" style="display:none;">
+                                            <div id="mainCrearPunto"></div>
+                                        </div>
+
+                                        <div id="mainSeguimiento"></div>
 
                                     </div>
                                 </div><span class="uib_shim"></span>
@@ -144,7 +162,7 @@
                     <div class="grid grid-pad urow uib_row_15 row-height-15" data-uib="layout/row" data-ver="0">
                         <div class="col uib_col_15 col-0_12-12" data-uib="layout/col" data-ver="0">
                             <div class="widget-container content-area vertical-col">
-                                <div id="mainCrearTransecta"> </div>
+                                <div id="mainCrearTransecta"></div>
                                 <span class="uib_shim"></span>
                             </div>
                         </div>
@@ -291,7 +309,7 @@
                             <div class="widget-container content-area vertical-col">
 
                                 <ul class="list widget uib_w_10 d-margins" data-uib="app_framework/listview" data-ver="1">
-                                    <li class="widget uib_w_11" data-uib="app_framework/listitem" data-ver="1"><a class="" href="/aplicacion/listaTipoEjemplares"><i class="fa fa-file-text"></i>Tipos de Ejemplares Recolectables</a>
+                                    <li class="widget uib_w_11" data-uib="app_framework/listitem" data-ver="1"><a class="" href="/aplicacion/listaTipoEjemplares"><i class="fa fa-file-text"></i>Tipos de Ejemplares</a>
                                     </li>
                                     <li class="widget uib_w_12" data-uib="app_framework/listitem" data-ver="1">
                                         <a href="/aplicacion/listaEspecies">
@@ -319,7 +337,11 @@ Familia</a>
                                     <div class="widget-container left-receptacle"></div>
                                     <div class="widget-container right-receptacle"></div>
                                     <div>
-                                        <p>This is the view for the third Tab.</p>
+
+                                        <div id="vistaPuntos"></div>
+
+
+
                                     </div>
                                 </div><span class="uib_shim"></span>
                             </div>

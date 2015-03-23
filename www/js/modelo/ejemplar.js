@@ -3,9 +3,10 @@ var Y = Y || YUI();
 Y.add('ejemplarModelo',function(Y){
     Y.Ejemplar = Y.Base.create('Ejemplar', Y.Model, [],{
 
-            save:function(callback){
+            save:function(visita,idPunto){
                 var _this = this;
-                var q = "INSERT INTO Ejemplar('idTipoEjemplar') values("+this.get("tipoEjemplar").get("id")+");";
+                var idPunto = idPunto || "NULL";
+                var q = "INSERT INTO Ejemplar('idTipoEjemplar','idTransecta','fecha','idPunto','foto') values("+this.get("tipoEjemplar").get("id")+","+visita.get("idTransecta")+","+visita.get("fecha")+","+idPunto+",'"+_this.get("foto")+"');";
                 db.transaction(function(t){
                     t.executeSql(q, [],
                     function (t, data) {
@@ -13,7 +14,6 @@ Y.add('ejemplarModelo',function(Y){
                         _this.get("valores").map(function(valor){
                             valor.save(data.insertId);
                         });
-                        callback();
                     },null);
                 });
             },
@@ -56,7 +56,11 @@ Y.add('ejemplarModelo',function(Y){
                 },
                 tipoEjemplar:{
                     value: null
+                },
+                foto:{
+                    value: ""
                 }
+
             }
         }
     );
