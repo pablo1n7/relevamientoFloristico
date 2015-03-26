@@ -191,6 +191,10 @@ $
     });
 
     db.transaction(function (t) {
+        t.executeSql('CREATE TABLE IF NOT EXISTS VisitaFoto(nombreFoto TEXT NOT NULL,idTransecta INTEGER NOT NULL ,fecha INT NOT NULL,FOREIGN KEY (idTransecta) REFERENCES Visita(idTransecta),FOREIGN KEY (fecha) REFERENCES Visita(fecha), PRIMARY KEY (idTransecta,fecha,nombreFoto));', [], null, null);
+    });
+
+    db.transaction(function (t) {
         t.executeSql('CREATE TABLE IF NOT EXISTS Punto(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, idTransecta INTEGER NOT NULL, fecha INT NOT NULL, coordenada TEXT, estadoPunto TEXT NOT NULL, tipoSuelo TEXT NOT NULL, FOREIGN KEY (tipoSuelo) REFERENCES TipoSuelo(nombre),FOREIGN KEY (idTransecta, fecha) REFERENCES Visita(idTransecta,fecha));', [], null, null);
     });
 

@@ -9,11 +9,9 @@
             </div>
         </div>
         <div id="imagenesVisita" class="imagenesVisita">
-            <div class="imgRecolectable">IMG de Visita 1</div>
-            <div class="imgRecolectable">IMG de Visita 2</div>
-            <div class="imgRecolectable">IMG de Visita 3</div>
-            <div class="imgRecolectable">IMG de Visita 4</div>
-            <div class="imgRecolectable">IMG de Visita 5</div>
+        {{ for(var k=0; k<it.transecta.get('visitas')[j].get('imagenes').length;k++){ }}
+            <div onclick="verImagen('{{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}}',null,true);" class="imgRecolectable" style="background-position: 50% 50%;background-size: cover;background-image:url({{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}})"></div>
+        {{ } }}
         </div>
 
         <div id="adjuntosAVisita" class="imagenesVisita">

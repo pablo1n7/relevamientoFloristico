@@ -607,11 +607,76 @@ footer .button{
 }
 
 
+.imgRecolectable:hover{
+  -webkit-animation-duration: 1s;
+  -webkit-animation-timing-function: ease;
+  -webkit-animation-fill-mode: both;
+  -webkit-animation-name: tada;
+  -moz-animation-duration: 1s;
+  -moz-animation-timing-function: ease;
+  -moz-animation-fill-mode: both;
+  -moz-animation-name: tada;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+  animation-fill-mode: both;
+  animation-name: tada;
+}
 
 
 
+/*Radar*/
 
+.contenedorRadar {
+    position: relative;
+    width: 100%;
+    background-color:#FFF8F0;
+    margin: 60px auto;
+}
+.cuadro {
+	position: relative;
+  	float: left;
+   	font-size: 5px;
+    position: relative;
+    background-color: #084b00;
+    border: 1px solid black;
+}
 
+.cuadroZoomOut{
+	width: 10%;
+    height: 46px;
+}
+
+.cuadroZoomIn{
+	width: 20%;
+    height: 96px;
+}
+
+#objetivo{
+	background-color: rgba(255, 255, 0, 0.9);
+    border-radius: 10px;
+    height: 10px;
+    width: 10px;
+    position: absolute;
+}
+
+.persona{
+	background-image: url("../img/posicionActual.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+
+}
+
+#radar{
+    /*background-image: url("../img/marcoRadar.png");*/
+    background-image: url("../img/radarSombra.png");
+    background-repeat: no-repeat;
+    height: 500px;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+    background-size: contain;
+    overflow: auto;
+}
 
 
 

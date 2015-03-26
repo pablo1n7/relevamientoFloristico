@@ -124,21 +124,25 @@ function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
 }
 
 function mensajeExitoso(mensaje){
-    $.ui.popup( {
+    /*$.ui.popup( {
        title:"<div class='icon check exito' >Éxito</div>",
        message:mensaje,
        cancelText:"Aceptar",
        cancelOnly:true
     });
+    */
+    alertify.success(mensaje);
 }
 
 function mensajeError(mensaje){
-    $.ui.popup( {
+    /*$.ui.popup( {
        title:"<div class='icon warning error' >Error</div>",
        message:mensaje,
        cancelText:"Aceptar",
        cancelOnly:true
-    });
+    });*/
+    alertify.error(mensaje);
+
 }
 
 function obtenerValoresBD(nombreTabla,arreglo){
@@ -238,7 +242,7 @@ function tomarFoto(callback){
 }
 
 
-function verImagen(urlImg,elemento,noEliminable){
+function verImagen(urlImg,elemento,noEliminable,callback){
     var noEliminable = (noEliminable) ? noEliminable:false;
     var divFoto = $('<div id="visorImagen" class="visorImagen"/>');
     divFoto.append('<div class="widget-container content-area horiz-area wrapping-col iconosFoto iconoX"><span class="icon close" onclick="$(this.parentElement).parent().parent().remove();"></span></div>');
@@ -246,7 +250,11 @@ function verImagen(urlImg,elemento,noEliminable){
     divFoto.append(imagen);
     if(!noEliminable){
         var otroDiv = $('<div class="widget-container content-area horiz-area wrapping-col iconosFoto contenedorTrash"><span class="icon trash"></span></div>')
-        otroDiv.click(function(){confirmarEliminado(otroDiv,elemento)});
+        otroDiv.click(function(){
+            var avisoTitulo = "Aviso";
+            var avisoMensaje = "Esta seguro que desea eliminar esta imagen?";
+            mensajeConfirmacion(avisoTitulo,avisoMensaje,function(){otroDiv.parent().parent().remove();callback(elemento);},function(){});
+        });
         divFoto.append(otroDiv);
     }
     $("body").append('<div id="divFondoImagen" class="divAyuda"/>');
@@ -265,11 +273,11 @@ function eliminarFoto(elemento){
 }
 
 
-function confirmarEliminado(botonEliminar,elemento){
+/*function confirmarEliminado(botonEliminar,elemento){
     var avisoTitulo = "Aviso";
     var avisoMensaje = "Esta seguro que desea eliminar esta imagen?";
-    mensajeConfirmacion(avisoTitulo,avisoMensaje,function(){botonEliminar.parent().parent().remove();eliminarFoto(elemento);},function(){});
-}
+    mensajeConfirmacion(avisoTitulo,avisoMensaje,function(){botonEliminar.parent().parent().remove();callback(elemento);},function(){});
+}*/
 
 
 function eliminarRecolectable(spanX){
@@ -292,7 +300,7 @@ function eliminarImagenes(){
     }
 
     $.ui.hideModal();
-    $("#botonCerrarModal").remove();
+    //$("#botonCerrarModal").remove();
 }
 
 
@@ -372,6 +380,7 @@ function activarSliderPuntosVisita(idContenedorVisita, desplazamiento,claseHijos
     var contenedores = divContenedor.find("."+claseHijos);
     propiedades = $(contenedores[0]).offset();
     divContenedor.css({height:propiedades.height});
+    var contenedores = divContenedor.find("."+claseHijos);
     var cantSliders = contenedores.length;
     for(var i=1;i<cantSliders;i++){
         $(contenedores[i]).css({marginTop:-propiedades.height,left:propiedades.left+screen.width});
@@ -446,10 +455,10 @@ function correrDerecha(divContenedor,cantidadContenedores,claseHijos,indice,desp
 var SlidersManager = function(){
     var objetosSliders = [];
 
-    this.agregarSlider = function(idDivContenedor,cantidadContenedores,claseHijos,desplazamiento,callback){
+    this.agregarSlider = function(idDivContenedor,claseHijos,desplazamiento,callback){
         var slid = objetosSliders.filter(function(s){return s.id==idDivContenedor});
         if(slid.length == 0){
-            objetosSliders.push(new Slider(idDivContenedor,cantidadContenedores,claseHijos,desplazamiento,callback));
+            objetosSliders.push(new Slider(idDivContenedor,claseHijos,desplazamiento,callback));
         }
     };
 
@@ -467,28 +476,34 @@ var SlidersManager = function(){
 
 }();
 
-var Slider = function(idSlider,cantidadContenedores,claseHijos,desplazamiento,callback){
+var Slider = function(idSlider,claseHijos,desplazamiento,callback){
     this.id = idSlider;
-    this.cantidadContenedores = cantidadContenedores;
     this.objetosMoviles = claseHijos;
     this.desplazamiento = desplazamiento;
     this.indice = 0;
     this.callback = callback;
+    this.cantidadContenedores = $("#"+this.id).find("."+this.objetosMoviles).length;
 
 
     this.izquierda = function(){
-        if(this.indice < this.cantidadContenedores){
+        if(this.indice+1 < this.cantidadContenedores){
             var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
             var cont1 = $(contenedores[this.indice]);
-            cont1.css3Animate({
+            var desp = cont1.offset().left;
+            /*cont1.css3Animate({
                     x: -(screen.width + (screen.width/this.desplazamiento)),
                     time: "500ms",
                     previous: true
-                });
+                });*/
+            cont1.animateCss({x:-(screen.width),y:"0",duration:"500",easing:"easeOutSine"}).start();
             this.indice++;
             var cont2 = $(contenedores[this.indice]);
             var _this = this;
-            cont2.css3Animate({
+            cont2.animateCss({x:0,y:"0",duration:"500",easing:"easeOutSine"}).start();
+            setTimeout(function(){
+                _this.callback(_this,cont2);
+            },300);
+            /*cont2.css3Animate({
                         x: -(screen.width + (screen.width/this.desplazamiento)),
                         time: "500ms",
                         previous: true,
@@ -498,7 +513,7 @@ var Slider = function(idSlider,cantidadContenedores,claseHijos,desplazamiento,ca
                             $("#vistaPuntos").addClass("oculto");
                             $("#vistaPuntos").removeClass("oculto");
                         }
-            });
+            });*/
         }
     };
 
@@ -506,15 +521,18 @@ var Slider = function(idSlider,cantidadContenedores,claseHijos,desplazamiento,ca
         if(this.indice > 0){
             var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
             var cont1 = $(contenedores[this.indice]);
-            cont1.css3Animate({
+           /* cont1.css3Animate({
                     x: (screen.width + (screen.width/this.desplazamiento)),
                     time: "500ms",
                     previous: true
-                });
+                });*/
+            //cont1.animateCss({x:screen.width+(screen.width/this.desplazamiento),y:"0",duration:"500",easing:"easeOutSine"}).start();
+            var desp = cont1.offset().left;
+            cont1.animateCss({x:screen.width,y:"0",duration:"500",easing:"easeOutSine"}).start();
             this.indice--;
             var cont2 = $(contenedores[this.indice]);
             var _this = this;
-            cont2.css3Animate({
+           /* cont2.css3Animate({
                         x: (screen.width + (screen.width/this.desplazamiento)),
                         time: "500ms",
                         previous: true,
@@ -522,7 +540,9 @@ var Slider = function(idSlider,cantidadContenedores,claseHijos,desplazamiento,ca
                             $("#vistaPuntos").addClass("oculto");
                             $("#vistaPuntos").removeClass("oculto");
                         }
-                    });
+                    });*/
+            cont2.animateCss({x:0,y:"0",duration:"500",easing:"easeOutSine"}).start();
+            //cont2.animateCss({x:screen.width+(screen.width/this.desplazamiento),y:"0",duration:"500",easing:"easeOutSine"}).start();
         }
     };
 
@@ -532,7 +552,8 @@ var Slider = function(idSlider,cantidadContenedores,claseHijos,desplazamiento,ca
     divContenedor.css({height:propiedades.height});
     var cantSliders = contenedores.length;
     for(var i=1;i<cantSliders;i++){
-        $(contenedores[i]).css({marginTop:-propiedades.height,left:propiedades.left+screen.width});
+        $(contenedores[i]).css({marginTop:-propiedades.height});
+        $(contenedores[i]).animateCss({x:screen.width,y:"0",duration:"0",easing:"easeOutSine"}).start();
     }
     var _this = this;
     $("#"+this.id).bind("swipeLeft",function(e){
@@ -561,6 +582,149 @@ var Slider = function(idSlider,cantidadContenedores,claseHijos,desplazamiento,ca
 
 
 
+function asociarItemVisita(){
+    var item = recolectarItem($("#recolectableVisita").find("[name|=item]")[0]);
+    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("items").push(item);
+    $.ui.hideModal();
+    mensajeExitoso("Item Recolectado");
+}
+
+function recolectarItem(item){
+    var campos = $(item).find(".input-group");
+    var foto = $(campos[0]).find("[name|=imgUrl]")[0].innerHTML || "";
+    var nombreTipoEjemplar = $($(campos[0]).find("[name|=tipoEjemplares]")[0]).val();
+    var tipoEjemplar = tipoEjemplares.filter(function(tE){return tE.get("nombre")== nombreTipoEjemplar})[0];
+    var ejemplar = new Y.Ejemplar({"tipoEjemplar":tipoEjemplar,"foto":foto});
+    ejemplar.crearCampos(tipoEjemplar.get("campos"));
+    ejemplar.completarCampos(campos.slice(1,campos.length));
+
+    return ejemplar;
+}
+
+function asociarPlantaVisita(){
+    var planta = recolectarPlanta($("#recolectableVisita").find("[name|=planta]")[0]);
+    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("items").push(planta);
+    $.ui.hideModal();
+    mensajeExitoso("Planta Recolectada");
+}
+
+function recolectarPlanta(planta){
+    var campo = $($(planta).find(".input-group")[0]);
+    var foto = campo.find("[name|=imgUrl]")[0].innerHTML || "";
+    var toques = campo.find("[name|=toquesPlanta]")[0].value;
+    var nombreEspecie = campo.find("[name|=especie]")[0].value;
+    var planta = new Y.Planta({"especie":nombreEspecie,"toques":toques,"foto":foto});
+
+    return planta;
+}
 
 
 
+var Radar = function(idContenedor,cantidad){
+
+		this.estadoZoom = 0;
+		this.contenedor = $("#"+idContenedor);
+		this.cantidad = cantidad;
+        this.idIntervalo=-1;
+		_this = this;
+
+		this.agregarCuadro = function(clase){
+			var cuadro = $('<div class="cuadro '+clase+'"></div>');
+			_this.contenedor.append(cuadro);
+            cuadro.css({height:cuadro.offset().width+"px"});
+		}
+		this.crearCuadricula = function(clase,cantidad){
+			_this.contenedor.empty();
+			for (var i = 0; i < cantidad; i++) {
+				_this.agregarCuadro(clase);
+			};
+            $("#radar").css({height:_this.contenedor.offset().width+"px"});
+            _this.contenedor.css({height:_this.contenedor.offset().width+"px"});
+		};
+
+		this.zoom = function(){
+			if(_this.estadoZoom == 0){
+				_this.zoomIn();
+				_this.estadoZoom = _this.estadoZoom+1;
+			}
+			else{
+				_this.zoomOut();
+				_this.estadoZoom = _this.estadoZoom-1;
+			}
+		}
+
+		this.zoomIn = function(){
+			_this.crearCuadricula("cuadroZoomIn",(parseInt(25)));
+		}
+
+		this.zoomOut = function(){
+			_this.crearCuadricula("cuadroZoomOut",_this.cantidad);
+		}
+
+		this.crearCuadricula("cuadroZoomOut",_this.cantidad);
+		$("#radar").click(function(){
+			_this.zoom();
+		});
+
+        this.detener= function(){
+            clearInterval(_this.idIntervalo);
+        };
+
+		this.marcarObjetivo = function(angulo,distancia){
+            var x0 = 500;
+            var y0 = 500;
+            var porcentaje = 10;
+
+/*            var x1 = ((Math.cos(angulo)*distancia)+x0)/porcentaje;
+            var y1 = ((Math.sin(angulo)*distancia)+y0)/porcentaje;*/
+
+            var x1 = (((Math.cos(angulo)*distancia)*(_this.estadoZoom+1))+x0)/porcentaje;
+            var y1 = (((Math.sin(angulo)*distancia)*(_this.estadoZoom+1))+y0)/porcentaje;
+
+            x1--;
+            y1--;
+            console.log(x1);
+            console.log(y1);
+
+           if(_this.contenedor.find("#objetivo").length!=0){
+               $("#objetivo").remove();
+               //clearInterval(_this.idIntervalo);
+
+           }
+			_this.contenedor.append("<div id='objetivo'/>");
+            $("#objetivo").css({marginLeft:x1+"%",marginTop:y1+"%"});
+			intermitente = 3;
+            if(_this.idIntervalo==-1){
+                _this.idIntervalo = setInterval(function(){
+                    intermitente++;
+                    if (intermitente == 8){
+                        intermitente=3;
+                        intel.xdk.player.playSound("/sonidos/bipRadar.mp3");
+                    }
+                    var color= "rgba(255,255,0,0."+intermitente+")";
+                    $("#objetivo").css({backgroundColor:color});
+                },200);
+            }
+		}
+
+		this.marcarCentro = function(){
+			$(_this.contenedor.find(".cuadro")[parseInt(_this.cantidad/2)]).addClass("persona");
+
+		}
+
+	}
+
+function asignarFuncionCierreModal(callback){
+
+    var botonClose = $($("a.close")[0]);
+    var nuevoBoton = $("<div id='botonCerrarModal'>");
+    nuevoBoton.css({'background-color':'rgba(0,0,0,0)','position':'absolute','zIndex':'3'});
+    nuevoBoton.css(botonClose.offset());
+    $("#modalHeader").append(nuevoBoton);
+    nuevoBoton.click(function(){
+        $("#botonCerrarModal").remove();
+        callback();
+    });
+
+
+}

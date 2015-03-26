@@ -41,7 +41,7 @@
                                     $($(_this).parent().find('[name|=verFoto]')[0]).removeClass('oculto');
                                   $($(_this).parent().find('[name|=verFoto]')[0]).unbind();
                                     $($(_this).parent().find('[name|=verFoto]')[0]).click(function(){
-                                        verImagen(urlImg,_this);
+                                        verImagen(urlImg,_this,false,eliminarFoto);
                                         $(_this).removeClass('desenlazar');
                                     });
 

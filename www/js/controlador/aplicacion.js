@@ -1,9 +1,9 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl'], //These are the views we will use with the controller
     init:function(){
 
         popularBD();
-        CANTIDAD_PUNTOS = 28;
+        CANTIDAD_PUNTOS = 2;
         tipoEjemplares=[];
         familias = [];
         especies = [];
@@ -149,7 +149,7 @@ $.mvc.controller.create("aplicacion", {
             $.ui.hideMask();
             tipoEjemplares.push(tipoEjemplar);
             $.mvc.route("aplicacion/listaTipoEjemplares");
-            mensajeExitoso("El tipo ejemplar ha sido agregado con éxito");
+            mensajeExitoso("Tipo Ejemplar Creado");
 
         });
 
@@ -208,12 +208,12 @@ $.mvc.controller.create("aplicacion", {
                 tipoEjemplar.delete(function(){
                     $.ui.hideMask();
                     tipoEjemplares.splice(tipoEjemplares.indexOf(tipoEjemplar),1);
-                    mensajeExitoso("El tipo ejemplar ha sido eliminado con Éxito");
+                    mensajeExitoso("Tipo Ejemplar eliminado");
                     $.mvc.route("aplicacion/listaTipoEjemplares");
                 },function(){
                     console.log("fallo");
                     $.ui.hideMask();
-                    mensajeError("El tipo ejemplar no puede ser eliminado: Tiene asociados ejemplares recolectados.");
+                    mensajeError("Ejemplares Asociados");
                     $.mvc.route("aplicacion/verTipoEjemplar/"+idTipoEjemplar);
 
 
@@ -253,11 +253,11 @@ $.mvc.controller.create("aplicacion", {
         familia.save(function(){
             $.ui.hideMask();
             familias.push(familia);
-            mensajeExitoso("La familia ha sido agregado con éxito");
+            mensajeExitoso("Familia Creada");
             $.mvc.route("aplicacion/listaFamilias");
         },function(){
             $.ui.hideMask();
-            mensajeError("Error al guardar familia: Ya se encuentra una familia registrada con ese nombre.");
+            mensajeError("Familia Duplicada");
         });
 
     },
@@ -290,11 +290,11 @@ $.mvc.controller.create("aplicacion", {
         especie.save(function(){
             $.ui.hideMask();
             especies.push(especie);
-            mensajeExitoso("La especie ha sido agregado con éxito");
+            mensajeExitoso("Especie Creada");
             $.mvc.route("aplicacion/listaEspecies");
         },function(){
             $.ui.hideMask();
-            mensajeError("Error al guardar especie: Ya se encuentra una especie registrada con ese nombre.");
+            mensajeError("Especie Duplicada");
         });
 
     },
@@ -356,7 +356,7 @@ $.mvc.controller.create("aplicacion", {
          $.ui.showMask('Guardando...');
         campania.save(function(){
             $.ui.hideMask();
-            mensajeExitoso("La campaña ha sido agregado con éxito");
+            mensajeExitoso("Campaña Creada");
             $.mvc.route("aplicacion/listaCampanias");
             campañas.push({nombre: campania.get("nombre"),fecha:campania.get("fecha")});
             $("#mainCampañas").html($.template('js/vista/listaCampania.tpl',{campanias:campañas}));
@@ -474,7 +474,7 @@ $.mvc.controller.create("aplicacion", {
             $.ui.hideMask();
             campañaActiva.get("transectas").push(transecta);
 
-            mensajeExitoso("La transecta ha sido agregado con éxito");
+            mensajeExitoso("Transecta Creada");
             //$.mvc.route("aplicacion/listaCampanias");
             $.mvc.route("aplicacion/activarTransecta/"+transecta.get("id"));
 
@@ -515,25 +515,24 @@ $.mvc.controller.create("aplicacion", {
         var items = $("#datosPlantas").find("[name|=item]");
         punto = new Y.Punto({"estado":estadoAguja,"suelo":tipoSuleo});
         for(var i=0;i<items.length;i++){
+            punto.get("items").push(recolectarItem(items[i]));
             //var unItem = new Y.Ejemplar({"tipo":});
-            var campos = $(items[i]).find(".input-group");
+
+            /*var campos = $(items[i]).find(".input-group");
             var foto = $(campos[0]).find("[name|=imgUrl]")[0].innerHTML || "";
             var nombreTipoEjemplar = $($(campos[0]).find("[name|=tipoEjemplares]")[0]).val();
             var tipoEjemplar = tipoEjemplares.filter(function(tE){return tE.get("nombre")== nombreTipoEjemplar})[0];
             var ejemplar = new Y.Ejemplar({"tipoEjemplar":tipoEjemplar,"foto":foto});
             ejemplar.crearCampos(tipoEjemplar.get("campos"));
             ejemplar.completarCampos(campos.slice(1,campos.length));
-            //ejemplar.save(function(){console.log("Ejemplar Guardado con Exito")});
             punto.get("items").push(ejemplar);
+            */
+
+            //ejemplar.save(function(){console.log("Ejemplar Guardado con Exito")});
         }
 
         for(var i=0;i<plantas.length;i++){
-            var campo = $($(plantas[i]).find(".input-group")[0]);
-            var foto = campo.find("[name|=imgUrl]")[0].innerHTML || "";
-            var toques = campo.find("[name|=toquesPlanta]")[0].value;
-            var nombreEspecie = campo.find("[name|=especie]")[0].value;
-            var planta = new Y.Planta({"especie":nombreEspecie,"toques":toques,"foto":foto});
-            punto.get("items").push(planta);
+            punto.get("items").push(recolectarPlanta(plantas[i]));
         }
          /*$.ui.showMask('Guardando...');*/
         var cantPuntos = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
@@ -545,24 +544,12 @@ $.mvc.controller.create("aplicacion", {
         justgageCampania.refresh((valorTemporal+0.1).toFixed(1));
         transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
         $.ui.hideModal();
-        /*punto.save(transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1],function(unPunto){
-            $.ui.hideMask();
-            $.ui.hideModal();
-            transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").push(unPunto);
-            console.log("GuARDO PUNTO");
-        });*/
-
 
     },
 
     creacionPunto:function(opcion){
         $("#mainCrearPunto").html($.template('js/vista/recolectarPunto.tpl',{opcion:parseInt(opcion),estadoPunto:estadoPunto[opcion],suelos:tiposSuelos}));
-        var botonClose = $($("a.close")[0]);
-        var nuevoBoton = $("<div id='botonCerrarModal'>");
-        nuevoBoton.css({'background-color':'rgba(0,0,0,0)','position':'absolute','zIndex':'3'});
-        nuevoBoton.css(botonClose.offset());
-        $("#modalHeader").append(nuevoBoton);
-        nuevoBoton.click(eliminarImagenes);
+        asignarFuncionCierreModal(eliminarImagenes);
         $.mvc.route("aplicacion/cargarFormularioPlanta/1/"+opcion);
     },
 
@@ -616,18 +603,87 @@ $.mvc.controller.create("aplicacion", {
 //                activarSliderPuntosVisita("visita"+transectaActiva.get("visitas")[0].get("fecha"),10,"sliderPuntosVisita",1);
 //                activarSliderPuntosVisita("vistaPuntos",26,"sliderVisita",0);
             SlidersManager.vaciar();
-            SlidersManager.agregarSlider("visita"+transectaActiva.get("visitas")[0].get("fecha"),11,"sliderPuntosVisita",10,function(){});
-            SlidersManager.agregarSlider("vistaPuntos",transectaActiva.get("visitas").length,"sliderVisita",26,function(slid,siguiente){
+            SlidersManager.agregarSlider("visita"+transectaActiva.get("visitas")[0].get("fecha"),"sliderPuntosVisita",10,function(){});
+            SlidersManager.agregarSlider("vistaPuntos","sliderVisita",26,function(slid,siguiente){
                 console.log("manager:");
                 console.log(SlidersManager);
                 console.log(slid);
                 var idVisitaPunto = $(siguiente.find(".contenedorPuntosVisita")[0]).attr("id");
                 console.log(idVisitaPunto);
-                SlidersManager.agregarSlider(idVisitaPunto,11,"sliderPuntosVisita",10,function(){});
+                SlidersManager.agregarSlider(idVisitaPunto,"sliderPuntosVisita",10,function(){});
             });
-/*            for(var i=1; i<transectaActiva.get("visitas").length;i++){
-                SlidersManager.agregarSlider("visita"+transectaActiva.get("visitas")[i].get("fecha"),11,"sliderPuntosVisita",10);
-            }    */
         }
+    },
+
+
+    tomarFotoVisita: function(){
+        tomarFoto(function(nombreImagen){
+            verImagen(intel.xdk.camera.getPictureURL(nombreImagen),null,false,function(){
+                intel.xdk.camera.deletePicture(nombreImagen);
+                transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].desasociarImagen(nombreImagen);
+            });
+
+        transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].asociarImagen(nombreImagen);
+
+        });
+
+    },
+
+    relevarRecolectableVisita: function(){
+        $("#mainRelevarRecolectable").html($.template('js/vista/relevarRecolectable.tpl',{}));
+        mostrarModal("#relevarRecolectable","fade","Recolectar");
+
+    },
+
+    cargarFormularioPlantaVisita:function(){
+        $($("#recolectableVisita").get(0).previousSibling).empty();
+        var divPlanta = $("<div id='plantaVisita1' name='planta' class='divRecolectables'/>");
+        $("#recolectableVisita").append(divPlanta);
+        $(divPlanta).html($.template('js/vista/crearPlanta.tpl',{especies:especies,numeroId:"Visita1",conToques:1}));
+        autocompletadoEspecies("autocompletadoVisita1",true);
+        $("#recolectableVisita").append('<div class="divBoton" onclick="asociarPlantaVisita()"><a name="recoletarPlanta" class="anchorBoton">Recolectar Planta</a></div>');
+
+    },
+
+    cargarFormularioItemVisita:function(){
+        $($("#recolectableVisita").get(0).previousSibling).empty();
+        var divItem = $("<div id='itemVisita' name='item' class='divRecolectables'/>");
+        $("#recolectableVisita").append(divItem);
+        $.mvc.route("aplicacion/seleccionarEjemplar/Visita");
+        $("#recolectableVisita").append('<div class="divBoton" onclick="asociarItemVisita()"><a name="recoletarPlanta" class="anchorBoton">Recolectar Item</a></div>');
+    },
+
+    guiarPrimerPunto:function(){
+        $("#mainGuiarPrimerPunto").html($.template('js/vista/guiarPrimerPunto.tpl',{}));
+        mostrarModal("#guiarPrimerPunto","fade","Recolectar");
+        r = new Radar("contenedor",100);
+
+        idIntervaloGps = setInterval(function(){
+            Gps.obtenerPosicion(function(lng,lat){
+
+                navigator.compass.getCurrentHeading(function(dir){
+                    var dist = Gps.distanciaEntrePuntos(lng,lat,-65.2979,-43.2604);
+                    var angulo = Gps.calcularAngulo(lng,lat,-65.2979,-43.2604);
+                    var anguloObservacion = dir.magneticHeading * (Math.PI/180);
+                    angulo = ((angulo) + anguloObservacion) ;
+                   // angulo = angulo - Math.PI - anguloObservacion;
+                    r.marcarObjetivo(-angulo,dist);
+                    $("#distancia").empty();
+                    $("#distancia").append(dist);
+                }, null, null);
+
+            });
+        },7000);
+
+        asignarFuncionCierreModal(function(){
+            clearInterval(idIntervaloGps);
+            r.detener();
+            $.ui.hideModal();
+        });
+
+
     }
+
+
+
 });

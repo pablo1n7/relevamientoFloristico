@@ -12,9 +12,35 @@ Y.add('visitaModelo',function(Y){
                         punto.save(_this,function(unPunto){
                             console.log("GuARDO PUNTO");
                         });
+
+                    });
+                    _this.get("items").map(function(item){
+                        item.save(_this);
+                    });
+
+                    _this.get("imagenes").map(function(nombre){
+                        var q = "INSERT INTO VisitaFoto ('idTransecta','fecha','nombreFoto') values("+idTransecta+","+_this.get("fecha")+",'"+nombre+"');";
+                        db.transaction(function(t){
+                            t.executeSql(q, [],
+                            function (t, data) {
+                            },function(){});
+                    });
+
+
+
+
                     });
                 },null);
             });
+        },
+
+        asociarImagen:function(nombre){
+            this.get("imagenes").push(nombre);
+        },
+
+        desasociarImagen:function(nombre){
+            this.set("imagenes",this.get("imagenes").filter(function(elemento){return elemento != nombre}));
+
         },
 
         almacenarPunto:function(punto){
@@ -39,6 +65,9 @@ Y.add('visitaModelo',function(Y){
                 },
                 items:{
                     value:[]
+                },
+                imagenes:{
+                    value:[]
                 }
             },
         
@@ -53,13 +82,26 @@ Y.add('visitaModelo',function(Y){
                     var visitas = [];
                     for (var i = 0; i < data.rows.length; i++) {
                         var visita = new Y.Visita({"idTransecta":transecta.get("id"),"fecha":data.rows.item(i).fecha});
-                        //puntos.
                         //items y plantas.
                         (function(v){Y.Punto.obtenerPuntosVisita(visita,function(puntos){
                             console.log("Obteniendo Puntos, Items y todo eso");
                             v.set("puntos",puntos);
                         });
                         }(visita));
+
+                        (function(v){
+                               var q = "select * from VisitaFoto where idTransecta="+v.get("idTransecta")+" and fecha="+v.get("fecha")+";";
+                                db.transaction(function (t) {
+                                    t.executeSql(q, null, function (t, data) {
+                                        var imagenes =[];
+                                        for (var i = 0; i < data.rows.length; i++) {
+                                            imagenes.push(data.rows.item(i).nombreFoto);
+                                        };
+                                        v.set("imagenes",imagenes);
+                                    });
+                                });
+                        }(visita));
+
                         visitas.push(visita);
                     };
                     callback(visitas);
