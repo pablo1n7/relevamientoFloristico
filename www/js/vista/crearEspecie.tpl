@@ -1,4 +1,4 @@
-<input name="nombreEspecie" id="nombreEspecie" type="text" placeholder="Nombre Especie">
+<input name="nombreEspecie" id="nombreEspecie" type="text" placeholder="Nombre Especie" patron="^([a-zñáéíóú]+)([a-zñáéíóú0-9 ]+)$" mensaje="Nota: El nombre debe comenzar con letra y no puede estar vacio">
 <div class="input-group">
     <span>Familia</span>
     <select id="familia">

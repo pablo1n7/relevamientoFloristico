@@ -40,19 +40,19 @@ var Gps = (function(){
         var angulo = Math.atan(dividendo / divisor);
         if(divisor>0){
             if(dividendo > 0){
-                console.log("cuadrante 1");
+                //console.log("cuadrante 1");
                 return angulo;
             }else{
-                console.log("cuadrante 4");
+                //console.log("cuadrante 4");
                 return (2*Math.PI)+angulo;
             }
         }else{
             if(dividendo > 0){
-                console.log("cuadrante 2");
+                //console.log("cuadrante 2");
                 return (Math.PI)+angulo;
 
             }else{
-                console.log("cuadrante 3");
+                //console.log("cuadrante 3");
                 return (Math.PI)+angulo;
 
             }
@@ -61,9 +61,6 @@ var Gps = (function(){
     };
 
     var terminarMediciones = function(){
-        navigator.geolocation.clearWatch(watchID);
-        watchID = -1;
-
         var x0=0;
         var y0=0;
 
@@ -82,24 +79,30 @@ var Gps = (function(){
         mediciones = [];
     };
 
+    var pararGps = function(){
+        navigator.geolocation.clearWatch(watchID);
+        watchID = -1;
+    }
 
     var callbackExitoGps= function(position){
         mediciones.push(position.coords);
         //mensajeExitoso(mediciones.length+"-->"+position.coords.latitude+"-->"+position.coords.longitude);
-        if (mediciones.length>5)
+        if (mediciones.length>3)
             terminarMediciones();
+
     };
 
     var callbackErrorGps= function(error){
         mensajeError('code: '    + error.code    + '\n' +
-                'message: ' + error.message + '\n'
-);
+                'message: ' + error.message + '\n');
+
     };
 
 
     var posicion= function(callbackSeguimiento){
         callback = callbackSeguimiento;
-        var options = {timeout: 30000, frecuency:3000 ,enableHighAccuracy: true };
+        var options = {timeout: 15000, frecuency:3000 ,enableHighAccuracy: true };
+        //var options = {timeout: 30000, frecuency:3000 ,enableHighAccuracy: true };
         watchID = navigator.geolocation.watchPosition(callbackExitoGps,callbackErrorGps,options);
         //watchID = intel.xdk.geolocation.watchPosition(callbackExitoGps,callbackErrorGps,{maximumAge: 3000, timeout: 5000, enableHighAccuracy: true});
     };
@@ -109,7 +112,8 @@ var Gps = (function(){
         watchID: watchID,
         mediciones: mediciones,
         distanciaEntrePuntos: dist,
-        calcularAngulo:angulo
+        calcularAngulo:angulo,
+        pararGps: pararGps
     }
 
 

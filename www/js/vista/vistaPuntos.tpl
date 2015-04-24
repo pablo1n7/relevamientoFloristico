@@ -8,24 +8,58 @@
                     Fecha de Visita: {{=new Date(it.transecta.get('visitas')[j].get("fecha")).toLocaleString()}}
             </div>
         </div>
-        <div id="imagenesVisita" class="imagenesVisita">
-        {{ for(var k=0; k<it.transecta.get('visitas')[j].get('imagenes').length;k++){ }}
-            <div onclick="verImagen('{{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}}',null,true);" class="imgRecolectable" style="background-position: 50% 50%;background-size: cover;background-image:url({{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}})"></div>
-        {{ } }}
-        </div>
 
-        <div id="adjuntosAVisita" class="imagenesVisita">
-            <div class="imgRecolectable">ADJ de Visita 1</div>
-            <div class="imgRecolectable">ADJ de Visita 2</div>
-            <div class="imgRecolectable">ADJ de Visita 3</div>
-            <div class="imgRecolectable">ADJ de Visita 4</div>
-            <div class="imgRecolectable">ADJ de Visita 5</div>
+
+
+<div style="width:100%;overflow:hidden;">
+        <div id="imagenesvisita{{=it.transecta.get('visitas')[j].get('fecha')}}" class="imagenesVisita" style="width:100%">
+
+        {{ if(it.transecta.get('visitas')[j].get('imagenes').length == 0){ }}
+
+            <div style="text-align:center; width:100%; margin: 10px;"> No hay Imagenes asociadas</div>
+
+        {{ } }}
+
+        {{ for(var k=0; k<it.transecta.get('visitas')[j].get('imagenes').length;k++){ }}
+            <div onclick="verImagen('{{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}}',null,true);" class="imgRecolectable adjuntos" style="width:{{=(screen.width/4.5)}}px;background-position: 50% 50%;background-size: cover;background-image:url({{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}})"></div>
+        {{ } }}
+
+
         </div>
+</div>
+
+
+
+<div style="width:100%;overflow:hidden;">
+        <div id="adjuntosAvisita{{=it.transecta.get('visitas')[j].get('fecha')}}" class="imagenesVisita" style="width:100%">
+        {{ if(it.transecta.get('visitas')[j].get('items').length == 0){ }}
+            <div id="" style="text-align:center; margin: 10px;"> No hay Items asociados</div>
+
+        {{ } }}
+            {{ for(var k=0; k<it.transecta.get('visitas')[j].get('items').length;k++){ }}
+            <div class="imgRecolectable adjuntos" style="width:{{=(screen.width/4.5)}}px;background-position: 50% 50%;background-size: cover;background-image:url({{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('items')[k].get('foto'))}})">
+
+                <i class="fa {{=it.transecta.get('visitas')[j].get('items')[k].iconoRepresentacion()}}"></i>
+
+
+
+            </div>
+        {{ } }}
+
+        </div>
+</div>
 
 
         <div id="visita{{=it.visitas[j].get('fecha')}}"  class="contenedorPuntosVisita">
-            <div  class="pr1">
-                <div id="contenedorImagenes0" class="sliderPuntosVisita">
+
+            <div id="contenedorImagenes0" class="sliderPuntosVisita">
+
+                {{ if(it.transecta.get('visitas')[j].get('puntos').length == 0){ }}
+
+                    <div style="margin:10px;text-align:center; width:100%"> No hay Puntos asociados</div>
+
+                {{ } }}
+
                 {{
                 var arreglo = {" Suelo Desnudo ":"contenedorSueloDesnudo"," Muerto en Pie ":"contenedorMuertoEnPie"," Toque Directo ":"contenedorToqueDirecto"};
                     var contador= 0;
@@ -42,7 +76,7 @@
                 {{ } }}
                 </div>
 
-            </div>
+
         </div>
     </div>
     {{ } }}

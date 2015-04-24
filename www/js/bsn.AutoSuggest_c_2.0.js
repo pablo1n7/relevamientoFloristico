@@ -233,33 +233,15 @@ _bsn.AutoSuggest.prototype.onKeyUp = function(ev)
 _bsn.AutoSuggest.prototype.getSuggestions = function (val)
 {
 
-	// if input stays the same, do nothing
-	//
-	/*if (val == this.sInput)
-		return false;
-*/
-
-	// input length is less than the min required to trigger a request
-	// reset input string
-	// do nothing
-	//
-	/*if (val.length < this.oP.minchars)
-	{
-		this.sInput = "";
-		return false;
-	}*/
-
-
-	// if caching enabled, and user is typing (ie. length of input is increasing)
-	// filter results out of aSuggestions from last request
-	//
-//	if (val.length>this.nInputChars && this.aSuggestions.length && this.oP.cache)
 	if (this.aSuggestions.length && this.oP.cache)
 	{
 		var arr = [];
 		for (var i=0;i<this.aSuggestions.length;i++)
 		{
-			if ((this.aSuggestions[i].value.substr(0,val.length).toLowerCase() == val.toLowerCase())&& (arr.length<3))
+			//if ((this.aSuggestions[i].value.substr(0,val.length).toLowerCase() == val.toLowerCase())&& (arr.length<3))
+			//	arr.push( this.aSuggestions[i] );
+            var re = new RegExp(val,'i');
+            if (this.aSuggestions[i].value.match(re) != null && (arr.length<3))
 				arr.push( this.aSuggestions[i] );
 		}
 
@@ -545,6 +527,10 @@ _bsn.AutoSuggest.prototype.setHighlightedValue = function (valor)
 
 		this.sInput = this.fld.value =valor;
         this.validSuggestion = valor;
+
+        $(this.fld).blur();
+       // cordova.plugins.SoftKeyBoard.hide();
+
 		// move cursor to end of input (safari)
 		//
 		this.fld.focus();

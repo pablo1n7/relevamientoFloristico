@@ -3,7 +3,7 @@ Y.add('numericoModelo',function(Y){
     Y.Numerico = Y.Base.create('numerico', Y.TipoPropiedad, [],{
             representacion:function(){
                 var $input = $("<input/>");
-                $input.attr({'placeholder':'0,1,2...',"type":"number"});
+                $input.attr({'value':'0','placeholder':'0,1,2...',"type":"number","patron": "^(-?[0-9]+)$", "mensaje":"" });
                 return $input;
             }
         },{

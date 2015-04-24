@@ -3,7 +3,9 @@ $.mvc.controller.create("aplicacion", {
     init:function(){
 
         popularBD();
-        CANTIDAD_PUNTOS = 2;
+        CANTIDAD_PUNTOS = 11;
+        DISTANCIA_ACEPTABLE =10;
+        DISTANCIA_ENTRE_PUNTOS = 3;
         tipoEjemplares=[];
         familias = [];
         especies = [];
@@ -25,8 +27,20 @@ $.mvc.controller.create("aplicacion", {
         obtenerValoresBD("DistribucionGeografica",distribuciones);
         obtenerValoresBD("TipoSuelo",tiposSuelos);
 
+        if(device.platform == "Android"){
+            $("#crearPuntoScroller").css({"height": "90%","overflowY":"hidden"});
+            $("#seleccionarPropiedadScroller").css({"height": "90%","overflowY":"hidden"});
+            $("#seleccionarPropiedadScroller").scroller();
+            $("#crearPuntoScroller").scroller();
+        }
 
 
+        $("body").click(function(){
+            $("body").addClass("desenlazar");
+            setTimeout(function(){
+                $("body").removeClass("desenlazar");
+            },100);
+        });
 
 
 
@@ -48,7 +62,8 @@ $.mvc.controller.create("aplicacion", {
         //$("#propiedades").empty();
         if($("#propiedades"))
             $("#propiedades").remove();
-        $("#seleccionarPropiedad").prepend('<div name="propiedades" id="propiedades"></div>');
+        //$("#seleccionarPropiedad").prepend('<div name="propiedades" id="propiedades"></div>');
+        $("#divPropiedades").prepend('<div name="propiedades" id="propiedades"></div>');
 
 
 
@@ -66,19 +81,8 @@ $.mvc.controller.create("aplicacion", {
             $("#propiedades").append($contenedor);
         };
 
-        Y.Propiedad.obtenerPropiedades(callback);
-        mostrarModal("#seleccionarPropiedad","fade","Seleccionar");
-        if(device.platform == "Android"){
-            $("#propiedades").css({"height": "80%",
-                                   "overflowY":"hidden"});
-            setTimeout(function(){
-                    $("#propiedades").scroller({
-                        verticalScroll:true,
-                        horizontalScroll:false,
-                        autoEnable:true
-                    });
-            },1000);
-        }
+         Y.Propiedad.obtenerPropiedades(callback);
+         mostrarModal("#seleccionarPropiedad","fade","Seleccionar");
          $("#modalContainer").unbind("doubleTap");
          if($("#propiedades").length == 0){
             $("#propiedades").append("No se encuentran propiedades para listar");
@@ -104,6 +108,12 @@ $.mvc.controller.create("aplicacion", {
     },
 
     crearTipoEjemplar:function(){
+
+        if (!validar($("#crearTipoEjemplar"))){
+            mensajeError("Campos incorrectos!");
+            return;
+        }
+
         var tiposConstantes = ["Alfanumerico","Enumerado","Numerico","Rango"];
         var campos = $("#campos").children();
         var nombreTipoEjemplar = $("#nombreTipoEjemplar").val();
@@ -128,7 +138,10 @@ $.mvc.controller.create("aplicacion", {
                     case "Rango":
                         var valorMin = $(ejemplar).find('[name|=valorMin]').val();
                         var valorMax = $(ejemplar).find('[name|=valorMax]').val();
-                        tipoPropiedad = new Y.Rango({'valorMin':valorMin,'valorMax':valorMax});
+                        if(parseInt(valorMin)<parseInt(valorMax))
+                            tipoPropiedad = new Y.Rango({'valorMin':valorMin,'valorMax':valorMax});
+                        else
+                            tipoPropiedad = new Y.Rango({'valorMin':valorMax,'valorMax':valorMin});
                         break;
                     case "Enumerado":
                         var valores = $(ejemplar).find('[name|=valores]').val().split(',');
@@ -144,9 +157,9 @@ $.mvc.controller.create("aplicacion", {
                 propiedad = Y.Propiedad.obtenerPropiedad(ejemplar.id,function(prop){console.log("GUARDANDO PROPIEDAD IDPROP: "+prop.get("id"));tipoEjemplar.agregarPropiedad(prop);});
             }
         }
-        $.ui.showMask('Guardando...');
+        mostrarMascara('Guardando...');
         tipoEjemplar.save(function(){
-            $.ui.hideMask();
+            ocultarMascara();
             tipoEjemplares.push(tipoEjemplar);
             $.mvc.route("aplicacion/listaTipoEjemplares");
             mensajeExitoso("Tipo Ejemplar Creado");
@@ -204,15 +217,15 @@ $.mvc.controller.create("aplicacion", {
         activarBotonAtras(function(){$.mvc.route("aplicacion/listaTipoEjemplares");});
         activarBotonFuncionalidad('<i class="fa fa-minus"></i>',function(){
             mensajeConfirmacion("Mensaje de Confirmación","¿Estas seguro que desea eliminar?",function(){
-                $.ui.showMask('Eliminando...');
+                mostrarMascara('Eliminando...');
                 tipoEjemplar.delete(function(){
-                    $.ui.hideMask();
+                    ocultarMascara();
                     tipoEjemplares.splice(tipoEjemplares.indexOf(tipoEjemplar),1);
                     mensajeExitoso("Tipo Ejemplar eliminado");
                     $.mvc.route("aplicacion/listaTipoEjemplares");
                 },function(){
                     console.log("fallo");
-                    $.ui.hideMask();
+                    ocultarMascara();
                     mensajeError("Ejemplares Asociados");
                     $.mvc.route("aplicacion/verTipoEjemplar/"+idTipoEjemplar);
 
@@ -247,16 +260,22 @@ $.mvc.controller.create("aplicacion", {
     },
 
     crearFamilia:function(){
+
+        if (!validar($("#mainCrearFamilia"))){
+            mensajeError("Campos incorrectos!");
+            return;
+        }
+
         var nombreFamilia = $("#nombreFamilia").val();
         var familia = new Y.Familia ({"nombre":nombreFamilia});
-        $.ui.showMask('Guardando...');
+        mostrarMascara('Guardando...');
         familia.save(function(){
-            $.ui.hideMask();
+            ocultarMascara();
             familias.push(familia);
             mensajeExitoso("Familia Creada");
             $.mvc.route("aplicacion/listaFamilias");
         },function(){
-            $.ui.hideMask();
+            ocultarMascara();
             mensajeError("Familia Duplicada");
         });
 
@@ -278,6 +297,12 @@ $.mvc.controller.create("aplicacion", {
     },
 
     crearEspecie:function(){
+
+        if (!validar($("#mainCrearEspecie"))){
+            mensajeError("Campos incorrectos!");
+            return;
+        }
+
         var nombreEspecie = $("#nombreEspecie").val();
         var familia=$("#familia").val();
         var formaBiologica =$("#formaBiologica").val();
@@ -286,14 +311,14 @@ $.mvc.controller.create("aplicacion", {
         var distribucionGeografica=$("#distribucionGeografica").val();
         var indiceCalidad=$("#indiceDeCalidad").val();
         var especie = new Y.Especie({"nombre":nombreEspecie,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologica,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceCalidad});
-        $.ui.showMask('Guardando...');
+        mostrarMascara('Guardando...');
         especie.save(function(){
-            $.ui.hideMask();
+            ocultarMascara();
             especies.push(especie);
             mensajeExitoso("Especie Creada");
             $.mvc.route("aplicacion/listaEspecies");
         },function(){
-            $.ui.hideMask();
+            ocultarMascara();
             mensajeError("Especie Duplicada");
         });
 
@@ -339,6 +364,12 @@ $.mvc.controller.create("aplicacion", {
     },
 
      crearCampania:function(){
+
+        if (!validar($("#mainCrearCampaña"))){
+            mensajeError("Campos incorrectos!");
+            return;
+        }
+
         var nombreCampania = $("#nombreCampaña").val();
         var descripcion=$("#descripcionCampaña").val();
 
@@ -353,9 +384,9 @@ $.mvc.controller.create("aplicacion", {
 
 
 
-         $.ui.showMask('Guardando...');
+         mostrarMascara('Guardando...');
         campania.save(function(){
-            $.ui.hideMask();
+            ocultarMascara();
             mensajeExitoso("Campaña Creada");
             $.mvc.route("aplicacion/listaCampanias");
             campañas.push({nombre: campania.get("nombre"),fecha:campania.get("fecha")});
@@ -397,11 +428,50 @@ $.mvc.controller.create("aplicacion", {
         autocompletadoEspecies("especiePredominante1",false);
         autocompletadoEspecies("especiePredominante2",false);
         autocompletadoEspecies("especiePredominante3",false);
+
+
+objetoBrujulaTransecta = {};
+//objetoBrujulaTransecta.idSeguimiento= -1;
+objetoBrujulaTransecta.dirAnterior = null;
+objetoBrujulaTransecta.vueltas = 0;
+
+
+
         activarBrujula(function(dir){
             $("#valorSentido").empty();
             $("#valorSentido").append(parseInt(dir.magneticHeading));
-            $("#brujulaMovil").css3Animate({previous:true,time:"300ms",rotateX:-dir.magneticHeading+"deg",origin:"50% 50%"});
-            $("#brujulaFija").css3Animate({previous:true,time:"300ms",rotateX:dir.magneticHeading+"deg",origin:"50% 50%"});
+
+
+        var dirActual = dir.magneticHeading;
+        var vueltas = objetoBrujulaTransecta.vueltas;
+
+        if(objetoBrujulaTransecta.dirAnterior==null)
+            objetoBrujulaTransecta.dirAnterior = dirActual;
+
+        if ((objetoBrujulaTransecta.dirAnterior> 270 && objetoBrujulaTransecta.dirAnterior< 360) && dirActual < 90 ){
+            vueltas++;
+        }else{
+            if ( (objetoBrujulaTransecta.dirAnterior< 90) && (dirActual> 270 && dirActual< 360)){
+                vueltas--;
+            }//else{
+        }
+    var valorMovimiento = dirActual + (360 * vueltas);
+            console.log(valorMovimiento);
+                $("#brujulaMovil").css3Animate({previous:true,time:"1000ms",rotateX:-valorMovimiento+"deg",origin:"50% 50%"});
+                $("#brujulaFija").css3Animate({previous:true,time:"1000ms",rotateX:valorMovimiento+"deg",origin:"50% 50%"});
+    //$("#flechaSeguimiento").css3Animate({previous:true,time:"1000ms",rotateX:valorMovimiento+"deg",origin:"51% 80.5%"});
+            //}
+
+        //}
+        objetoBrujulaTransecta.vueltas = vueltas;
+        objetoBrujulaTransecta.dirAnterior = dirActual;
+
+
+
+
+
+            /*$("#brujulaMovil").css3Animate({previous:true,time:"1000ms",rotateX:-dir.magneticHeading+"deg",origin:"50% 50%"});
+            $("#brujulaFija").css3Animate({previous:true,time:"1000ms",rotateX:dir.magneticHeading+"deg",origin:"50% 50%"});*/
         },function(watchId){
             idBrujula = watchId;
             $("#brujulaMovil").click(function(){
@@ -440,6 +510,14 @@ $.mvc.controller.create("aplicacion", {
     },
 
     crearTransecta: function(){
+
+        if (!validar($("#mainCrearTransecta"))){
+            mensajeError("Campos incorrectos!");
+            return;
+        }
+
+
+
         var ambiente= $("#ambiente").val();
         var sentido = $("#valorSentido").text();
         var cuadro = $("#cuadro").val();
@@ -469,23 +547,23 @@ $.mvc.controller.create("aplicacion", {
 
 
         var transecta = new Y.Transecta({"ambiente":ambiente,"sentido":sentido,"cuadro":cuadro,"campania":campañaActiva,"nombreEspecies":nombreEspecies});
-        $.ui.showMask('Guardando...');
+        mostrarMascara('Guardando...');
         transecta.save(function(){
-            $.ui.hideMask();
+            ocultarMascara();
             campañaActiva.get("transectas").push(transecta);
 
             mensajeExitoso("Transecta Creada");
             //$.mvc.route("aplicacion/listaCampanias");
             $.mvc.route("aplicacion/activarTransecta/"+transecta.get("id"));
 
-            $.mvc.route("aplicacion/crearPunto");
+
 
 
         });
     },
 
     activarTransecta: function(id){
-
+         mostrarMascara('Activando Transecta...');
         Y.Transecta.obtenerTransecta(id,function(transecta){
             transectaActiva = transecta;
             var visita = new Y.Visita({fecha:Date.now()});
@@ -495,7 +573,20 @@ $.mvc.controller.create("aplicacion", {
             activarSubPagina("#mainsub","Pagina Principal");
              $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
             justgageTransecta = new JustGage({ id: "justgageTransecta",value: 0,min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
-            justgageCampania = new JustGage({ id: "justgageCampania",value: 0,min: 0,max: 100,title: "Progreso Campania", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white",humanFriendly:true,humanFriendlyDecimal:'1'});
+            $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
+
+            $("#metrosRestantes").empty();
+            $("#metrosRestantes").append(CANTIDAD_PUNTOS*DISTANCIA_ENTRE_PUNTOS);
+
+
+
+            ocultarMascara();
+            if (transecta.get("visitas").length != 1){
+                ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
+                $.mvc.route("/aplicacion/guiarPrimerPunto/"+transecta.get("visitas")[0].get("puntos")[0].get("coordenadas"));
+            }else{
+                $.mvc.route("aplicacion/crearPunto");
+            }
 
 
         });
@@ -504,11 +595,23 @@ $.mvc.controller.create("aplicacion", {
 
     crearPunto:function(){
 
-        $("#mainCrearPunto").html($.template('js/vista/crearPunto.tpl',{}));
-        mostrarModal("#crearPunto","fade","Recolectar Punto");
+        if(transectaActiva.get("visitas").length == 0 || transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length != CANTIDAD_PUNTOS){
+            $("#mainCrearPunto").html($.template('js/vista/crearPunto.tpl',{}));
+            mostrarModal("#crearPunto","fade","Recolectar Punto");
+        }else{
+            mensajeError("Visita Completa!");
+        }
     },
 
     almacenarPunto:function(){
+
+        if (!validar($("#mainCrearPunto"))){
+            mensajeError("Campos incorrectos!");
+            return;
+        }
+
+
+
         var estadoAguja = $("#estadoAguja").text().split(":")[1];
         var tipoSuleo = $("#tipoSuelo").val();
         var plantas = $("#datosPlantas").find("[name|=planta]");
@@ -516,34 +619,38 @@ $.mvc.controller.create("aplicacion", {
         punto = new Y.Punto({"estado":estadoAguja,"suelo":tipoSuleo});
         for(var i=0;i<items.length;i++){
             punto.get("items").push(recolectarItem(items[i]));
-            //var unItem = new Y.Ejemplar({"tipo":});
-
-            /*var campos = $(items[i]).find(".input-group");
-            var foto = $(campos[0]).find("[name|=imgUrl]")[0].innerHTML || "";
-            var nombreTipoEjemplar = $($(campos[0]).find("[name|=tipoEjemplares]")[0]).val();
-            var tipoEjemplar = tipoEjemplares.filter(function(tE){return tE.get("nombre")== nombreTipoEjemplar})[0];
-            var ejemplar = new Y.Ejemplar({"tipoEjemplar":tipoEjemplar,"foto":foto});
-            ejemplar.crearCampos(tipoEjemplar.get("campos"));
-            ejemplar.completarCampos(campos.slice(1,campos.length));
-            punto.get("items").push(ejemplar);
-            */
-
-            //ejemplar.save(function(){console.log("Ejemplar Guardado con Exito")});
         }
-
         for(var i=0;i<plantas.length;i++){
             punto.get("items").push(recolectarPlanta(plantas[i]));
         }
-         /*$.ui.showMask('Guardando...');*/
         var cantPuntos = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
-        if(cantPuntos ==0 || cantPuntos == CANTIDAD_PUNTOS){
-            console.log("aca obtengo posicion gps");
+        if(cantPuntos ==0 || cantPuntos == CANTIDAD_PUNTOS-1){
+
+            if(transectaActiva.get("visitas").length==1){
+                mostrarMascara("Obteniendo datos del GPS");
+                Gps.obtenerPosicion(function(lng,lat){
+                    ocultarMascara();
+                    punto.set("coordenadas",lng+"/"+lat);
+
+                });
+            }else{
+
+                if(transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length == 0){
+                    punto.set("coordenadas",transectaActiva.get("visitas")[0].get("puntos")[0].get("coordenadas"));
+                }else{
+                    punto.set("coordenadas",transectaActiva.get("visitas")[0].get("puntos")[CANTIDAD_PUNTOS-1].get("coordenadas"));
+
+                }
+            }
         }
-        justgageTransecta.refresh(cantPuntos+1);
-        var valorTemporal = parseFloat(justgageCampania.originalValue);
-        justgageCampania.refresh((valorTemporal+0.1).toFixed(1));
+        cantPuntos=cantPuntos+1;
+        justgageTransecta.refresh(cantPuntos);
+
         transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
         $.ui.hideModal();
+        $("#metrosRestantes").empty();
+        $("#metrosRestantes").append(DISTANCIA_ENTRE_PUNTOS*(CANTIDAD_PUNTOS-cantPuntos));
+        mensajeExitoso("Punto Recolectado");
 
     },
 
@@ -558,23 +665,7 @@ $.mvc.controller.create("aplicacion", {
         $("#datosPlantas").append(divPlanta);
         $(divPlanta).html($.template('js/vista/crearPlanta.tpl',{especies:especies,numeroId:numeroId,conToques:conToques}));
         $("#botonAgregarPlanta").attr("href","/aplicacion/cargarFormularioPlanta/"+(parseInt(numeroId)+1)+"/0");
-
-        if(device.platform == "Android"){
-            $("#mainCrearPunto").css({"height": "90%",
-                                   "overflowY":"hidden"});
-            setTimeout(function(){
-                    $("#mainCrearPunto").scroller({
-                        verticalScroll:true,
-                        horizontalScroll:false,
-                        autoEnable:true
-                    });
-            },1000);
-        }
-
-
         autocompletadoEspecies("autocompletado"+numeroId,true);
-
-
     },
 
     cargarFormularioItem:function(numeroId){
@@ -582,37 +673,40 @@ $.mvc.controller.create("aplicacion", {
         $("#datosPlantas").append(divItem);
         $.mvc.route("aplicacion/seleccionarEjemplar/"+numeroId);
         $("#botonAgregarItem").attr("href","/aplicacion/cargarFormularioItem/"+(parseInt(numeroId)+1));
-
-        if(device.platform == "Android"){
-            $("#mainCrearPunto").css({"height": "90%",
-                                   "overflowY":"hidden"});
-            setTimeout(function(){
-                    $("#mainCrearPunto").scroller({
-                        verticalScroll:true,
-                        horizontalScroll:false,
-                        autoEnable:true
-                    });
-            },1000);
-        }
     },
 
     verPuntos:function(){
         if(transectaActiva != null){
+            $("#vistaPuntos").animateCss({x:"0",y:"0",duration:"0",easing:"easeOutSine"}
+);
             $("#vistaPuntos").html($.template('js/vista/vistaPuntos.tpl',{transecta:transectaActiva,visitas:transectaActiva.get("visitas")}));
 
 //                activarSliderPuntosVisita("visita"+transectaActiva.get("visitas")[0].get("fecha"),10,"sliderPuntosVisita",1);
 //                activarSliderPuntosVisita("vistaPuntos",26,"sliderVisita",0);
-            SlidersManager.vaciar();
-            SlidersManager.agregarSlider("visita"+transectaActiva.get("visitas")[0].get("fecha"),"sliderPuntosVisita",10,function(){});
-            SlidersManager.agregarSlider("vistaPuntos","sliderVisita",26,function(slid,siguiente){
+            //SlidersManager.vaciar();
+            var anchoVisitas = screen.width * 0.75;
+            var anchoImagenes = anchoVisitas;// * 0.83;
+
+
+
+//            SlidersManager.agregarSlider("adjuntosAVisita"+transectaActiva.get("visitas")[0].get("fecha"),"adjuntos",(screen.width/4)+"px",function(){});
+            SlidersManagerImagenes.agregarSlider("imagenesvisita"+transectaActiva.get("visitas")[0].get("fecha"),"adjuntos",(screen.width/4)+"px");
+            SlidersManagerImagenes.agregarSlider("adjuntosAvisita"+transectaActiva.get("visitas")[0].get("fecha"),"adjuntos",(screen.width/4)+"px");
+            SlidersManager.agregarSlider("visita"+transectaActiva.get("visitas")[0].get("fecha"),"sliderPuntosVisita",anchoImagenes+"px",function(){});
+            SlidersManager.agregarSlider("vistaPuntos","sliderVisita",anchoVisitas+"px",function(slid,siguiente){
                 console.log("manager:");
                 console.log(SlidersManager);
                 console.log(slid);
                 var idVisitaPunto = $(siguiente.find(".contenedorPuntosVisita")[0]).attr("id");
                 console.log(idVisitaPunto);
-                SlidersManager.agregarSlider(idVisitaPunto,"sliderPuntosVisita",10,function(){});
+                SlidersManager.agregarSlider(idVisitaPunto,"sliderPuntosVisita",anchoImagenes+"px",function(){});
+                SlidersManagerImagenes.agregarSlider("adjuntosA"+idVisitaPunto,"adjuntos",(screen.width/4)+"px");
+                SlidersManagerImagenes.agregarSlider("imagenes"+idVisitaPunto,"adjuntos",(screen.width/4)+"px");
+
             });
         }
+/*        var anchoContenedor = screen.width * transectaActiva.get("visitas").length+"px";
+        $("#vistaPuntos").css({width:anchoContenedor});*/
     },
 
 
@@ -653,37 +747,76 @@ $.mvc.controller.create("aplicacion", {
         $("#recolectableVisita").append('<div class="divBoton" onclick="asociarItemVisita()"><a name="recoletarPlanta" class="anchorBoton">Recolectar Item</a></div>');
     },
 
-    guiarPrimerPunto:function(){
+    guiarPrimerPunto:function(longitud,latitud){
         $("#mainGuiarPrimerPunto").html($.template('js/vista/guiarPrimerPunto.tpl',{}));
         mostrarModal("#guiarPrimerPunto","fade","Recolectar");
         r = new Radar("contenedor",100);
+        mostrarMascara("Obteniendo Posicion");
+        var dist = -1;
+        var longitudActual = -1;
+        var latitudActual = -1;
+        var destinoFinal = false;
 
-        idIntervaloGps = setInterval(function(){
-            Gps.obtenerPosicion(function(lng,lat){
+        var watchHeadingId = navigator.compass.watchHeading(function(dir){
 
-                navigator.compass.getCurrentHeading(function(dir){
-                    var dist = Gps.distanciaEntrePuntos(lng,lat,-65.2979,-43.2604);
-                    var angulo = Gps.calcularAngulo(lng,lat,-65.2979,-43.2604);
-                    var anguloObservacion = dir.magneticHeading * (Math.PI/180);
-                    angulo = ((angulo) + anguloObservacion) ;
-                   // angulo = angulo - Math.PI - anguloObservacion;
-                    r.marcarObjetivo(-angulo,dist);
-                    $("#distancia").empty();
-                    $("#distancia").append(dist);
-                }, null, null);
+            if(dist != -1){
+                if(dist<=DISTANCIA_ACEPTABLE){
+                    $.mvc.route("aplicacion/detenerGuia");
+                    setTimeout(function(){
+                        $.mvc.route("aplicacion/crearPunto");
+                        mensajeExitoso("1er Punto Alcanzado");
+                    },50);
+                    destinoFinal = true;
+                    dist = -1;
+                    /*$.ui.hideModal();
+                    Gps.pararGps();
+                    setTimeout(function(){r.detener()},100);
+                    navigator.compass.clearWatch(watchHeadingId);*/
+                    $("#botonCerrarModal").trigger("click"); //triger
 
-            });
-        },7000);
+                }
+
+                var angulo = Gps.calcularAngulo(longitudActual,latitudActual,longitud,latitud);
+                var anguloObservacion = dir.magneticHeading * (Math.PI/180);
+                angulo = ((angulo) + anguloObservacion) ;
+               // angulo = angulo - Math.PI - anguloObservacion;
+                r.marcarObjetivo(-angulo,dist);
+                //angulo = -(angulo*180/Math.PI);
+                angulo = -(angulo*180/Math.PI)+90;
+                $("#divFlechaSeguimiento").css3Animate({previous:true,time:"300ms",rotateX:angulo+"deg",origin:"51% 50%"});
+
+                $("#distancia").empty();
+                $("#distancia").append(dist.toFixed(1));
+            }
+        }, null, { frequency: 1000 });
+
+
+        Gps.obtenerPosicion(function(lng,lat){
+            ocultarMascara();
+            if(!destinoFinal)
+                dist = Gps.distanciaEntrePuntos(lng,lat,longitud,latitud);
+            longitudActual = lng;
+            latitudActual = lat;
+
+        });
 
         asignarFuncionCierreModal(function(){
-            clearInterval(idIntervaloGps);
-            r.detener();
+            navigator.compass.clearWatch(watchHeadingId);
+            setTimeout(function(){
+                r.detener()
+                setTimeout(function(){
+                    r.detener()
+                },1000);
+
+            },500);
+            dist = -1;
+            Gps.pararGps();
             $.ui.hideModal();
         });
 
+        $("#contenedorFlechaSeguimiento").css({height: $("#contenedorDistancia").offset().height+"px"});
 
     }
-
 
 
 });

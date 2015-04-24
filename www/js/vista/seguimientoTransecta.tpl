@@ -14,4 +14,12 @@
     </div>
 </div>
 <div id="justgageTransecta" class="justgagePersonalizado"  > </div>
-<div id="justgageCampania" class="justgagePersonalizado tabulado"  > </div>
+<div id="indicadorDistancia" class="justgagePersonalizado tabulado">
+    <div>
+        Fin Transecta en:
+    </div>
+    <div id="metrosRestantes" class="metrosRestantes">
+        2205
+    </div>
+    <div>mts</div>
+</div>

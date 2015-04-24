@@ -88,6 +88,9 @@
         <script src="js/app.js"></script>
         <script src="js/init-app.js"></script>
         <script src="js/init-dev.js"></script>
+
+
+
         <!--
                         You may substitute jQuery for the App Framework selector library.
                         See http://app-framework-software.intel.com/documentation.php#afui/afui_jquery
@@ -107,9 +110,6 @@
         <script type="application/javascript" src="justgage/gauges.js"></script>
 
         <script type="application/javascript" src="js/alertify.min.js"></script>
-
-
-
 
     </head>
 
@@ -146,7 +146,15 @@
                                     <div id="main">
 
                                         <div id="crearPunto" style="display:none;">
-                                            <div id="mainCrearPunto"></div>
+                                            <div id="crearPuntoScroller" class="grid grid-pad urow uib_row_16 row-height-16" data-uib="layout/row" data-ver="0">
+                                                <div class="col uib_col_16 col-0_12-12" data-uib="layout/col" data-ver="0">
+                                                    <div class="widget-container content-area vertical-col">
+                                                        <div id="mainCrearPunto"></div>
+                                                        <span class="uib_shim"></span>
+                                                    </div>
+                                                </div>
+                                                <span class="uib_shim"></span>
+                                            </div>
                                         </div>
                                         <div id="relevarRecolectable" style="display:none;">
                                             <div id="mainRelevarRecolectable"></div>
@@ -156,8 +164,7 @@
                                         </div>
 
                                         <div id="mainSeguimiento">
-                                            <div class="divBoton"><a name="seleccionarPropiedad" class="anchorBoton" href="/aplicacion/guiarPrimerPunto"> Radar Dragon Ball </a>
-                                    </div>
+
                                         </div>
 
                                     </div>
@@ -167,6 +174,7 @@
                         <span class="uib_shim"></span>
                     </div>
                 </div>
+
                 <div id="crearTransecta" class="upage-content hidden">
 
                     <div class="grid grid-pad urow uib_row_15 row-height-15" data-uib="layout/row" data-ver="0">
@@ -288,8 +296,16 @@
 
                                 </div>
                                 <div id="seleccionarPropiedad" style="display:none;">
-
-                                    <div class="divBoton"><a name="seleccionarPropiedad" class="anchorBoton" href="/aplicacion/cargarPropiedadesSeleccionadas"> Seleccionar </a>
+                                    <div id="seleccionarPropiedadScroller" class="grid grid-pad urow uib_row_16 row-height-16" data-uib="layout/row" data-ver="0">
+                                        <div class="col uib_col_16 col-0_12-12" data-uib="layout/col" data-ver="0">
+                                            <div class="widget-container content-area vertical-col">
+                                                <div id="divPropiedades"></div>
+                                                <div class="divBoton"><a name="seleccionarPropiedad" class="anchorBoton" href="/aplicacion/cargarPropiedadesSeleccionadas"> Seleccionar </a>
+                                                    <span class="uib_shim"></span>
+                                                </div>
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -349,8 +365,6 @@ Familia</a>
                                     <div>
 
                                         <div id="vistaPuntos"></div>
-
-
 
                                     </div>
                                 </div><span class="uib_shim"></span>

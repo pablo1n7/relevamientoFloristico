@@ -1,5 +1,5 @@
-<input name="nombreCampaña" id="nombreCampaña" type="text" placeholder="Nombre de la Campaña">
-<textarea name="descripcionCampaña" id ="descripcionCampaña" rows="3" cols="20" placeholder="Ingrese una Descripción"></textarea>
+<input name="nombreCampaña" id="nombreCampaña" type="text" placeholder="Nombre de la Campaña" patron="^([a-zñáéíóú]+)([a-zñáéíóú0-9 ]+)$" mensaje="Nota: El nombre debe comenzar con letra y no puede estar vacio">
+<input name="descripcionCampaña" id ="descripcionCampaña" type="text" placeholder="Ingrese una Descripción"/>
 
 
 

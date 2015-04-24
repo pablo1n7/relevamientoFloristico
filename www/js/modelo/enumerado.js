@@ -59,7 +59,7 @@ Y.add('enumeradoModelo',function(Y){
 
     Y.Enumerado.representacionComoCrear = function(){
         $div = $("<div/>");
-        $input = $('<input type="text" name="valores" placeholder="Rojo,Verde,Amarillo"/>');
+        $input = $('<input type="text" name="valores" placeholder="Rojo,Verde,Amarillo" patron="^([a-zñáéíóú0-9]+)([a-zñáéíóú0-9, ]+)([a-zñáéíóú0-9]+)$" mensaje=""/>');
         $label = $("<label>Conjunto</label>");
         $div.append($label);
         $div.append($input);

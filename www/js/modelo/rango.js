@@ -60,8 +60,8 @@ Y.add('rangoModelo',function(Y){
 
      Y.Rango.representacionComoCrear = function(){
         var $div = $("<div/>");
-        var $inputMax = $('<input type="number" name="valorMax" placeholder="Valor Maximo" />');
-        var $inputMin = $('<input type="number" name="valorMin" placeholder="Valor Minimo" />');
+        var $inputMax = $('<input type="number" name="valorMax" placeholder="Valor Maximo" patron="^(-?[0-9]+)$" mensaje=""/>');
+        var $inputMin = $('<input type="number" name="valorMin" placeholder="Valor Minimo" patron="^(-?[0-9]+)$" mensaje=""/>');
         $div.append($inputMin);
         $div.append($inputMax);
         return $div;

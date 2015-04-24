@@ -15,6 +15,10 @@ Y.add('plantaModelo',function(Y){
                 });
             },
 
+            iconoRepresentacion:function(){
+                return "fa-leaf planta"
+            }
+
     },{
             ATTRS:{
                 id:{
@@ -36,4 +40,52 @@ Y.add('plantaModelo',function(Y){
             }
         }
     );
+    Y.Planta.obtenerPlantasAsociadas = function(idPunto,idTransecta,fecha,callback){
+        var q = "";
+        if(idPunto == null)
+            q = "select * from Planta where idPunto isnull and idTransecta="+idTransecta+" and fecha="+fecha+";";
+        else
+            q = "select * from Planta where idPunto = "+idPunto+" and idTransecta="+idTransecta+" and fecha="+fecha+";";
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+                var plantas = [];
+                for (var i = 0; i < data.rows.length; i++) {
+                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).nombreEspecie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    plantas.push(planta);
+                };
+                callback(plantas);
+            });
+        });
+    };
+
+
+    Y.Planta.obtenerPlantasVisita = function(idTransecta,fecha,callback){
+        q = "select * from Planta where idTransecta="+idTransecta+" and fecha="+fecha+";";
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+                var plantas = [];
+                for (var i = 0; i < data.rows.length; i++) {
+                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).nombreEspecie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    plantas.push(planta);
+                };
+                callback(plantas);
+            });
+        });
+    };
+
+
+
+    Y.Planta.obtenerPlantas = function(callback){   // Hay que pensar como (stream? objeto YUI? JSON?) se las mandamos al servidor!
+            var q = "select * from Planta;";
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+                var plantas = [];
+                for (var i = 0; i < data.rows.length; i++) {
+                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).nombreEspecie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    plantas.push(planta);
+                };
+                callback(plantas);
+            });
+        });
+    };
 }, '0.0.1', { requires: ['model','especieModelo']});

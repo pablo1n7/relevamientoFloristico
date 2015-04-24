@@ -13,12 +13,21 @@
 
     Toques
     <input name="toquesPlanta" type="number" placeholder="toques" {{ if(it.conToques != 0){  }}
-     value="0" disabled {{ } else{ }} value="1" {{ } }}>
+     value="0" disabled {{ } else{ }} value="1" patron="^([0-9]+)$" mensaje="" {{ } }}>
     <br>
     <br>
     <span>Especie</span>
+    {{
 
-        <input name="especie" id="autocompletado{{=it.numeroId}}" type="text" placeholder="Especie">
+        var texto = especies[0].get("nombre");
+        for(var i = 1 ; i < especies.length;i++){
+            console.log(i);
+            texto=texto+"|"+especies[i].get("nombre");
+        }
+        console.log(texto);
+
+    }}
+        <input name="especie" id="autocompletado{{=it.numeroId}}" type="text" placeholder="Especie" patron="{{=texto}}" mensaje="">
 
 
 <div class="icon picture verFotoEspecie" onclick="verImagenEspecie(this.previousSibling)"></div>

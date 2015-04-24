@@ -1,6 +1,6 @@
 body{
     font-size: 30px;
-    font-family: fantasy;
+    font-family: Arial !important;
     letter-spacing: 0.1em;
     text-transform: capitalize;
 }
@@ -51,6 +51,7 @@ textarea{
 .input-group{
     text-align: center;
     border-width: 0px !important;
+    letter-spacing: normal !important;
 }
 
 .input-group label{
@@ -293,7 +294,7 @@ footer .button{
 }
 
 .brujulaFija{
-    background-image: url("../img/flecha2.png");
+    background-image: url("../img/flecha4.png");
     background-repeat: no-repeat;
     background-size: contain;
     height: 100%;
@@ -301,7 +302,7 @@ footer .button{
 
 .brujulaMovil{
     margin: 0 auto;
-    background-image: url("../img/brujula2.png");
+    background-image: url("../img/bujula2.png");
     background-repeat: no-repeat;
     height: 100%;
     text-align: center;
@@ -395,6 +396,10 @@ footer .button{
 }
 
 .desenlazar{
+    pointer-events: none;
+}
+
+.bloquear{
     pointer-events: none;
 }
 
@@ -533,11 +538,20 @@ footer .button{
 
 .tabulado{
     margin-left: 2%;
+    color:white;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+}
+
+.metrosRestantes{
+    font-size: 103px;
+    font-weight: 100;
 }
 
 
 .contenedorPuntosVisita{
-    padding: 20px;
     width: 90%;
     margin: 0 auto;
     overflow: hidden;
@@ -546,20 +560,25 @@ footer .button{
 .sliderPuntosVisita{
     overflow: auto;
     position: relative;
+    float:left;
+    padding-right: 7%;
 }
 
 .sliderVisita{
-    overflow: auto;
+    overflow: hidden;
     position: relative;
+    float:left;
+    padding-right: 2%;
+    padding-left: 0.9%;
 }
 
 .imagenesVisita{
-    width: 100%;
     height: 120px;
     overflow: hidden;
     border-bottom-color: #eee;
     border-bottom-width: 5px;
     border-bottom-style: ridge;
+    padding-top:10px;
 }
 
 .headerVisita{
@@ -581,7 +600,7 @@ footer .button{
 .imagenesVisita .imgRecolectable{
     width: 20%;
     height: 90px;
-    margin: 2%;
+    /*margin: 2%;*/
 }
 
 .contenedorSueloDesnudo{
@@ -667,8 +686,7 @@ footer .button{
 }
 
 #radar{
-    /*background-image: url("../img/marcoRadar.png");*/
-    background-image: url("../img/radarSombra.png");
+    background-image: url("../img/radar.png");
     background-repeat: no-repeat;
     height: 500px;
     position: absolute;
@@ -678,6 +696,76 @@ footer .button{
     overflow: auto;
 }
 
+.planta{
+    color: darkgreen;
+    margin: 1%;
+    text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
+}
 
+.ejemplar{
+    margin: 5%;
+    color: dodgerblue;
+    text-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
+}
 
+#mainRelevarRecolectable .right{
+    display: none;
+}
 
+.contenedorDistancia{
+    float: left;
+    width: 49%;
+    color: white;
+    background-color: rgba(33,33,33,08);
+    padding: 1%;
+    border-radius: 5px;
+    text-align: center;
+    margin-right: 1%;
+}
+
+.cuadroDistancia{
+    font-size: 75px;
+}
+
+.contenedorFlechaSeguimiento{
+    border-radius: 5px;
+    text-align: center;
+    float: left;
+    background-color: rgba(33,33,33,08);
+    width: 49%;
+    margin-left: 1%;
+    height: 0px;
+}
+
+.flechaSeguimiento{
+    height: 100%;
+    width: 100%;
+}
+
+.flechaSeguimiento img {
+    height: 100%;
+}
+
+/*.imagenesVisita :first-child{
+    width: 1000px;
+    overflow-x: hidden;
+}*/
+
+.adjuntos{
+    margin:0%;
+    margin-left:10px !important;
+}
+
+#uib_page_2 > div {
+    padding-left: 0% !important;
+}
+
+.errorValidacion{
+    box-shadow: 0px 0px 10px 4px rgba(255, 0, 0, 0.75) !important;
+    -moz-box-shadow: 0px 0px 10px 4px rgba(255, 0, 0, 0.75) !important;
+    -webkit-box-shadow: 0px 0px 10px 7px rgba(255, 0, 0, 0.75) !important;
+}
+
+.mensajeError{
+    margin-top: 20px;
+}

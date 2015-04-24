@@ -18,6 +18,10 @@ Y.add('ejemplarModelo',function(Y){
                 });
             },
 
+            iconoRepresentacion:function(){
+                return "fa-file-text ejemplar"
+            },
+
             representacion: function(){
                 var $div = $('<div/>');
                 for(var i = 0 ; i<this.get("valores").length;i++){
@@ -64,4 +68,22 @@ Y.add('ejemplarModelo',function(Y){
             }
         }
     );
+
+    Y.Ejemplar.obtenerEjemplaresAsociados = function(idPunto,idTransecta,fecha,callback){
+        var q = "";
+        if(idPunto == null)
+            q = "select * from Ejemplar where idPunto isnull and idTransecta="+idTransecta+" and fecha="+fecha+";";
+        else
+            q = "select * from Ejemplar where idPunto="+idPunto+" and idTransecta="+idTransecta+" and fecha="+fecha+";";
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+                var ejemplares = [];
+                for (var i = 0; i < data.rows.length; i++) {
+                    var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"tipoEjemplar":data.rows.item(i).idTipoEjemplar,"foto":data.rows.item(i).foto});
+                    ejemplares.push(ejemplar);
+                };
+                callback(ejemplares);
+            });
+        });
+    };
 }, '0.0.1', { requires: ['model','propiedadModelo','tipoEjemplarModelo']});

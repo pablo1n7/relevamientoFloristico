@@ -10,12 +10,17 @@ function activarBotonAtras(funcionClick){
 
 function activarBotonFuncionalidad(nombre,funcionClick){
     $("#funcionalidad").append(nombre);
+    $("#funcionalidad").css({"display":"none"});
     $("#funcionalidad").css({"visibility":"initial"});
     $("#funcionalidad").click(function(){
 
         desactivarBotonesHeader();
         funcionClick();
     });
+
+    setTimeout(function(){
+        $("#funcionalidad").css({"display":"block"});
+    },100);
 
 
 }
@@ -37,12 +42,18 @@ function activarSubPagina(nombreSubPagina,titulo){
     desactivarBotonesHeader();
     if( (typeof diccionarioAyuda !== "undefined") && diccionarioAyuda[nombreSubPagina])
         $($(nombreSubPagina).parent()[0]).bind("doubleTap",function(){activarModoAyuda(nombreSubPagina,diccionarioAyuda[nombreSubPagina])});
+    $("#mainpage").scroller().scrollToTop("0ms");
+
+
+
 }
 
 function mostrarModal(div,efecto,titulo){
     $.ui.showModal(div,efecto);
     $("#modalHeader h1 ").empty();
     $("#modalHeader h1 ").append(titulo);
+    $("#seleccionarPropiedadScroller").scroller().scrollToTop("0ms");
+    $("#crearPuntoScroller").scroller().scrollToTop("0ms");
 
 }
 
@@ -218,7 +229,7 @@ function toogleAlto(idElemento,height){
 
 function activarBrujula(callback,listo){
     var options = {
-        frequency: 300
+        frequency: 1000
     };
     var watchID = navigator.compass.watchHeading(callback, null, options);
     listo(watchID);
@@ -229,7 +240,6 @@ callbackCapturaImg = null;
 function listenerCamara(e){
 
     /*var rutaImg = intel.xdk.camera.getPictureURL(e.filename);*/
-    alert(e.filename);
     callbackCapturaImg(e.filename);
 
 }
@@ -294,7 +304,6 @@ function eliminarImagenes(){
     for(var i=0; i<divsImg.length ; i++){
         var nombreFoto = $(divsImg[i]).html();
         if(nombreFoto != ""){
-            alert("Borre "+(i+1));
             intel.xdk.camera.deletePicture(nombreFoto);
         }
     }
@@ -329,125 +338,42 @@ function autocompletadoEspecies(idElemento,sugerirSiempre){
     var as = new AutoSuggest(idElemento, options);
 }
 
-idSeguimiento= -1;
-dirAnterior = null;
-vueltas = 0;
+objetoBrujulaSeguimiento = {};
+objetoBrujulaSeguimiento.idSeguimiento= -1;
+objetoBrujulaSeguimiento.dirAnterior = null;
+objetoBrujulaSeguimiento.vueltas = 0;
 
 function activarBrujulaSeguimiento(direccionCorrecta){
     direccionCorrecta = parseFloat(direccionCorrecta);
-    if(idSeguimiento != -1)
-        navigator.compass.clearWatch(idSeguimiento);
+    if(objetoBrujulaSeguimiento.idSeguimiento != -1)
+        navigator.compass.clearWatch(objetoBrujulaSeguimiento.idSeguimiento);
     activarBrujula(function(dir){
         var valorMovimiento = direccionCorrecta - dir.magneticHeading;
         var dirActual = dir.magneticHeading;
 
-        if(dirAnterior==null)
-            dirAnterior = dirActual;
+        if(objetoBrujulaSeguimiento.dirAnterior==null)
+            objetoBrujulaSeguimiento.dirAnterior = dirActual;
 
-        if ((dirAnterior> 270 && dirAnterior< 360) && dirActual < 90 ){
-            vueltas--;
+        if ((objetoBrujulaSeguimiento.dirAnterior> 270 && objetoBrujulaSeguimiento.dirAnterior< 360) && dirActual < 90 ){
+            objetoBrujulaSeguimiento.vueltas--;
         }else{
 
-            if ( (dirAnterior< 90) && (dirActual> 270 && dirActual< 360)){
-                vueltas++;
+            if ( (objetoBrujulaSeguimiento.dirAnterior< 90) && (dirActual> 270 && dirActual< 360)){
+                objetoBrujulaSeguimiento.vueltas++;
             }
             else{
-    valorMovimiento = valorMovimiento + (360 * vueltas);
-    $("#flechaSeguimiento").css3Animate({previous:true,time:"300ms",rotateX:valorMovimiento+"deg",origin:"51% 80.5%"});
+    valorMovimiento = valorMovimiento + (360 * objetoBrujulaSeguimiento.vueltas);
+    $("#flechaSeguimiento").css3Animate({previous:true,time:"1000ms",rotateX:valorMovimiento+"deg",origin:"51% 80.5%"});
             }
 
         }
+        objetoBrujulaSeguimiento.dirAnterior = dirActual;
 
+    },function(idBrujula){
+        console.log(idBrujula);
+        objetoBrujulaSeguimiento.idSeguimiento = idBrujula;
+    });
 
-
-
-        //$("#flechaSeguimiento").css3Animate({previous:true,time:"300ms",rotateX:(direccionCorrecta-dir.magneticHeading)+"deg",origin:"51% 80.5%"});
-        dirAnterior = dirActual;
-
-    },function(idBrujula){idSeguimiento = idBrujula})
-
-}
-
-
-//pantallaActual = null;
-
-
-estadoSliders = [{contador:0,callback:function(idDivFechaVisita){activarSliderPuntosVisita(idDivFechaVisita,10,"sliderPuntosVisita",1);}},{contador:0,callback:function(idDivFechaVisita){}}];
-
-function activarSliderPuntosVisita(idContenedorVisita, desplazamiento,claseHijos,indice){
-    estadoSliders[indice].contador=0;
-    var divContenedor = $("#"+idContenedorVisita);
-    var contenedores = divContenedor.find("."+claseHijos);
-    propiedades = $(contenedores[0]).offset();
-    divContenedor.css({height:propiedades.height});
-    var contenedores = divContenedor.find("."+claseHijos);
-    var cantSliders = contenedores.length;
-    for(var i=1;i<cantSliders;i++){
-        $(contenedores[i]).css({marginTop:-propiedades.height,left:propiedades.left+screen.width});
-    }
-
-    /*$(divContenedor.find("."+claseDivEvento)[0]).bind("swipeLeft",function(e){e.preventDefault();correrIzquierda(divContenedor,cantSliders,claseHijos,indice)});
-    $(divContenedor.find("."+claseDivEvento)[0]).bind("swipeRight",function(e){e.preventDefault();correrDerecha(divContenedor,cantSliders,claseHijos,indice)});*/
-    divContenedor.bind("swipeLeft",function(e){e.stopPropagation();correrIzquierda(divContenedor,cantSliders,claseHijos,indice,desplazamiento)});
-    divContenedor.bind("swipeRight",function(e){e.stopPropagation();correrDerecha(divContenedor,cantSliders,claseHijos,indice,desplazamiento)});
-}
-
-
-
-function correrIzquierda(divContenedor,cantidadContenedores,claseHijos,indice,desplazamiento){
-
-    if(estadoSliders[indice].contador != cantidadContenedores-1 ){
-        divContenedor.addClass("desenlazar");
-        var contenedores =  divContenedor.find("."+claseHijos);
-        var cont1 = $(contenedores[estadoSliders[indice].contador]);
-        console.log(estadoSliders[indice].contador);
-        cont1.css3Animate({
-                            x: -(screen.width + (screen.width/desplazamiento)),
-                            time: "500ms",
-                            previous: true,
-                        });
-        estadoSliders[indice].contador = (estadoSliders[indice].contador+1);//%cantidadContenedores;
-        var cont2 = $(contenedores[estadoSliders[indice].contador]);
-        cont2.css3Animate({
-                            x: -(screen.width + (screen.width/desplazamiento)),
-                            time: "500ms",
-                            previous: true,
-                            success: function(){
-                                divContenedor.removeClass("desenlazar");
-                                if(indice == 0){
-                                    estadoSliders[indice].callback($($(divContenedor.find("."+claseHijos)[estadoSliders[indice].contador]).find(".contenedorPuntosVisita")[0]).attr("id"));
-                                }
-                            }
-                        });
-    }
-}
-
-function correrDerecha(divContenedor,cantidadContenedores,claseHijos,indice,desplazamiento){
-
-    if(estadoSliders[indice].contador != 0 ){
-        divContenedor.addClass("desenlazar");
-        var contenedores =  divContenedor.find("."+claseHijos);
-        var cont1 = $(contenedores[estadoSliders[indice].contador]);
-        cont1.css3Animate({
-                            x: (screen.width + (screen.width/desplazamiento)),
-                            time: "500ms",
-                            previous: true,
-                        });
-        estadoSliders[indice].contador = (estadoSliders[indice].contador-1);
-        var cont2 = $(contenedores[estadoSliders[indice].contador]);
-        cont2.css3Animate({
-                            x: (screen.width + (screen.width/desplazamiento)),
-                            time: "500ms",
-                            previous: true,
-                            success: function(){
-                                divContenedor.removeClass("desenlazar");
-                                if(indice == 0){
-                                    estadoSliders[indice].callback($($(divContenedor.find("."+claseHijos)[estadoSliders[indice].contador]).find(".contenedorPuntosVisita")[0]).attr("id"));
-                                }
-
-                            }
-                        });
-        }
 }
 
 
@@ -455,10 +381,36 @@ function correrDerecha(divContenedor,cantidadContenedores,claseHijos,indice,desp
 var SlidersManager = function(){
     var objetosSliders = [];
 
-    this.agregarSlider = function(idDivContenedor,claseHijos,desplazamiento,callback){
+    this.agregarSlider = function(idDivContenedor,claseHijos,ancho,callback){
         var slid = objetosSliders.filter(function(s){return s.id==idDivContenedor});
         if(slid.length == 0){
-            objetosSliders.push(new Slider(idDivContenedor,claseHijos,desplazamiento,callback));
+            objetosSliders.push(new Slider(idDivContenedor,claseHijos,ancho,callback));
+        }else{
+            slid[0].inicializar();
+        }
+    };
+
+    this.vaciarSlider = function(){
+        objetosSliders = [];
+    };
+
+    return{
+        objetos:objetosSliders,
+        vaciar: vaciarSlider,
+        agregarSlider:this.agregarSlider
+    }
+
+}();
+
+var SlidersManagerImagenes = function(){
+    var objetosSlidersImagenes = [];
+
+    this.agregarSlider = function(idDivContenedor,claseHijos,ancho){
+        var slid = objetosSlidersImagenes.filter(function(s){return s.id==idDivContenedor});
+        if(slid.length == 0){
+            objetosSlidersImagenes.push(new SliderImagenes(idDivContenedor,claseHijos,ancho));
+        }else{
+            slid[0].inicializar();
         }
     };
 
@@ -469,120 +421,162 @@ var SlidersManager = function(){
 
 
     return{
-        objetos:objetosSliders,
+        objetos:objetosSlidersImagenes,
         vaciar: vaciarSlider,
         agregarSlider:this.agregarSlider
     }
 
 }();
 
-var Slider = function(idSlider,claseHijos,desplazamiento,callback){
+var Slider = function(idSlider,claseHijos,ancho,callback){
     this.id = idSlider;
     this.objetosMoviles = claseHijos;
-    this.desplazamiento = desplazamiento;
+    this.ancho = ancho;
     this.indice = 0;
     this.callback = callback;
     this.cantidadContenedores = $("#"+this.id).find("."+this.objetosMoviles).length;
 
 
     this.izquierda = function(){
-        if(this.indice+1 < this.cantidadContenedores){
-            var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
-            var cont1 = $(contenedores[this.indice]);
-            var desp = cont1.offset().left;
-            /*cont1.css3Animate({
-                    x: -(screen.width + (screen.width/this.desplazamiento)),
-                    time: "500ms",
-                    previous: true
-                });*/
-            cont1.animateCss({x:-(screen.width),y:"0",duration:"500",easing:"easeOutSine"}).start();
+        if(this.indice < this.cantidadContenedores-1){
             this.indice++;
+            var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
             var cont2 = $(contenedores[this.indice]);
-            var _this = this;
-            cont2.animateCss({x:0,y:"0",duration:"500",easing:"easeOutSine"}).start();
-            setTimeout(function(){
-                _this.callback(_this,cont2);
-            },300);
-            /*cont2.css3Animate({
-                        x: -(screen.width + (screen.width/this.desplazamiento)),
-                        time: "500ms",
-                        previous: true,
-                        success:function(){
-                            console.log("derecha");
-                            _this.callback(_this,cont2);
-                            $("#vistaPuntos").addClass("oculto");
-                            $("#vistaPuntos").removeClass("oculto");
-                        }
-            });*/
+            this.callback(this,cont2);
+            $("#"+this.id).animateCss({x:-(parseInt(this.ancho))*this.indice,y:"0",duration:"600",easing:"easeOutSine"}).start();
+            setTimeout(function(){$("#"+this.id).hide();},200);
+            setTimeout(function(){$("#"+this.id).show();},400);
         }
     };
 
     this.derecha = function(){
         if(this.indice > 0){
-            var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
-            var cont1 = $(contenedores[this.indice]);
-           /* cont1.css3Animate({
-                    x: (screen.width + (screen.width/this.desplazamiento)),
-                    time: "500ms",
-                    previous: true
-                });*/
-            //cont1.animateCss({x:screen.width+(screen.width/this.desplazamiento),y:"0",duration:"500",easing:"easeOutSine"}).start();
-            var desp = cont1.offset().left;
-            cont1.animateCss({x:screen.width,y:"0",duration:"500",easing:"easeOutSine"}).start();
             this.indice--;
-            var cont2 = $(contenedores[this.indice]);
-            var _this = this;
-           /* cont2.css3Animate({
-                        x: (screen.width + (screen.width/this.desplazamiento)),
-                        time: "500ms",
-                        previous: true,
-                        success:function(){
-                            $("#vistaPuntos").addClass("oculto");
-                            $("#vistaPuntos").removeClass("oculto");
-                        }
-                    });*/
-            cont2.animateCss({x:0,y:"0",duration:"500",easing:"easeOutSine"}).start();
-            //cont2.animateCss({x:screen.width+(screen.width/this.desplazamiento),y:"0",duration:"500",easing:"easeOutSine"}).start();
+            $("#"+this.id).animateCss({x:-((parseInt(this.ancho))*this.indice),y:"0",duration:"600",easing:"easeOutSine"}).start();
+            setTimeout(function(){$("#"+this.id).hide();},200);
+            setTimeout(function(){$("#"+this.id).show();},400);
         }
     };
 
-    var divContenedor = $("#"+this.id);
-    var contenedores = divContenedor.find("."+this.objetosMoviles);
-    propiedades = $(contenedores[0]).offset();
-    divContenedor.css({height:propiedades.height});
-    var cantSliders = contenedores.length;
-    for(var i=1;i<cantSliders;i++){
-        $(contenedores[i]).css({marginTop:-propiedades.height});
-        $(contenedores[i]).animateCss({x:screen.width,y:"0",duration:"0",easing:"easeOutSine"}).start();
-    }
-    var _this = this;
-    $("#"+this.id).bind("swipeLeft",function(e){
-        e.stopPropagation();
-        _this.izquierda();
-    });
-    $("#"+this.id).bind("swipeRight",function(e){
-        e.stopPropagation();
-        _this.derecha();
-    });
+    this.inicializar = function(){
+        var divContenedor = $("#"+this.id);
+        var contenedores = divContenedor.find("."+this.objetosMoviles);
+        propiedades = $(contenedores[0]).offset();
+        var cantSliders = contenedores.length;
+        $(contenedores[0]).css({width:this.ancho,overflowX:"hidden"});
+        this.indice = 0;
+        for(var i=1;i<cantSliders;i++){
+            $(contenedores[i]).css({width:this.ancho});
+        }
+
+//        var anchoContenedor = parseInt(this.ancho) * cantSliders+"px";
+        var anchoContenedor = (screen.width * cantSliders)+"px";
+        $("#"+this.id).css({width:anchoContenedor});
+
+        var _this = this;
+        $("#"+this.id).unbind();
+        $("#"+this.id).bind("swipeLeft",function(e){
+            $("body").addClass("desenlazar");
+            e.stopPropagation();
+            _this.izquierda();
+            setTimeout(function(){
+                $("body").removeClass("desenlazar");
+            },500);
+        });
+        $("#"+this.id).bind("swipeRight",function(e){
+            $("body").addClass("desenlazar");
+            e.stopPropagation();
+            _this.derecha();
+            setTimeout(function(){
+                $("body").removeClass("desenlazar");
+            },500);
+        });
+    };
+
+        this.inicializar();
+}
+
+
+var SliderImagenes = function(idSlider,claseHijos,ancho){
+    this.id = idSlider;
+    this.objetosMoviles = claseHijos;
+    this.ancho = ancho;
+    this.indice = 0;
+
+    this.cantidadContenedores = $("#"+this.id).find("."+this.objetosMoviles).length;
+
+    this.izquierda = function(){
+//        if(this.indice < this.cantidadContenedores-1){
+        if(this.indice < this.cantidadContenedores){
+            this.indice++;
+            var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
+            var cont2 = $(contenedores[this.indice]);
+            $("#"+this.id).animateCss({x:-((parseInt(this.ancho)+15)*this.indice),y:"0",duration:"200",easing:"easeOutSine"}).start();
+            setTimeout(function(){$("#"+this.id).hide();},200);
+            setTimeout(function(){$("#"+this.id).show();},400);
+        }
+    };
+
+    this.derecha = function(){
+        if(this.indice > 0){
+            this.indice--;
+            $("#"+this.id).animateCss({x:-((parseInt(this.ancho)+15)*this.indice),y:"0",duration:"200",easing:"easeOutSine"}).start();
+            setTimeout(function(){$("#"+this.id).hide();},200);
+            setTimeout(function(){$("#"+this.id).show();},400);
+        }
+    };
+
+    this.inicializar = function(){
+        var divContenedor = $("#"+this.id);
+        var contenedores = divContenedor.find("."+this.objetosMoviles);
+        propiedades = $(contenedores[0]).offset();
+        var cantSliders = contenedores.length;
+        $(contenedores[0]).css({width:this.ancho,overflowX:"hidden"});
+        this.indice = 0;
+        for(var i=1;i<cantSliders;i++){
+            $(contenedores[i]).css({width:this.ancho});
+        }
+
+        var anchoContenedor = ( (cantSliders * 15) + ( parseInt(this.ancho) * cantSliders) )+"px";
+
+        if(cantSliders != 0)
+            $("#"+this.id).css({width:anchoContenedor});
+
+     //   this.cantidadContenedores = Math.ceil(((screen.width / parseInt(this.ancho))) / cantSliders);
+        this.cantidadContenedores = cantSliders - parseInt(((screen.width / (parseInt(this.ancho)+15))));
+        /*if(cantSliders>3)
+            this.cantidadContenedores++;
+        */
+        var _this = this;
+        $("#"+this.id).unbind();
+        $("#"+this.id).bind("swipeLeft",function(e){
+            $("body").addClass("desenlazar");
+            e.stopPropagation();
+            _this.izquierda();
+            setTimeout(function(){
+                $("body").removeClass("desenlazar");
+            },500);
+        });
+        $("#"+this.id).bind("swipeRight",function(e){
+            $("body").addClass("desenlazar");
+            e.stopPropagation();
+            _this.derecha();
+            setTimeout(function(){
+                $("body").removeClass("desenlazar");
+            },500);
+        });
+    };
+
+        this.inicializar();
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function asociarItemVisita(){
+    if (!validar($("#mainRelevarRecolectable"))){
+            mensajeError("Campos incorrectos!");
+            return;
+    }
     var item = recolectarItem($("#recolectableVisita").find("[name|=item]")[0]);
     transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("items").push(item);
     $.ui.hideModal();
@@ -602,6 +596,10 @@ function recolectarItem(item){
 }
 
 function asociarPlantaVisita(){
+    if (!validar($("#mainRelevarRecolectable"))){
+            mensajeError("Campos incorrectos!");
+            return;
+    }
     var planta = recolectarPlanta($("#recolectableVisita").find("[name|=planta]")[0]);
     transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("items").push(planta);
     $.ui.hideModal();
@@ -625,8 +623,8 @@ var Radar = function(idContenedor,cantidad){
 		this.estadoZoom = 0;
 		this.contenedor = $("#"+idContenedor);
 		this.cantidad = cantidad;
-        this.idIntervalo=-1;
 		_this = this;
+        idIntervalo=-1;
 
 		this.agregarCuadro = function(clase){
 			var cuadro = $('<div class="cuadro '+clase+'"></div>');
@@ -667,7 +665,8 @@ var Radar = function(idContenedor,cantidad){
 		});
 
         this.detener= function(){
-            clearInterval(_this.idIntervalo);
+            clearInterval(idIntervalo);
+
         };
 
 		this.marcarObjetivo = function(angulo,distancia){
@@ -675,16 +674,12 @@ var Radar = function(idContenedor,cantidad){
             var y0 = 500;
             var porcentaje = 10;
 
-/*            var x1 = ((Math.cos(angulo)*distancia)+x0)/porcentaje;
-            var y1 = ((Math.sin(angulo)*distancia)+y0)/porcentaje;*/
-
             var x1 = (((Math.cos(angulo)*distancia)*(_this.estadoZoom+1))+x0)/porcentaje;
             var y1 = (((Math.sin(angulo)*distancia)*(_this.estadoZoom+1))+y0)/porcentaje;
 
             x1--;
             y1--;
-            console.log(x1);
-            console.log(y1);
+
 
            if(_this.contenedor.find("#objetivo").length!=0){
                $("#objetivo").remove();
@@ -694,12 +689,13 @@ var Radar = function(idContenedor,cantidad){
 			_this.contenedor.append("<div id='objetivo'/>");
             $("#objetivo").css({marginLeft:x1+"%",marginTop:y1+"%"});
 			intermitente = 3;
-            if(_this.idIntervalo==-1){
-                _this.idIntervalo = setInterval(function(){
+            if(idIntervalo==-1){
+                idIntervalo = setInterval(function(){
                     intermitente++;
                     if (intermitente == 8){
                         intermitente=3;
                         intel.xdk.player.playSound("/sonidos/bipRadar.mp3");
+                        console.log("BEEP");
                     }
                     var color= "rgba(255,255,0,0."+intermitente+")";
                     $("#objetivo").css({backgroundColor:color});
@@ -728,3 +724,84 @@ function asignarFuncionCierreModal(callback){
 
 
 }
+
+function mostrarMascara(mensaje){
+    $("body").addClass("bloquear");
+    $.ui.showMask(mensaje);
+}
+
+function ocultarMascara(){
+    $("body").removeClass("bloquear");
+    $.ui.hideMask();
+
+}
+
+function ordenarEspecies(especiesPredominante,ultimaVisita){
+    diccionarioEspecies ={};
+    Y.Planta.obtenerPlantasVisita(ultimaVisita.get("idTransecta"),ultimaVisita.get("fecha"),function(plantas){
+        plantas.map(function(planta,indice){
+            if(diccionarioEspecies.hasOwnProperty(planta.get("especie")))
+                diccionarioEspecies[planta.get("especie")] = diccionarioEspecies[planta.get("especie")] +1;
+            else
+                diccionarioEspecies[planta.get("especie")] = 1;
+        });
+
+
+        arregloObjetos=[];
+        var claves =Object.keys(diccionarioEspecies);
+        for(var i = 0; i < claves.length;  i++ ){
+            arregloObjetos.push({"nombre":claves[i],"valor":diccionarioEspecies[claves[i]]});
+        }
+
+        arregloObjetos.sort(function(c,d){ return c.valor < d.valor });
+
+        for(var i=2; i>=0 ;i--){
+            especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == arregloObjetos[i].nombre})[0]),1)[0]);
+        }
+
+
+
+
+    });
+
+}
+
+
+function validar($divPagina){
+    var valido = true;
+    var inputs = $divPagina.find("input");
+    for(var i = 0; i< inputs.length;i++){
+        var $input = $(inputs[i]);
+        var tipo = $input.attr("type");
+        var patron = $input.attr("patron");
+        if(tipo !="range" && patron != null ){
+            valido = validarCampo($input) && valido;
+        }
+    }
+    return valido;
+
+}
+
+
+
+
+function validarCampo($campo){
+    var valor = $campo.val();
+    var patron = $campo.attr("patron");
+    var reg = new RegExp(patron,"i");
+
+
+    if(valor.match(reg)==null){
+        //mensajeError($campo.attr("mensaje"));
+        $campo.addClass("errorValidacion");
+
+        if ($("#"+$campo.attr("name")+"error").length == 0 && ($campo.attr("mensaje") != ""))
+            $campo.parent()[0].insertBefore($("<p id='"+$campo.attr("name")+"error' class='mensajeError'>"+ $campo.attr("mensaje") +"</p>").get(0),$campo.get(0));
+
+        return false;
+    }
+    $campo.removeClass("errorValidacion");
+    $("#"+$campo.attr("name")+"error").remove();
+    return true;
+}
+

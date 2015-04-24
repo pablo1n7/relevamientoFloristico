@@ -45,7 +45,7 @@ Y.add('visitaModelo',function(Y){
 
         almacenarPunto:function(punto){
             this.get("puntos").push(punto);
-            if(this.get("puntos").length == CANTIDAD_PUNTOS+1){
+            if(this.get("puntos").length == CANTIDAD_PUNTOS){
                 this.save(transectaActiva.get("id"));
             }
 
@@ -77,15 +77,37 @@ Y.add('visitaModelo',function(Y){
 
     Y.Visita.obtenerVisitasTransecta = function(transecta,callback){
          var q = "select * from Visita where idTransecta="+transecta.get("id")+";";
+         contadorVisitas =0;
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     var visitas = [];
+                    if(data.rows.length == 0){
+                        callback(visitas);
+                        return;
+                    }
                     for (var i = 0; i < data.rows.length; i++) {
                         var visita = new Y.Visita({"idTransecta":transecta.get("id"),"fecha":data.rows.item(i).fecha});
                         //items y plantas.
+                        (function(v){
+                            Y.Planta.obtenerPlantasAsociadas(null,v.get("idTransecta"),v.get("fecha"),function(plantas){
+                                console.log("Obteniendo plantas");
+                                //v.get("items").concat(plantas);
+                                v.set("items",v.get("items").concat(plantas))
+                            });
+                        }(visita));
+                        (function(v){Y.Ejemplar.obtenerEjemplaresAsociados(null,v.get("idTransecta"),v.get("fecha"),function(ejemplares){
+                            console.log("Obteniendo Ejemplares");
+                            //v.get("items").concat(ejemplares);
+                            v.set("items",v.get("items").concat(ejemplares))
+                        });
+                        }(visita));
                         (function(v){Y.Punto.obtenerPuntosVisita(visita,function(puntos){
                             console.log("Obteniendo Puntos, Items y todo eso");
                             v.set("puntos",puntos);
+                            if(data.rows.item(0).fecha == v.get("fecha"))
+                                callback(visitas);
+
+                            //callback(visitas);
                         });
                         }(visita));
 
@@ -104,7 +126,16 @@ Y.add('visitaModelo',function(Y){
 
                         visitas.push(visita);
                     };
-                    callback(visitas);
+
+                    /*while(data.rows.length != contadorVisitas){
+                        continue;
+                    }
+
+*/
+
+
+
+
                 });
             });
     }

@@ -1,5 +1,5 @@
 <div id="datosTransecta">
-    <textarea id="ambiente" name="ambiente" rows="3" cols="20" placeholder="Ingrese el Ambiente de la Transcta"></textarea>
+    <input id="ambiente" name="ambiente" type="text" placeholder="Ingrese el Ambiente de la Transcta" patron="^([a-zñáéíóú]+)([a-zñáéíóú0-9 ]+)$" mensaje="Nota: El ambiente debe comenzar con letra y no puede estar vacio"/>
 
 
     <input id="cuadro" type="text" placeholder="Ingrese el nombre del Cuadro (opcional)"/>

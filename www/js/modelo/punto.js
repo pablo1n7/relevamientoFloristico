@@ -4,7 +4,7 @@ Y.add('puntoModelo',function(Y){
 
         save:function(visita,callback){
                 var _this = this;
-                var q = "INSERT INTO Punto('idTransecta','fecha','estadoPunto','tipoSuelo','coordenada') values("+visita.get("idTransecta")+","+visita.get("fecha")+",'"+_this.get("estado")+"','"+_this.get("suelo")+"','"+_this.get("coordenada")+"');";
+                var q = "INSERT INTO Punto('idTransecta','fecha','estadoPunto','tipoSuelo','coordenada') values("+visita.get("idTransecta")+","+visita.get("fecha")+",'"+_this.get("estado")+"','"+_this.get("suelo")+"','"+_this.get("coordenadas")+"');";
                 db.transaction(function(t){
                     t.executeSql(q, [],
                         function (t, data) {
@@ -33,7 +33,7 @@ Y.add('puntoModelo',function(Y){
                 estado:{
                     value: null
                 },
-                coordenada:{
+                coordenadas:{
                     value: null
                 }
             },
@@ -47,7 +47,7 @@ Y.add('puntoModelo',function(Y){
                 t.executeSql(q, null, function (t, data) {
                     var puntos = [];
                     for (var i = 0; i < data.rows.length; i++) {
-                        var punto = new Y.Punto({"id":data.rows.item(i).id,"estado":data.rows.item(i).estadoPunto});
+                        var punto = new Y.Punto({"id":data.rows.item(i).id,"estado":data.rows.item(i).estadoPunto,"coordenadas":data.rows.item(i).coordenada});
                         puntos.push(punto);
                     }
                     callback(puntos);
