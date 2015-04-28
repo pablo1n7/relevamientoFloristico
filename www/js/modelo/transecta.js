@@ -4,7 +4,7 @@ Y.add('transectaModelo',function(Y){
 
         save:function(callback,callbackError){
             var _this = this;
-            var q = "INSERT INTO Transecta ('nombreCampania','fechaCampania','sentido','ambiente','cuadro') values('"+this.get("campania").get("nombre")+"',"+this.get("campania").get("fecha")+","+this.get("sentido")+",'"+this.get("ambiente")+"','"+this.get("cuadro")+"');";
+            var q = "INSERT INTO Transecta ('nombreCampania','fechaCampania','sentido','ambiente','cuadro','distanciaEntrePuntos') values('"+this.get("campania").get("nombre")+"',"+this.get("campania").get("fecha")+","+this.get("sentido")+",'"+this.get("ambiente")+"','"+this.get("cuadro")+"',"+this.get("distanciaEntrePuntos")+");";
             db.transaction(function(t){
                 t.executeSql(q, [],
                 function (t, data) {
@@ -44,6 +44,9 @@ Y.add('transectaModelo',function(Y){
                 },
                 nombreEspecies:{
                     value:[]
+                },
+                distanciaEntrePuntos:{
+                    value:3
                 }
 
             },
@@ -56,7 +59,7 @@ Y.add('transectaModelo',function(Y){
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
-                    callback(new Y.Transecta({"id":data.rows.item(i).id,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro}));
+                    callback(new Y.Transecta({"id":data.rows.item(i).id,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro, "distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos}));
                 };
             });
         });
@@ -69,7 +72,7 @@ Y.add('transectaModelo',function(Y){
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
 
-                    var transecta = new Y.Transecta({"id":data.rows.item(i).id,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro});
+                    var transecta = new Y.Transecta({"id":data.rows.item(i).id,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro,"distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos});
                     Y.Visita.obtenerVisitasTransecta(transecta,function(visitas){
                         transecta.set("visitas",visitas);
                         callback(transecta);

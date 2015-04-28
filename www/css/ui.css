@@ -445,22 +445,13 @@ footer .button{
     font-size: 24px;
     padding-top: 2%;
     padding-left: 10%;
-    font-family: serif;
+    font-family: Arial !important;
     text-align: left;
     height: 39px;
+    color:white;
+    background-color: rgb(33,33,33);
 }
 
-.headerPlanta{
-    background-color: #A8F18B;
-}
-
-.headerItem{
-    background-color: #8BB8F1;
-}
-
-.headerSuelo{
-    background-color: darkgray;
-}
 
 .seleccionable{
     width: 100%;

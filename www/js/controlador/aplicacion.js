@@ -5,7 +5,6 @@ $.mvc.controller.create("aplicacion", {
         popularBD();
         CANTIDAD_PUNTOS = 11;
         DISTANCIA_ACEPTABLE =10;
-        DISTANCIA_ENTRE_PUNTOS = 3;
         tipoEjemplares=[];
         familias = [];
         especies = [];
@@ -310,7 +309,8 @@ $.mvc.controller.create("aplicacion", {
         var estadoDeConservacion=$("#estadoDeConservacion").val();
         var distribucionGeografica=$("#distribucionGeografica").val();
         var indiceCalidad=$("#indiceDeCalidad").val();
-        var especie = new Y.Especie({"nombre":nombreEspecie,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologica,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceCalidad});
+        var forrajera = parseInt($("#forrajera").val());
+        var especie = new Y.Especie({"nombre":nombreEspecie,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologica,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceCalidad,"forrajera":forrajera});
         mostrarMascara('Guardando...');
         especie.save(function(){
             ocultarMascara();
@@ -521,6 +521,7 @@ objetoBrujulaTransecta.vueltas = 0;
         var ambiente= $("#ambiente").val();
         var sentido = $("#valorSentido").text();
         var cuadro = $("#cuadro").val();
+        var distanciaEntrePuntos = parseInt($("#distanciaEntrePuntosLabel").text());
 
         /*var especiesSeleccionadas = ($("#contenedorEspecies").find("[type|=checkbox]")).get().filter(function(x){return x.checked});
 
@@ -546,7 +547,7 @@ objetoBrujulaTransecta.vueltas = 0;
         }
 
 
-        var transecta = new Y.Transecta({"ambiente":ambiente,"sentido":sentido,"cuadro":cuadro,"campania":campañaActiva,"nombreEspecies":nombreEspecies});
+        var transecta = new Y.Transecta({"ambiente":ambiente,"sentido":sentido,"cuadro":cuadro,"campania":campañaActiva,"nombreEspecies":nombreEspecies, "distanciaEntrePuntos":distanciaEntrePuntos});
         mostrarMascara('Guardando...');
         transecta.save(function(){
             ocultarMascara();
@@ -576,7 +577,7 @@ objetoBrujulaTransecta.vueltas = 0;
             $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
 
             $("#metrosRestantes").empty();
-            $("#metrosRestantes").append(CANTIDAD_PUNTOS*DISTANCIA_ENTRE_PUNTOS);
+            $("#metrosRestantes").append(CANTIDAD_PUNTOS*transectaActiva.get("distanciaEntrePuntos"));
 
 
 
@@ -649,7 +650,7 @@ objetoBrujulaTransecta.vueltas = 0;
         transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
         $.ui.hideModal();
         $("#metrosRestantes").empty();
-        $("#metrosRestantes").append(DISTANCIA_ENTRE_PUNTOS*(CANTIDAD_PUNTOS-cantPuntos));
+        $("#metrosRestantes").append(transectaActiva.get("distanciaEntrePuntos")*(CANTIDAD_PUNTOS-cantPuntos));
         mensajeExitoso("Punto Recolectado");
 
     },

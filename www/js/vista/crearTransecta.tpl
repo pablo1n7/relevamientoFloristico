@@ -4,6 +4,16 @@
 
     <input id="cuadro" type="text" placeholder="Ingrese el nombre del Cuadro (opcional)"/>
 
+    <div class="input-group">
+        <span> Distancia Entre Puntos (Mts)</span>
+        <br>
+        <input id="distanciaEntrePuntos" class="slider" onchange="$('#distanciaEntrePuntosLabel').text(this.value);" type="range" min="1" max="3" value="3">
+        <span id="distanciaEntrePuntosLabel" class="range-value">3</span>
+    </div>
+
+
+
+
     <div id="brujulaMovil" class="brujulaMovil" style="width:{{=it.screen.width-(it.screen.width/2.5)}}px;height:{{=it.screen.width-(it.screen.width/2.5)}}px">
         <div id="brujulaFija" class="brujulaFija"></div>
     </div>
@@ -11,6 +21,7 @@
         <div><p id="valorSentido">0</p>grados</div>
         <p id="mensajeBrujula">Toque la brujula para fijar el sentido de la transecta.</p></div>
 </div>
+
 
 <div class="input-group">
     <div class="headerElemento headerPlanta">

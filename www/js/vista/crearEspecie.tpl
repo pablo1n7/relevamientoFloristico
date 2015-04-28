@@ -50,6 +50,16 @@
     <span id="indiceCalidadLabel" class="range-value">0</span>
 </div>
 
+
+<div class="input-group" data-ver="1">
+    <span>Forrajera</span>
+    <select id="forrajera">
+        <option value="1" > Si </option>
+        <option value="0"> No </option>
+    </select>
+</div>
+
+
 <div class="divBoton">
     <a name="crearEspecie" class="anchorBoton" href="/aplicacion/crearEspecie">Crear Especie</a>
 </div>

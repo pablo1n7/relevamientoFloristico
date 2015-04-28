@@ -9,7 +9,7 @@ Y.add('especieModelo',function(Y){
         },
 
         save:function(callback,callbackError){
-            var q = "INSERT INTO Especie ('nombre','tipoBiologico','formaBiologica','distribucionGeografica','indiceDeCalidad','estadoDeConservacion','familia') values('"+this.get("nombre")+"','"+this.get("tipoBiologico")+"','"+this.get("formaBiologica")+"','"+this.get("distribucionGeografica")+"',"+this.get("indiceDeCalidad")+",'"+this.get("estadoDeConservacion")+"','"+this.get("familia")+"');";
+            var q = "INSERT INTO Especie ('nombre','tipoBiologico','formaBiologica','distribucionGeografica','indiceDeCalidad','estadoDeConservacion','familia','forrajera') values('"+this.get("nombre")+"','"+this.get("tipoBiologico")+"','"+this.get("formaBiologica")+"','"+this.get("distribucionGeografica")+"',"+this.get("indiceDeCalidad")+",'"+this.get("estadoDeConservacion")+"','"+this.get("familia")+"',"+this.get("forrajera")+");";
             db.transaction(function(t){
                 t.executeSql(q, [],
                 function (t, data) {
@@ -45,6 +45,9 @@ Y.add('especieModelo',function(Y){
                 },
                 imagen:{
                     value: ''
+                },
+                forrajera:{
+                    value: 1
                 }
 
             },
@@ -57,7 +60,7 @@ Y.add('especieModelo',function(Y){
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     for (var i = 0; i < data.rows.length; i++) {
-                        var especie = new Y.Especie({"nombre":data.rows.item(i).nombre,"familia":data.rows.item(i).familia,"formaBiologica":data.rows.item(i).formaBiologica,"tipoBiologico":data.rows.item(i).tipoBiologico,"estadoDeConservacion":data.rows.item(i).estadoDeConservacion,"distribucionGeografica":data.rows.item(i).distribucionGeografica,"indiceDeCalidad":data.rows.item(i).indiceDeCalidad,"imagen":data.rows.item(i).imagen});
+                        var especie = new Y.Especie({"nombre":data.rows.item(i).nombre,"familia":data.rows.item(i).familia,"formaBiologica":data.rows.item(i).formaBiologica,"tipoBiologico":data.rows.item(i).tipoBiologico,"estadoDeConservacion":data.rows.item(i).estadoDeConservacion,"distribucionGeografica":data.rows.item(i).distribucionGeografica,"indiceDeCalidad":data.rows.item(i).indiceDeCalidad,"imagen":data.rows.item(i).imagen,"forrajera":data.rows.item(i).forrajera});
                         //especies.push(especie);
                         callback(especie);
                         //console.log(data.rows.item(i));
