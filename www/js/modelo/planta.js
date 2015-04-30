@@ -17,6 +17,16 @@ Y.add('plantaModelo',function(Y){
 
             iconoRepresentacion:function(){
                 return "fa-leaf planta"
+            },
+
+            borrar:function(){
+                intel.xdk.camera.deletePicture(this.get("foto"));
+                var q = "delete from Planta where id="+this.get("id")+";";
+                db.transaction(function (t) {
+                    t.executeSql(q, null, function (t, data) {
+                        console.log("una Planta Eliminada");
+                    });
+                });
             }
 
     },{

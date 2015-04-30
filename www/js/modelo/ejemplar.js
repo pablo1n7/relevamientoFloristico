@@ -50,6 +50,26 @@ Y.add('ejemplarModelo',function(Y){
                     var valor = new Y.Valor({"propiedad":propiedad});
                     pepe.get("valores").push(valor);
                 });*/
+            },
+
+            borrar:function(){
+                intel.xdk.camera.deletePicture(this.get("foto"));
+                var _this = this;
+                var q = "delete from Valor where idEjemplar="+this.get("id")+";";
+                db.transaction(function (t) {
+                    t.executeSql(q, null, function (t, data) {
+                        console.log("un Valor Eliminado");
+
+                        var q1 = "delete from Ejemplar where id="+_this.get("id")+";";
+                        db.transaction(function (t) {
+                            t.executeSql(q1, null, function (t, data) {
+                                console.log("un Ejemplar Eliminado");
+                            });
+                        });
+
+                    });
+                });
+
             }
 
 

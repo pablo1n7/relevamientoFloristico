@@ -760,3 +760,65 @@ footer .button{
 .mensajeError{
     margin-top: 20px;
 }
+
+
+
+
+.mascaraPopUp{
+	top:0px;
+	position: absolute;
+	z-index: 1000;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(33,33,33,.5);
+}
+
+.popUp{
+	margin: 50% auto;
+	background-color: white;
+	border-radius: 10px;
+	width: 80%;
+}
+
+.popUp label, .popUp input {
+	margin-left: 20px !important;
+}
+
+
+.popUp textarea{
+	resize: none;
+	width: 95%;
+	margin: 2% 1% !important;*/
+}
+
+.cabeceraPopUp{
+  	background-color: rgb(33,33,33);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    color: white;
+    font-size: 30px;
+    padding: 15px;
+}
+
+.cuerpoPopUp{
+    font-size: 20px;
+    padding: 10px;
+}
+
+.contenedorBotones{
+    padding:10px;
+	margin-top: 10px;
+	border-top-style: solid !important;
+	border-top: 1px;
+	border-top-color: rgba(33,33,33,.3);
+	overflow: auto;
+}
+
+.contenedorBotones input{
+	background-color: rgb(33, 33, 33);
+    border-radius: 5px;
+    color: white;
+    font-weight: bolder;
+    padding: 4px 12px;
+    width: 45%;
+}

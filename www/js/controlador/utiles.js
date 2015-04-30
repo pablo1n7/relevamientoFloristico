@@ -122,7 +122,7 @@ function agregarAyuda(contexto,diccionario){
 //
 
 function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
-    $.ui.popup( {
+    /*$.ui.popup( {
        title:titulo,
        message:mensaje,
        doneText:"Aceptar",
@@ -130,7 +130,26 @@ function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
        cancelText:"Cancelar",
        cancelCallback: funcionCancelar,
        cancelOnly:false
-    });
+    });*/
+		var $mascaraPopUp = $('<div id="mascaraPopUp" class="mascaraPopUp"></div>');
+		$("body").append($mascaraPopUp);
+		var $divPopUp = $('<div class="popUp"/>');
+		$mascaraPopUp.append($divPopUp);
+		$divPopUp.append('<div class="cabeceraPopUp">'+titulo+'</div>');
+		var $cuerpoPopUp = $('<div class="cuerpoPopUp">'+mensaje+'"</div>');
+		$divPopUp.append($cuerpoPopUp);
+		var $contenedorBotones = $('<div class="contenedorBotones"/>');
+		$contenedorBotones.append('<input type="button" id="aceptar" class="botonAceptar" value="Aceptar"/><input type="button" id="cancelar" class="botonCancelar" value="Cancelar"/>');
+		$divPopUp.append($contenedorBotones);
+		$("#cancelar").click(function(){
+            $("#mascaraPopUp").remove()
+            funcionCancelar()
+        });
+		$("#aceptar").click(function(){
+		 	$("#mascaraPopUp").remove();
+            funcionAceptar();
+		 });
+
 
 }
 
@@ -578,7 +597,7 @@ function asociarItemVisita(){
             return;
     }
     var item = recolectarItem($("#recolectableVisita").find("[name|=item]")[0]);
-    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("items").push(item);
+    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarItem(item);
     $.ui.hideModal();
     mensajeExitoso("Item Recolectado");
 }
@@ -601,7 +620,7 @@ function asociarPlantaVisita(){
             return;
     }
     var planta = recolectarPlanta($("#recolectableVisita").find("[name|=planta]")[0]);
-    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("items").push(planta);
+    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarItem(planta);
     $.ui.hideModal();
     mensajeExitoso("Planta Recolectada");
 }
@@ -754,8 +773,8 @@ function ordenarEspecies(especiesPredominante,ultimaVisita){
         }
 
         arregloObjetos.sort(function(c,d){ return c.valor < d.valor });
-
-        for(var i=2; i>=0 ;i--){
+        var cantidad = (3 >arregloObjetos.length)?arregloObjetos.length:4;
+        for(var i=cantidad-1; i>=0 ;i--){
             especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == arregloObjetos[i].nombre})[0]),1)[0]);
         }
 
@@ -805,3 +824,33 @@ function validarCampo($campo){
     return true;
 }
 
+
+
+function verificarVisitas(){
+    var q = "select * from Visita ORDER BY fecha DESC LIMIT 1;";
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+                for (var i = 0; i < data.rows.length; i++) {
+                    var q1 = "select count(*) as contador from Punto where idTransecta="+data.rows.item(i).idTransecta+" AND fecha="+data.rows.item(i).fecha+";";
+                    var transectaAActivar = data.rows.item(i).idTransecta;
+                    var fechaAActivar = data.rows.item(i).fecha;
+                    db.transaction(function (t) {
+                        t.executeSql(q1, null, function (t, data) {
+                            console.log("cantidad Puntos ultima Visita:"+data.rows.item(0).contador);
+                            if(data.rows.item(0).contador < CANTIDAD_PUNTOS){
+                                mensajeConfirmacion("Reanudar Visita","Hay una Visita pendiente, desea continuarla?",
+                                    function(){console.log("reanudo");
+                                               $.mvc.route("aplicacion/activarTransecta/"+transectaAActivar+"/1");
+                                    },function(){
+                                        console.log("cancelo");
+                                        Y.Visita.obtenerVisitaTransecta(transectaAActivar,fechaAActivar,function(visita){
+                                            visita.borrar();
+                                        });
+                                    });
+                            }
+                        });
+                    });
+                };
+            });
+        });
+}

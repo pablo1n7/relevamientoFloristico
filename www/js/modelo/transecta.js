@@ -71,8 +71,7 @@ Y.add('transectaModelo',function(Y){
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
-
-                    var transecta = new Y.Transecta({"id":data.rows.item(i).id,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro,"distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos});
+                    var transecta = new Y.Transecta({"id":data.rows.item(i).id,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro,"distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos,"nombreCampania":data.rows.item(i).nombreCampania,"fechaCampania":data.rows.item(i).fechaCampania});
                     Y.Visita.obtenerVisitasTransecta(transecta,function(visitas){
                         transecta.set("visitas",visitas);
                         callback(transecta);

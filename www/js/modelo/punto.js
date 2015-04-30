@@ -15,6 +15,18 @@ Y.add('puntoModelo',function(Y){
                     });
 
 
+        },
+
+        borrar:function(){
+            this.get("items").map(function(item){
+                item.borrar();
+            });
+            var q = "delete from Punto where id = "+this.get("id")+";";
+            db.transaction(function(t){
+                t.executeSql(q, [],function (t, data) {},function(){
+                    console.log("un Punto Eliminado");
+                });
+            });
         }
 
 
@@ -40,6 +52,36 @@ Y.add('puntoModelo',function(Y){
         
         }
     );
+
+
+    Y.Punto.completarPuntos = function(puntos,visita,callback){
+
+        cantidadPuntos = puntos.length;
+
+        for (var i = 0; i<puntos.length;i++){
+            (function(punto){
+                Y.Planta.obtenerPlantasAsociadas(punto.get("id"),visita.get("idTransecta"),visita.get("fecha"),function(items){
+                    punto.set("items",punto.get("items").concat(items));
+                    Y.Ejemplar.obtenerEjemplaresAsociados(punto.get("id"),visita.get("idTransecta"),visita.get("fecha"),function(items){
+                        punto.set("items",punto.get("items").concat(items));
+                        cantidadPuntos--;
+                    });
+                })
+            }(puntos[i]))
+        }
+
+        var idIntervaloBorrar = -1;
+        idIntervaloBorrar = setInterval(function(){
+            console.log("indiada");
+            if(cantidadPuntos <= 0){
+                console.log("Finalizando indiada");
+                clearInterval(idIntervaloBorrar);
+                callback(puntos);
+            }
+        },5000);
+
+
+    };
 
     Y.Punto.obtenerPuntosVisita = function(visita,callback){
         var q = "select * from Punto where idTransecta="+visita.get("idTransecta")+" and fecha="+visita.get("fecha")+";";

@@ -2,6 +2,7 @@ $.mvc.controller.create("aplicacion", {
     views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl'], //These are the views we will use with the controller
     init:function(){
 
+       // vaciarBD();
         popularBD();
         CANTIDAD_PUNTOS = 11;
         DISTANCIA_ACEPTABLE =10;
@@ -40,9 +41,6 @@ $.mvc.controller.create("aplicacion", {
                 $("body").removeClass("desenlazar");
             },100);
         });
-
-
-
     },
     default:function(){
 
@@ -53,7 +51,7 @@ $.mvc.controller.create("aplicacion", {
         Y.Campania.obtenerCampanias(function(campania){campañas.push(campania)});
         tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
 
-
+    verificarVisitas();
     },
 
     seleccionarPropiedad: function(){
@@ -115,6 +113,10 @@ $.mvc.controller.create("aplicacion", {
 
         var tiposConstantes = ["Alfanumerico","Enumerado","Numerico","Rango"];
         var campos = $("#campos").children();
+        if(campos.length==0){
+            mensajeError("No hay propiedades!");
+            return;
+        }
         var nombreTipoEjemplar = $("#nombreTipoEjemplar").val();
         var descripcionTipoEjemplar = $("#descripcionTipoEjemplar").val();
         var tipoEjemplar = new Y.TipoEjemplar({'nombre':nombreTipoEjemplar,'descripcion':descripcionTipoEjemplar});
@@ -395,15 +397,18 @@ $.mvc.controller.create("aplicacion", {
     },
 
 
-    activarCampania:function(nombreCodificado,fecha){
+    activarCampania:function(nombreCodificado,fecha,reanudacion){
+        var reanudacion = reanudacion || 0;
         var nombre = decodeURIComponent(nombreCodificado);
         Y.Campania.obtenerCampania(nombre,fecha,function(camp){
             campañaActiva = camp;
             mensajeExitoso("Campaña Seleccionada");
-            activarSubPagina("#uib_page_1","Campaña "+camp.get("nombre"));
-            activarBotonFuncionalidad('Desactivar',function(){
-                $.mvc.route("aplicacion/desactivarCampania");
-            });
+            if(parseInt(reanudacion)==0){
+                activarSubPagina("#uib_page_1","Campaña "+camp.get("nombre"));
+                activarBotonFuncionalidad('Desactivar',function(){
+                    $.mvc.route("aplicacion/desactivarCampania");
+                });
+            }
 
             $("#mainCampañas").html($.template('js/vista/campaniaActiva.tpl',{campania:campañaActiva}));
             toogleAlto("#contenedorTipos",$("#contenedorTipos").offset().height+"px");
@@ -563,26 +568,35 @@ objetoBrujulaTransecta.vueltas = 0;
         });
     },
 
-    activarTransecta: function(id){
+    activarTransecta: function(id,reanudacion){
+        var reanudacion = reanudacion || 0;
+        var valorJustgage = 0;
+        var metrosRestantes = 0;
          mostrarMascara('Activando Transecta...');
         Y.Transecta.obtenerTransecta(id,function(transecta){
             transectaActiva = transecta;
-            var visita = new Y.Visita({fecha:Date.now()});
-            //visita.save(transecta.get("id"));
-            transecta.get("visitas").push(visita);
+            if(parseInt(reanudacion) == 0){
+                var visita = new Y.Visita({fecha:Date.now()});
+                visita.save(transecta.get("id"));
+                transecta.get("visitas").push(visita);
+                metrosRestantes = CANTIDAD_PUNTOS * transectaActiva.get("distanciaEntrePuntos");
+            }else{
+                valorJustgage = transecta.get("visitas")[transecta.get("visitas").length-1].get("puntos").length;
+                metrosRestantes = (CANTIDAD_PUNTOS - valorJustgage) * transectaActiva.get("distanciaEntrePuntos");
+                $.mvc.route("/aplicacion/activarCampania/"+encodeURIComponent(transectaActiva.get("nombreCampania"))+"/"+transectaActiva.get("fechaCampania")+"/1");
+
+            }
             activarBrujulaSeguimiento(transectaActiva.get("sentido"));
             activarSubPagina("#mainsub","Pagina Principal");
              $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
-            justgageTransecta = new JustGage({ id: "justgageTransecta",value: 0,min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+            justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage,min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
             $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
 
             $("#metrosRestantes").empty();
-            $("#metrosRestantes").append(CANTIDAD_PUNTOS*transectaActiva.get("distanciaEntrePuntos"));
-
-
+            $("#metrosRestantes").append(metrosRestantes);
 
             ocultarMascara();
-            if (transecta.get("visitas").length != 1){
+            if (parseInt(reanudacion) == 0 && transecta.get("visitas").length != 1){
                 ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
                 $.mvc.route("/aplicacion/guiarPrimerPunto/"+transecta.get("visitas")[0].get("puntos")[0].get("coordenadas"));
             }else{
@@ -617,7 +631,7 @@ objetoBrujulaTransecta.vueltas = 0;
         var tipoSuleo = $("#tipoSuelo").val();
         var plantas = $("#datosPlantas").find("[name|=planta]");
         var items = $("#datosPlantas").find("[name|=item]");
-        punto = new Y.Punto({"estado":estadoAguja,"suelo":tipoSuleo});
+        var punto = new Y.Punto({"estado":estadoAguja,"suelo":tipoSuleo});
         for(var i=0;i<items.length;i++){
             punto.get("items").push(recolectarItem(items[i]));
         }
@@ -632,6 +646,8 @@ objetoBrujulaTransecta.vueltas = 0;
                 Gps.obtenerPosicion(function(lng,lat){
                     ocultarMascara();
                     punto.set("coordenadas",lng+"/"+lat);
+                    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
+                    Gps.pararGps();
 
                 });
             }else{
@@ -642,12 +658,15 @@ objetoBrujulaTransecta.vueltas = 0;
                     punto.set("coordenadas",transectaActiva.get("visitas")[0].get("puntos")[CANTIDAD_PUNTOS-1].get("coordenadas"));
 
                 }
+                transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
             }
+        }else{
+            transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
         }
         cantPuntos=cantPuntos+1;
         justgageTransecta.refresh(cantPuntos);
 
-        transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
+
         $.ui.hideModal();
         $("#metrosRestantes").empty();
         $("#metrosRestantes").append(transectaActiva.get("distanciaEntrePuntos")*(CANTIDAD_PUNTOS-cantPuntos));
