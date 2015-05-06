@@ -4,8 +4,17 @@
     <div class="sliderVisita">
         <div class="headerVisita">
             <div id="infoVisita">
+                <div class="numeroVisita"> {{=(j+1)+"/"+it.transecta.get('visitas').length}} </div>
                 <p>Ambiente de Transecta: {{=it.transecta.get('ambiente')}}</p>
-                    Fecha de Visita: {{=new Date(it.transecta.get('visitas')[j].get("fecha")).toLocaleString()}}
+                    Fecha de Visita: {{
+
+                            var a = new Date(it.transecta.get('visitas')[j].get("fecha"));
+                            var dia = a.getDate();
+                            var mes = a.getMonth();
+                            var anio = a.getFullYear();
+
+                    }}
+                {{=dia+"/"+mes+"/"+anio}}
             </div>
         </div>
 

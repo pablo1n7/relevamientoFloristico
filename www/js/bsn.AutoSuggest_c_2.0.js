@@ -529,7 +529,7 @@ _bsn.AutoSuggest.prototype.setHighlightedValue = function (valor)
         this.validSuggestion = valor;
 
         $(this.fld).blur();
-       // cordova.plugins.SoftKeyBoard.hide();
+        cordova.plugins.SoftKeyBoard.hide();
 
 		// move cursor to end of input (safari)
 		//

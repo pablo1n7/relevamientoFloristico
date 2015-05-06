@@ -142,7 +142,7 @@ Y.add('visitaModelo',function(Y){
 
     Y.Visita.obtenerVisitasTransecta = function(transecta,callback){
          var q = "select * from Visita where idTransecta="+transecta.get("id")+";";
-         contadorVisitas =0;
+         contadorVisitas = 0;
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     var visitas = [];
@@ -150,6 +150,7 @@ Y.add('visitaModelo',function(Y){
                         callback(visitas);
                         return;
                     }
+                    contadorVisitas = data.rows.length;
                     for (var i = 0; i < data.rows.length; i++) {
                         var visita = new Y.Visita({"idTransecta":transecta.get("id"),"fecha":data.rows.item(i).fecha});
                         //items y plantas.
@@ -169,10 +170,11 @@ Y.add('visitaModelo',function(Y){
                         (function(v){Y.Punto.obtenerPuntosVisita(visita,function(puntos){
                             console.log("Obteniendo Puntos, Items y todo eso");
                             v.set("puntos",puntos);
-                            if(data.rows.item(0).fecha == v.get("fecha"))
-                                callback(visitas);
+/*                            if(data.rows.item(0).fecha == v.get("fecha"))
+                                callback(visitas);*/
 
-                            //callback(visitas);
+                            contadorVisitas--;
+
                         });
                         }(visita));
 
@@ -192,14 +194,15 @@ Y.add('visitaModelo',function(Y){
                         visitas.push(visita);
                     };
 
-                    /*while(data.rows.length != contadorVisitas){
-                        continue;
-                    }
+                    idIntervaloVisitas = setInterval(function(){
+                        console.log("empezando indiada 2 (visitas)");
+                        if(contadorVisitas == 0){
+                            console.log("terminadndo Indiada 2 (visitas)");
+                            clearInterval(idIntervaloVisitas);
+                            callback(visitas);
 
-*/
-
-
-
+                        }
+                    },5000);
 
                 });
             });

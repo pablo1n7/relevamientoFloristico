@@ -26,6 +26,7 @@ agregarPropiedad=function(){
     $div.append($list);
     $div.append($('<div name="divTipo"/>'));
     $("#campos").append($div);
+    $("#mainpage").scroller().scrollToBottom("0ms");
 
 
 };
@@ -37,8 +38,14 @@ remover = function(elem){
 }}
 
 <div id="tipoEjemplar">
-<input name="nombreTipo" id="nombreTipoEjemplar" type="text" placeHolder="Nombre TipoEjemplar" patron="^([a-zñáéíóú]+)([a-zñáéíóú0-9 ]+)$" mensaje="Nota: El nombre debe comenzar con letra y no puede estar vacio" />
+<div class="input-group">
+    <span>Nombre</span>
+    <input name="nombreTipo" id="nombreTipoEjemplar" type="text" placeHolder="Nombre TipoEjemplar" patron="^([a-zñáéíóú]+)([a-zñáéíóú0-9 ]+)$" mensaje="Nota: El nombre debe comenzar con letra y no puede estar vacio" />
+</div>
+<div class="input-group">
+    <span>Descripción</span>
 <input name="descripcionTipo" id ="descripcionTipoEjemplar" type="text" placeholder="Ingrese una Descripción" patron="^([a-zñáéíóú]+)([a-zñáéíóú0-9 ]+)$" mensaje="Nota: La descripcion debe comenzar con letra y no puede estar vacia"/>
+</div>
     <br>
     <div id="campos"></div>
     <br>

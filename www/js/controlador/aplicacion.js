@@ -102,6 +102,7 @@ $.mvc.controller.create("aplicacion", {
             });
         });
         $.ui.hideModal("#seleccionarPropiedad");
+        $("#mainpage").scroller().scrollToBottom("0ms");
     },
 
     crearTipoEjemplar:function(){
@@ -177,7 +178,7 @@ $.mvc.controller.create("aplicacion", {
     crearEjemplar:function(numeroId){
         console.log("Funcion Crear ejemplar");
         var indexTipoEjemplar = $("#selectTipoEjemplares"+numeroId).get(0).selectedIndex;
-        var seleccion = tipoEjemplares[indexTipoEjemplar];
+        var seleccion = campañaActiva.get("tipoEjemplares")[indexTipoEjemplar];
         var ejemplar = new Y.Ejemplar({"tipoEjemplar":seleccion});
         ejemplar.crearCampos(seleccion.get("campos"));
         $("#ejemplar"+numeroId).empty();
@@ -418,18 +419,62 @@ $.mvc.controller.create("aplicacion", {
     },
 
     desactivarCampania:function(){
-        campañaActiva = null;
+        /*campañaActiva = null;
         transectaActiva = null;
-        $.mvc.route("aplicacion/listaCampanias");
+        $.mvc.route("aplicacion/listaCampanias");*/
+         if(transectaActiva != null && transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length < CANTIDAD_PUNTOS){
+            mensajeConfirmacion("Visita en Curso","La Visita actual no esta completa. Esta accion eliminará todos los datos asociados a la misma. Desea continuar?",
+                function(){
+                    console.log("continuo");
+                    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].borrar();
+                    transectaActiva = null;
+                    campañaActiva = null;
+                    $.mvc.route("aplicacion/listaCampanias");
+                },function(){
+                    console.log("no continuo");
+                    return;
+                });
+        }else{
+            campañaActiva = null;
+            transectaActiva = null;
+            $.mvc.route("aplicacion/listaCampanias");
+        }
     },
+
+
 
 
 
     creacionTransecta:function(){
 
+         if(transectaActiva != null && transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length < CANTIDAD_PUNTOS){
+            mensajeConfirmacion("Visita en Curso","La Visita actual no esta completa. Esta accion eliminará todos los datos asociados a la misma. Desea continuar?",
+                function(){
+                    console.log("continuo");
+                    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].borrar();
+                    transectaActiva = null;
+                    $.mvc.route("aplicacion/formularioCreacionTransecta");
+                },function(){
+                    console.log("no continuo");
+                    return;
+                });
+        }else{
+            $.mvc.route("aplicacion/formularioCreacionTransecta");
+        }
+
+
+    },
+
+
+
+    formularioCreacionTransecta:function(){
+
+
         activarSubPagina("#crearTransecta","Nueva Transecta");
         activarBotonAtras(function(){$.mvc.route("aplicacion/listaCampanias");});
         $("#mainCrearTransecta").html($.template('js/vista/crearTransecta.tpl',{screen:screen,especies:especies}));
+        $("#brujulaMovil").width((screen.width/1.7)+"px");
+        $("#brujulaMovil").height((screen.width/1.7)+"px");
         autocompletadoEspecies("especiePredominante1",false);
         autocompletadoEspecies("especiePredominante2",false);
         autocompletadoEspecies("especiePredominante3",false);
@@ -570,6 +615,22 @@ objetoBrujulaTransecta.vueltas = 0;
 
     activarTransecta: function(id,reanudacion){
         var reanudacion = reanudacion || 0;
+        if(transectaActiva != null && transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length < CANTIDAD_PUNTOS){
+            mensajeConfirmacion("Visita en Curso","La Visita actual no esta completa. Esta accion eliminará todos los datos asociados a la misma. Desea continuar?",
+                function(){
+                    console.log("continuo");
+                    transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].borrar();
+                    $.mvc.route("aplicacion/activacionTransecta/"+id+"/"+reanudacion);
+                },function(){
+                    console.log("no continuo");
+                    return;
+                });
+        }else{
+            $.mvc.route("aplicacion/activacionTransecta/"+id+"/"+reanudacion);
+        }
+    },
+
+    activacionTransecta:function(id,reanudacion){
         var valorJustgage = 0;
         var metrosRestantes = 0;
          mostrarMascara('Activando Transecta...');
@@ -582,6 +643,7 @@ objetoBrujulaTransecta.vueltas = 0;
                 metrosRestantes = CANTIDAD_PUNTOS * transectaActiva.get("distanciaEntrePuntos");
             }else{
                 valorJustgage = transecta.get("visitas")[transecta.get("visitas").length-1].get("puntos").length;
+                console.log("valor Justgage ="+valorJustgage);
                 metrosRestantes = (CANTIDAD_PUNTOS - valorJustgage) * transectaActiva.get("distanciaEntrePuntos");
                 $.mvc.route("/aplicacion/activarCampania/"+encodeURIComponent(transectaActiva.get("nombreCampania"))+"/"+transectaActiva.get("fechaCampania")+"/1");
 
@@ -589,7 +651,8 @@ objetoBrujulaTransecta.vueltas = 0;
             activarBrujulaSeguimiento(transectaActiva.get("sentido"));
             activarSubPagina("#mainsub","Pagina Principal");
              $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
-            justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage,min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+
+            justgageTransecta = new JustGage({ id: "justgageTransecta",value: ""+valorJustgage,min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
             $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
 
             $("#metrosRestantes").empty();
@@ -651,7 +714,6 @@ objetoBrujulaTransecta.vueltas = 0;
 
                 });
             }else{
-
                 if(transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length == 0){
                     punto.set("coordenadas",transectaActiva.get("visitas")[0].get("puntos")[0].get("coordenadas"));
                 }else{
@@ -678,6 +740,7 @@ objetoBrujulaTransecta.vueltas = 0;
         $("#mainCrearPunto").html($.template('js/vista/recolectarPunto.tpl',{opcion:parseInt(opcion),estadoPunto:estadoPunto[opcion],suelos:tiposSuelos}));
         asignarFuncionCierreModal(eliminarImagenes);
         $.mvc.route("aplicacion/cargarFormularioPlanta/1/"+opcion);
+        $("#crearPuntoScroller").scroller().scrollToTop("0ms");
     },
 
     cargarFormularioPlanta:function(numeroId,conToques){
@@ -686,6 +749,7 @@ objetoBrujulaTransecta.vueltas = 0;
         $(divPlanta).html($.template('js/vista/crearPlanta.tpl',{especies:especies,numeroId:numeroId,conToques:conToques}));
         $("#botonAgregarPlanta").attr("href","/aplicacion/cargarFormularioPlanta/"+(parseInt(numeroId)+1)+"/0");
         autocompletadoEspecies("autocompletado"+numeroId,true);
+        $("#crearPuntoScroller").scroller().scrollToBottom("0ms");
     },
 
     cargarFormularioItem:function(numeroId){
@@ -693,6 +757,7 @@ objetoBrujulaTransecta.vueltas = 0;
         $("#datosPlantas").append(divItem);
         $.mvc.route("aplicacion/seleccionarEjemplar/"+numeroId);
         $("#botonAgregarItem").attr("href","/aplicacion/cargarFormularioItem/"+(parseInt(numeroId)+1));
+        $("#crearPuntoScroller").scroller().scrollToBottom("0ms");
     },
 
     verPuntos:function(){

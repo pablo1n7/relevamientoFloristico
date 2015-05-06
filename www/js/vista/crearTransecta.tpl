@@ -1,13 +1,22 @@
 <div id="datosTransecta">
-    <input id="ambiente" name="ambiente" type="text" placeholder="Ingrese el Ambiente de la Transcta" patron="^([a-zñáéíóú]+)([a-zñáéíóú0-9 ]+)$" mensaje="Nota: El ambiente debe comenzar con letra y no puede estar vacio"/>
 
 
-    <input id="cuadro" type="text" placeholder="Ingrese el nombre del Cuadro (opcional)"/>
+
+
+    <div class="input-group">
+        <span>Ambiente</span>
+        <input id="ambiente" name="ambiente" type="text" placeholder="Ej: Estepa arbustiva" patron="^([a-zñáéíóú]+)([a-zñáéíóú0-9 ]+)$" mensaje="Nota: El ambiente debe comenzar con letra y no puede estar vacio"/>
+    </div>
+
+    <div class="input-group">
+        <span>Cuadro</span>
+        <input id="cuadro" type="text" placeholder="Ej: el salado (opcional)"/>
+    </div>
 
     <div class="input-group">
         <span> Distancia Entre Puntos (Mts)</span>
         <br>
-        <input id="distanciaEntrePuntos" class="slider" onchange="$('#distanciaEntrePuntosLabel').text(this.value);" type="range" min="1" max="3" value="3">
+        <input id="distanciaEntrePuntos" class="slider" onchange="$('#distanciaEntrePuntosLabel').text(this.value);" type="range" min="1" max="10" value="3">
         <span id="distanciaEntrePuntosLabel" class="range-value">3</span>
     </div>
 
@@ -27,9 +36,9 @@
     <div class="headerElemento headerPlanta">
         Especies Predominantes
     </div>
-    <input type="text" id="especiePredominante1" placeholder="Nombre Especie"/>
-    <input type="text" id="especiePredominante2" placeholder="Nombre Especie"/>
-    <input type="text" id="especiePredominante3" placeholder="Nombre Especie"/>
+    <input type="text" id="especiePredominante1" placeholder="Ej: atriplex lampa (opcional)"/>
+    <input type="text" id="especiePredominante2" placeholder="Ej: distichlis (opcional)"/>
+    <input type="text" id="especiePredominante3" placeholder="Ej: gamochaeta (opcional)"/>
 </div>
 
 

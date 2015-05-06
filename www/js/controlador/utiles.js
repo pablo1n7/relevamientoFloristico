@@ -46,6 +46,7 @@ function activarSubPagina(nombreSubPagina,titulo){
 
 
 
+
 }
 
 function mostrarModal(div,efecto,titulo){
@@ -136,7 +137,7 @@ function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
 		var $divPopUp = $('<div class="popUp"/>');
 		$mascaraPopUp.append($divPopUp);
 		$divPopUp.append('<div class="cabeceraPopUp">'+titulo+'</div>');
-		var $cuerpoPopUp = $('<div class="cuerpoPopUp">'+mensaje+'"</div>');
+		var $cuerpoPopUp = $('<div class="cuerpoPopUp">'+mensaje+'</div>');
 		$divPopUp.append($cuerpoPopUp);
 		var $contenedorBotones = $('<div class="contenedorBotones"/>');
 		$contenedorBotones.append('<input type="button" id="aceptar" class="botonAceptar" value="Aceptar"/><input type="button" id="cancelar" class="botonCancelar" value="Cancelar"/>');
@@ -460,37 +461,46 @@ var Slider = function(idSlider,claseHijos,ancho,callback){
         if(this.indice < this.cantidadContenedores-1){
             this.indice++;
             var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
+            var cont1 = $(contenedores[this.indice-1]);
             var cont2 = $(contenedores[this.indice]);
             this.callback(this,cont2);
-            $("#"+this.id).animateCss({x:-(parseInt(this.ancho))*this.indice,y:"0",duration:"600",easing:"easeOutSine"}).start();
-            setTimeout(function(){$("#"+this.id).hide();},200);
-            setTimeout(function(){$("#"+this.id).show();},400);
+            cont1.hide();
+            cont2.show();
+//            $("#"+this.id).animateCss({x:-(parseInt(this.ancho))*this.indice,y:"0",duration:"600",easing:"easeOutSine"}).start();
         }
     };
 
     this.derecha = function(){
         if(this.indice > 0){
             this.indice--;
-            $("#"+this.id).animateCss({x:-((parseInt(this.ancho))*this.indice),y:"0",duration:"600",easing:"easeOutSine"}).start();
-            setTimeout(function(){$("#"+this.id).hide();},200);
-            setTimeout(function(){$("#"+this.id).show();},400);
+            var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
+            var cont1 = $(contenedores[this.indice+1]);
+            var cont2 = $(contenedores[this.indice]);
+            cont1.hide();
+            cont2.show();
+//            $("#"+this.id).animateCss({x:-((parseInt(this.ancho))*this.indice),y:"0",duration:"600",easing:"easeOutSine"}).start();
+
         }
     };
 
     this.inicializar = function(){
         var divContenedor = $("#"+this.id);
         var contenedores = divContenedor.find("."+this.objetosMoviles);
-        propiedades = $(contenedores[0]).offset();
+//        propiedades = $(contenedores[0]).offset();
         var cantSliders = contenedores.length;
-        $(contenedores[0]).css({width:this.ancho,overflowX:"hidden"});
+  //      $(contenedores[0]).css({width:this.ancho,overflowX:"hidden"});
+        $(contenedores[0]).css({width:"100%",overflowX:"hidden"});
         this.indice = 0;
         for(var i=1;i<cantSliders;i++){
-            $(contenedores[i]).css({width:this.ancho});
+            $(contenedores[i]).css({width:"100%"});
+            $(contenedores[i]).hide();
         }
 
 //        var anchoContenedor = parseInt(this.ancho) * cantSliders+"px";
+/*
         var anchoContenedor = (screen.width * cantSliders)+"px";
         $("#"+this.id).css({width:anchoContenedor});
+*/
 
         var _this = this;
         $("#"+this.id).unbind();
@@ -713,7 +723,7 @@ var Radar = function(idContenedor,cantidad){
                     intermitente++;
                     if (intermitente == 8){
                         intermitente=3;
-                        intel.xdk.player.playSound("/sonidos/bipRadar.mp3");
+                        intel.xdk.player.playSound("sonidos/bipRadar.mp3");
                         console.log("BEEP");
                     }
                     var color= "rgba(255,255,0,0."+intermitente+")";
