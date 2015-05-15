@@ -204,6 +204,13 @@ $
     });
 
     db.transaction(function(t){
+        t.executeSql("INSERT INTO TipoSuelo('nombre') values('No Definido');", [],
+        function (t, data) {
+            //data.insertId
+        },null);
+    });
+
+    db.transaction(function(t){
         t.executeSql("INSERT INTO TipoSuelo('nombre') values('Rocoso');", [],
         function (t, data) {
             //data.insertId

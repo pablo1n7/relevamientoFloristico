@@ -1,12 +1,19 @@
 //typeof Y != "undefined" ? Y : Y = YUI();
 var Y = Y || YUI();
 Y.add('plantaModelo',function(Y){
+
+
+
     Y.Planta = Y.Base.create('Planta', Y.Model, [],{
 
             save:function(visita,idPunto){
                 var _this = this;
                 var idPunto = idPunto || "NULL";
-                var q = "INSERT INTO Planta('idTransecta','fecha','idPunto','nombreEspecie','toques','foto') values("+visita.get("idTransecta")+","+visita.get("fecha")+","+idPunto+",'"+_this.get("especie")+"',"+_this.get("toques")+",'"+_this.get("foto")+"');";
+
+                if(this.get("estadoFenologico")=="")
+                    this.set("estadoFenologico","No Definido");
+
+                var q = "INSERT INTO Planta('idTransecta','fecha','idPunto','nombreEspecie','toques','foto','estadoFenologico') values("+visita.get("idTransecta")+","+visita.get("fecha")+","+idPunto+",'"+_this.get("especie")+"',"+_this.get("toques")+",'"+_this.get("foto")+"','"+this.get("estadoFenologico")+"');";
                 db.transaction(function(t){
                     t.executeSql(q, [],
                     function (t, data) {
@@ -27,7 +34,26 @@ Y.add('plantaModelo',function(Y){
                         console.log("una Planta Eliminada");
                     });
                 });
-            }
+            },
+
+
+            mostrar:function(){
+                var $div = $("<div class='mostrarPlanta'> <div class='imagenFondoAdjunto' style='background-image:url("+this.getFoto()+");height:"+screen.width/2+"px;'/> </div>");
+                var $divInfo = $("<div class='infoAdjunto'></div>");
+                $divInfo.append("<p><b>Tipo de Adjunto: </b> Planta </p>");
+                $divInfo.append("<p><b>Especie: </b>"+this.get('especie')+"</p>");
+                if(this.get('toques') != 0)
+                    $divInfo.append("<p><b>Toques: </b>"+this.get('toques')+"</p>");
+                $divInfo.append("<p><b>Estado Fenológico: </b>"+this.get('estadoFenologico')+"</p>");
+                $div.append($divInfo);
+                return $div;
+            },
+
+        getFoto:function(){
+            if(this.get("foto")!="")
+                return intel.xdk.camera.getPictureURL(this.get("foto"));
+            return "img/imagen_no_disponible.jpg";
+        }
 
     },{
             ATTRS:{

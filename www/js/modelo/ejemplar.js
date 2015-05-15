@@ -31,6 +31,24 @@ Y.add('ejemplarModelo',function(Y){
 
             },
 
+            mostrar:function(){
+                var $div = $("<div class='mostrarPlanta'/>");
+                $div.append("<div class='imagenFondoAdjunto' style='background-image:url("+this.getFoto()+");height:"+screen.width/2+"px;'/>");
+                var $divInfo = $("<div class='infoAdjunto'/>");
+                $divInfo.append("<p><b>Tipo de Adjunto: </b>"+this.get("tipoEjemplar").get("nombre")+"</p>");
+                for(var i = 0; i<this.get("valores").length; i++){
+                    $divInfo.append("<p><b>"+this.get("valores")[i].get("propiedad").get("nombre")+": </b>"+this.get("valores")[i].get("valor")+"</p>");
+                }
+                $div.append($divInfo);
+                return $div;
+            },
+
+            getFoto:function(){
+                if(this.get("foto")!="")
+                    return intel.xdk.camera.getPictureURL(this.get("foto"));
+                return "img/imagen_no_disponible.jpg";
+            },
+
             completarCampos: function(campos){
                 $.each(this.get("valores"),function(indice,valor){
                     valor.asignarValor($(campos[indice]));
@@ -70,7 +88,21 @@ Y.add('ejemplarModelo',function(Y){
                     });
                 });
 
-            }
+            },
+
+        obtenerValores:function(){
+            var _this = this;
+            var  q = "select va.id,va.valor,pr.nombre, pr.id as prId from Valor va, Propiedad pr where va.idEjemplar="+this.get("id")+" and va.idPropiedad = pr.id;";
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+                for (var i = 0; i < data.rows.length; i++) {
+                    var valor = new Y.Valor({"id":data.rows.item(i).id,"valor":data.rows.item(i).valor,"propiedad":new Y.Propiedad({id:data.rows.item(i).prId,nombre:data.rows.item(i).nombre})});
+                    _this.get("valores").push(valor);
+                };
+                //callback(ejemplares);
+            });
+        });
+    }
 
 
     },{
@@ -83,6 +115,9 @@ Y.add('ejemplarModelo',function(Y){
                 },
                 foto:{
                     value: ""
+                },
+                id:{
+                    value:-1
                 }
 
             }
@@ -92,18 +127,21 @@ Y.add('ejemplarModelo',function(Y){
     Y.Ejemplar.obtenerEjemplaresAsociados = function(idPunto,idTransecta,fecha,callback){
         var q = "";
         if(idPunto == null)
-            q = "select * from Ejemplar where idPunto isnull and idTransecta="+idTransecta+" and fecha="+fecha+";";
+            q = "select ej.id, ej.idTipoEjemplar, ej.foto, te.nombre from Ejemplar ej, TipoEjemplar te where ej.idPunto isnull and ej.idTransecta="+idTransecta+" and ej.fecha="+fecha+" and ej.idTipoEjemplar=te.id;";
         else
-            q = "select * from Ejemplar where idPunto="+idPunto+" and idTransecta="+idTransecta+" and fecha="+fecha+";";
+            q = "select ej.id, ej.idTipoEjemplar, ej.foto, te.nombre from Ejemplar ej, TipoEjemplar te where ej.idPunto="+idPunto+" and ej.idTransecta="+idTransecta+" and ej.fecha="+fecha+" and ej.idTipoEjemplar=te.id;";
+//            q = "select * from Ejemplar where idPunto="+idPunto+" and idTransecta="+idTransecta+" and fecha="+fecha+";";
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 var ejemplares = [];
                 for (var i = 0; i < data.rows.length; i++) {
-                    var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"tipoEjemplar":data.rows.item(i).idTipoEjemplar,"foto":data.rows.item(i).foto});
+//                    var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"tipoEjemplar":data.rows.item(i).idTipoEjemplar,"foto":data.rows.item(i).foto});
+                    var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"tipoEjemplar":new Y.TipoEjemplar({id:data.rows.item(i).idTipoEjemplar,nombre:data.rows.item(i).nombre}),"foto":data.rows.item(i).foto});
+                    ejemplar.obtenerValores();
                     ejemplares.push(ejemplar);
                 };
                 callback(ejemplares);
-            });
+            },function(e){console.log(e);});
         });
     };
 }, '0.0.1', { requires: ['model','propiedadModelo','tipoEjemplarModelo']});

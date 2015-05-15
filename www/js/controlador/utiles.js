@@ -49,12 +49,16 @@ function activarSubPagina(nombreSubPagina,titulo){
 
 }
 
-function mostrarModal(div,efecto,titulo){
+function mostrarModal(div,efecto,titulo,callback){
+
     $.ui.showModal(div,efecto);
     $("#modalHeader h1 ").empty();
     $("#modalHeader h1 ").append(titulo);
     $("#seleccionarPropiedadScroller").scroller().scrollToTop("0ms");
     $("#crearPuntoScroller").scroller().scrollToTop("0ms");
+    $("#flechaSeguimiento").addClass("esconder");
+    setTimeout(function(){asignarFuncionCierreModal(callback);}, 500);
+
 
 }
 
@@ -328,7 +332,8 @@ function eliminarImagenes(){
         }
     }
 
-    $.ui.hideModal();
+    //$.ui.hideModal();
+    cerrarModal();
     //$("#botonCerrarModal").remove();
 }
 
@@ -540,18 +545,19 @@ var SliderImagenes = function(idSlider,claseHijos,ancho){
             this.indice++;
             var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
             var cont2 = $(contenedores[this.indice]);
-            $("#"+this.id).animateCss({x:-((parseInt(this.ancho)+15)*this.indice),y:"0",duration:"200",easing:"easeOutSine"}).start();
-            setTimeout(function(){$("#"+this.id).hide();},200);
-            setTimeout(function(){$("#"+this.id).show();},400);
+            //$("#"+this.id).animateCss({x:-((parseInt(this.ancho)+15)*this.indice),y:"0",duration:"200",easing:"easeOutSine"}).start();
+            var valor = ((parseInt(this.ancho)+15)*-this.indice);
+            $("#"+this.id).css({"left":valor+"px"});
         }
     };
 
     this.derecha = function(){
         if(this.indice > 0){
             this.indice--;
-            $("#"+this.id).animateCss({x:-((parseInt(this.ancho)+15)*this.indice),y:"0",duration:"200",easing:"easeOutSine"}).start();
-            setTimeout(function(){$("#"+this.id).hide();},200);
-            setTimeout(function(){$("#"+this.id).show();},400);
+            //$("#"+this.id).animateCss({x:-((parseInt(this.ancho)+15)*this.indice),y:"0",duration:"200",easing:"easeOutSine"}).start();
+            var valor = ((parseInt(this.ancho)+15)*-this.indice);
+            $("#"+this.id).css({"left":valor+"px"});
+
         }
     };
 
@@ -608,8 +614,9 @@ function asociarItemVisita(){
     }
     var item = recolectarItem($("#recolectableVisita").find("[name|=item]")[0]);
     transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarItem(item);
-    $.ui.hideModal();
+    //$.ui.hideModal();
     mensajeExitoso("Item Recolectado");
+    cerrarModal();
 }
 
 function recolectarItem(item){
@@ -631,8 +638,9 @@ function asociarPlantaVisita(){
     }
     var planta = recolectarPlanta($("#recolectableVisita").find("[name|=planta]")[0]);
     transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarItem(planta);
-    $.ui.hideModal();
+//    $.ui.hideModal();
     mensajeExitoso("Planta Recolectada");
+    cerrarModal();
 }
 
 function recolectarPlanta(planta){
@@ -640,7 +648,8 @@ function recolectarPlanta(planta){
     var foto = campo.find("[name|=imgUrl]")[0].innerHTML || "";
     var toques = campo.find("[name|=toquesPlanta]")[0].value;
     var nombreEspecie = campo.find("[name|=especie]")[0].value;
-    var planta = new Y.Planta({"especie":nombreEspecie,"toques":toques,"foto":foto});
+    var estadoFenologico = campo.find("[name|=estadoFenologico]")[0].value;
+    var planta = new Y.Planta({"especie":nombreEspecie,"toques":toques,"foto":foto,"estadoFenologico":estadoFenologico});
 
     return planta;
 }
@@ -665,7 +674,8 @@ var Radar = function(idContenedor,cantidad){
 			for (var i = 0; i < cantidad; i++) {
 				_this.agregarCuadro(clase);
 			};
-            $("#radar").css({height:_this.contenedor.offset().width+"px"});
+            //$("#radar").css({height:_this.contenedor.offset().width+"px"});
+            $("#radar").css({height:_this.contenedor.offset().width+2+"px"});
             _this.contenedor.css({height:_this.contenedor.offset().width+"px"});
 		};
 
@@ -742,12 +752,14 @@ var Radar = function(idContenedor,cantidad){
 function asignarFuncionCierreModal(callback){
 
     var botonClose = $($("a.close")[0]);
-    var nuevoBoton = $("<div id='botonCerrarModal'>");
-    nuevoBoton.css({'background-color':'rgba(0,0,0,0)','position':'absolute','zIndex':'3'});
+    var nuevoBoton = $("<div id='botonCerrarModal' class='botonCerrarModal'>");
     nuevoBoton.css(botonClose.offset());
+    nuevoBoton.css({'background-color':'rgba(0,0,0,0)','position':'absolute','width':'50px','height':'50px'});
     $("#modalHeader").append(nuevoBoton);
     nuevoBoton.click(function(){
+        console.log("Cerrando Modal!");
         $("#botonCerrarModal").remove();
+        cerrarModal();
         callback();
     });
 
@@ -863,4 +875,44 @@ function verificarVisitas(){
                 };
             });
         });
+}
+
+function visualizarAdjunto(indiceVisita,indiceAdjunto){
+    indiceVisita = parseInt(indiceVisita);
+    indiceAdjunto = parseInt(indiceAdjunto);
+    var adjunto = transectaActiva.get("visitas")[indiceVisita].get("items")[indiceAdjunto];
+    $("#mainVerAdjunto").empty();
+    $("#mainVerAdjunto").append(adjunto.mostrar());
+    mostrarModal("#verAdjunto","fade","Adjunto #"+(indiceAdjunto+1),function(){});
+};
+
+function visualizarPunto(indiceVisita,indicePunto){
+    indiceVisita = parseInt(indiceVisita);
+    indicePunto = parseInt(indicePunto);
+    var punto = transectaActiva.get("visitas")[indiceVisita].get("puntos")[indicePunto];
+    //var adjuntos = transectaActiva.get("visitas")[indiceVisita].get("puntos")[indicePunto].get("items");
+    $("#mainVerPunto").empty();
+    var $divPunto = $('<div class="infoPunto"/>');
+    $divPunto.append("<p><b> Estado aguja: </b>"+punto.get("estado")+"</p>");
+    $divPunto.append("<p><b> Suelo: </b>"+punto.get("suelo")+"</p>");
+    $("#mainVerPunto").append($divPunto);
+    mostrarMascara("Cargando Items");
+    punto.obtenerItems(transectaActiva.get("visitas")[indiceVisita],function(adjuntos){
+        setTimeout(function(){
+            for(var i = 0 ; i<adjuntos.length; i++){
+                $("#mainVerPunto").append(adjuntos[i].mostrar());
+            }
+            ocultarMascara();
+        },1000);
+    });
+
+
+    mostrarModal("#verPunto","fade","Punto #"+(indicePunto+1),function(){});
+
+};
+
+
+function cerrarModal(){
+    $("#flechaSeguimiento").removeClass("esconder");
+    $.ui.hideModal();
 }

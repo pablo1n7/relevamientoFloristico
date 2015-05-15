@@ -1,7 +1,9 @@
 body{
     font-size: 30px;
     font-family: Arial !important;
+/*
     letter-spacing: 0.1em;
+*/
     text-transform: capitalize;
 }
 
@@ -468,7 +470,8 @@ footer .button{
     width: 100%;
 }
 .propiedadEjemplar{
-    padding-top: 1%;
+    border-bottom-width: 1px !important;
+    border-radius: 0px !important;
     text-transform: capitalize;
 }
 
@@ -581,6 +584,7 @@ footer .button{
     border-bottom-width: 5px;
     border-bottom-style: ridge;
     padding-top:10px;
+    position: relative;
 }
 
 .headerVisita{
@@ -692,7 +696,9 @@ footer .button{
     background-repeat: no-repeat;
     height: 500px;
     position: absolute;
-    width: 100%;
+    width: 102%;
+    left: -1px;
+    top:-1px;
     z-index: 1000;
     background-size: contain;
     overflow: auto;
@@ -700,14 +706,18 @@ footer .button{
 
 .planta{
     color: darkgreen;
-    margin: 1%;
+    margin: 5%;
+    margin-top: 11%;
     text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
+    float: right;
 }
 
 .ejemplar{
     margin: 5%;
+    margin-top: 7%;
     color: dodgerblue;
     text-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
+    float: right;
 }
 
 #mainRelevarRecolectable .right{
@@ -847,4 +857,40 @@ footer .button{
     margin-top: -4%;
     font-size: 23px;
     color: #abc;
+}
+
+.imagenFondoAdjunto{
+    background-size: cover;
+    width: 60%;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 2%;
+    border-radius: 6px;
+    float: left;
+}
+
+.infoAdjunto{
+    padding: 2%;
+}
+
+.mostrarPlanta{
+    overflow: auto;
+    border-bottom-style: ridge;
+}
+
+.infoPunto{
+    border-bottom-style: ridge;
+}
+
+.infoPunto p{
+    font-size: 30px !important;
+    margin: 24px !important;
+}
+
+.esconder{
+    display:none;
+}
+
+.botonCerrarModal{
+    z-index: 100 !important;
 }

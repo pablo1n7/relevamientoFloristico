@@ -1,8 +1,6 @@
 $.mvc.controller.create("aplicacion", {
     views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl'], //These are the views we will use with the controller
     init:function(){
-
-       // vaciarBD();
         popularBD();
         CANTIDAD_PUNTOS = 11;
         DISTANCIA_ACEPTABLE =10;
@@ -29,9 +27,12 @@ $.mvc.controller.create("aplicacion", {
 
         if(device.platform == "Android"){
             $("#crearPuntoScroller").css({"height": "90%","overflowY":"hidden"});
+            $("#verPuntoScroller").css({"height": "90%","overflowY":"hidden"});
+
             $("#seleccionarPropiedadScroller").css({"height": "90%","overflowY":"hidden"});
             $("#seleccionarPropiedadScroller").scroller();
             $("#crearPuntoScroller").scroller();
+            $("#verPuntoScroller").scroller();
         }
 
 
@@ -79,7 +80,7 @@ $.mvc.controller.create("aplicacion", {
         };
 
          Y.Propiedad.obtenerPropiedades(callback);
-         mostrarModal("#seleccionarPropiedad","fade","Seleccionar");
+         mostrarModal("#seleccionarPropiedad","fade","Seleccionar",function(){});
          $("#modalContainer").unbind("doubleTap");
          if($("#propiedades").length == 0){
             $("#propiedades").append("No se encuentran propiedades para listar");
@@ -652,18 +653,22 @@ objetoBrujulaTransecta.vueltas = 0;
             activarSubPagina("#mainsub","Pagina Principal");
              $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
 
-            justgageTransecta = new JustGage({ id: "justgageTransecta",value: ""+valorJustgage,min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+            justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
             $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
 
             $("#metrosRestantes").empty();
             $("#metrosRestantes").append(metrosRestantes);
 
             ocultarMascara();
-            if (parseInt(reanudacion) == 0 && transecta.get("visitas").length != 1){
-                ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
+            if (transecta.get("visitas").length != 1 && transecta.get("visitas")[transecta.get("visitas").length-1].get("puntos").length == 0){
+
+                if(parseInt(reanudacion)==0)
+                    ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
+
                 $.mvc.route("/aplicacion/guiarPrimerPunto/"+transecta.get("visitas")[0].get("puntos")[0].get("coordenadas"));
             }else{
-                $.mvc.route("aplicacion/crearPunto");
+                 if(parseInt(reanudacion)==0)
+                    $.mvc.route("aplicacion/crearPunto");
             }
 
 
@@ -675,7 +680,7 @@ objetoBrujulaTransecta.vueltas = 0;
 
         if(transectaActiva.get("visitas").length == 0 || transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length != CANTIDAD_PUNTOS){
             $("#mainCrearPunto").html($.template('js/vista/crearPunto.tpl',{}));
-            mostrarModal("#crearPunto","fade","Recolectar Punto");
+            mostrarModal("#crearPunto","fade","Recolectar Punto",eliminarImagenes);
         }else{
             mensajeError("Visita Completa!");
         }
@@ -729,16 +734,22 @@ objetoBrujulaTransecta.vueltas = 0;
         justgageTransecta.refresh(cantPuntos);
 
 
-        $.ui.hideModal();
+        //$.ui.hideModal();
+        cerrarModal();
         $("#metrosRestantes").empty();
         $("#metrosRestantes").append(transectaActiva.get("distanciaEntrePuntos")*(CANTIDAD_PUNTOS-cantPuntos));
+
+        var valorJustgage = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
+        $("#justgageTransecta").empty();
+        justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+
         mensajeExitoso("Punto Recolectado");
 
     },
 
     creacionPunto:function(opcion){
         $("#mainCrearPunto").html($.template('js/vista/recolectarPunto.tpl',{opcion:parseInt(opcion),estadoPunto:estadoPunto[opcion],suelos:tiposSuelos}));
-        asignarFuncionCierreModal(eliminarImagenes);
+//        asignarFuncionCierreModal(eliminarImagenes);
         $.mvc.route("aplicacion/cargarFormularioPlanta/1/"+opcion);
         $("#crearPuntoScroller").scroller().scrollToTop("0ms");
     },
@@ -810,7 +821,7 @@ objetoBrujulaTransecta.vueltas = 0;
 
     relevarRecolectableVisita: function(){
         $("#mainRelevarRecolectable").html($.template('js/vista/relevarRecolectable.tpl',{}));
-        mostrarModal("#relevarRecolectable","fade","Recolectar");
+        mostrarModal("#relevarRecolectable","fade","Recolectar",function(){});
 
     },
 
@@ -834,7 +845,21 @@ objetoBrujulaTransecta.vueltas = 0;
 
     guiarPrimerPunto:function(longitud,latitud){
         $("#mainGuiarPrimerPunto").html($.template('js/vista/guiarPrimerPunto.tpl',{}));
-        mostrarModal("#guiarPrimerPunto","fade","Recolectar");
+//        mostrarModal("#guiarPrimerPunto","fade","Recolectar");
+        mostrarModal("#guiarPrimerPunto","fade","Recolectar",function(){
+            navigator.compass.clearWatch(watchHeadingId);
+            setTimeout(function(){
+                r.detener()
+                setTimeout(function(){
+                    r.detener()
+                },1000);
+
+            },500);
+            dist = -1;
+            Gps.pararGps();
+            cerrarModal();
+
+        });
         r = new Radar("contenedor",100);
         mostrarMascara("Obteniendo Posicion");
         var dist = -1;
@@ -847,6 +872,10 @@ objetoBrujulaTransecta.vueltas = 0;
             if(dist != -1){
                 if(dist<=DISTANCIA_ACEPTABLE){
                     $.mvc.route("aplicacion/detenerGuia");
+
+                    $("#botonCerrarModal").trigger("click"); //triger
+
+
                     setTimeout(function(){
                         $.mvc.route("aplicacion/crearPunto");
                         mensajeExitoso("1er Punto Alcanzado");
@@ -857,7 +886,7 @@ objetoBrujulaTransecta.vueltas = 0;
                     Gps.pararGps();
                     setTimeout(function(){r.detener()},100);
                     navigator.compass.clearWatch(watchHeadingId);*/
-                    $("#botonCerrarModal").trigger("click"); //triger
+
 
                 }
 
@@ -885,7 +914,7 @@ objetoBrujulaTransecta.vueltas = 0;
 
         });
 
-        asignarFuncionCierreModal(function(){
+/*        asignarFuncionCierreModal(function(){
             navigator.compass.clearWatch(watchHeadingId);
             setTimeout(function(){
                 r.detener()
@@ -896,8 +925,9 @@ objetoBrujulaTransecta.vueltas = 0;
             },500);
             dist = -1;
             Gps.pararGps();
-            $.ui.hideModal();
-        });
+            cerrarModal();
+            //$.ui.hideModal();
+        });*/
 
         $("#contenedorFlechaSeguimiento").css({height: $("#contenedorDistancia").offset().height+"px"});
 

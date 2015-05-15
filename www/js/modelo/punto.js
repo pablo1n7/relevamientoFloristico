@@ -27,7 +27,29 @@ Y.add('puntoModelo',function(Y){
                     console.log("un Punto Eliminado");
                 });
             });
+        },
+
+        obtenerItems:function(v,callback){
+            var _this = this;
+            if(this.get("items").length != 0){
+                callback(this.get("items"));
+                return;
+            }
+            Y.Planta.obtenerPlantasAsociadas(_this.get("id"),v.get("idTransecta"),v.get("fecha"),function(plantas){
+                console.log("Obteniendo plantas");
+                //v.get("items").concat(plantas);
+                _this.set("items",_this.get("items").concat(plantas))
+                Y.Ejemplar.obtenerEjemplaresAsociados(_this.get("id"),v.get("idTransecta"),v.get("fecha"),function(ejemplares){
+                    console.log("Obteniendo Ejemplares");
+                    //v.get("items").concat(ejemplares);
+                    _this.set("items",_this.get("items").concat(ejemplares));
+                    callback(_this.get("items"));
+                });
+            });
+
         }
+
+
 
 
     },{
@@ -89,7 +111,7 @@ Y.add('puntoModelo',function(Y){
                 t.executeSql(q, null, function (t, data) {
                     var puntos = [];
                     for (var i = 0; i < data.rows.length; i++) {
-                        var punto = new Y.Punto({"id":data.rows.item(i).id,"estado":data.rows.item(i).estadoPunto,"coordenadas":data.rows.item(i).coordenada});
+                        var punto = new Y.Punto({"id":data.rows.item(i).id,"estado":data.rows.item(i).estadoPunto,"coordenadas":data.rows.item(i).coordenada, "suelo": data.rows.item(i).tipoSuelo });
                         puntos.push(punto);
                     }
                     callback(puntos);

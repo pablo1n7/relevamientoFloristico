@@ -30,7 +30,10 @@
         {{ } }}
 
         {{ for(var k=0; k<it.transecta.get('visitas')[j].get('imagenes').length;k++){ }}
-            <div onclick="verImagen('{{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}}',null,true);" class="imgRecolectable adjuntos" style="width:{{=(screen.width/4.5)}}px;background-position: 50% 50%;background-size: cover;background-image:url({{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}})"></div>
+            <div onclick="verImagen('{{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}}',null,true);" class="imgRecolectable adjuntos" style="width:{{=(screen.width/4.5)}}px;background-position: 50% 50%;background-size: cover;background-image:url({{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('imagenes')[k])}})">
+
+            <div class="listonImagen">{{=k+1}}</div>
+            </div>
         {{ } }}
 
 
@@ -46,8 +49,8 @@
 
         {{ } }}
             {{ for(var k=0; k<it.transecta.get('visitas')[j].get('items').length;k++){ }}
-            <div class="imgRecolectable adjuntos" style="width:{{=(screen.width/4.5)}}px;background-position: 50% 50%;background-size: cover;background-image:url({{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('items')[k].get('foto'))}})">
-
+            <div onclick="visualizarAdjunto('{{=j}}',{{=k}})" class="imgRecolectable adjuntos" style="width:{{=(screen.width/4.5)}}px;background-position: 50% 50%;background-size: cover;background-image:url({{=intel.xdk.camera.getPictureURL(it.transecta.get('visitas')[j].get('items')[k].get('foto'))}})">
+                <div class="listonImagen">{{=k+1}}</div>
                 <i class="fa {{=it.transecta.get('visitas')[j].get('items')[k].iconoRepresentacion()}}"></i>
 
 
@@ -79,7 +82,7 @@
                     {{ } contador++; }}
 
 
-                    <div class="imgRecolectable {{=arreglo[it.transecta.get('visitas')[j].get('puntos')[i].get('estado')] }}">
+                    <div onclick="visualizarPunto('{{=j}}',{{=i}})" class="imgRecolectable {{=arreglo[it.transecta.get('visitas')[j].get('puntos')[i].get('estado')] }}">
                         <div class="listonImagen">{{=i+1}}</div>
                     </div>
                 {{ } }}

@@ -16,6 +16,11 @@
      value="0" disabled {{ } else{ }} value="1" patron="^([0-9]+)$" mensaje="" {{ } }}>
     <br>
     <br>
+    <span>Estado Fenológico</span>
+        <input name="estadoFenologico" type="text" placeholder="Ej: Semilla Seca (opcional)">
+
+    <br>
+    <br>
     <span>Especie</span>
     {{
 
@@ -27,8 +32,7 @@
         console.log(texto);
 
     }}
-        <input name="especie" id="autocompletado{{=it.numeroId}}" type="text" placeholder="Especie" patron="{{=texto}}" mensaje="">
-
+    <input name="especie" id="autocompletado{{=it.numeroId}}" type="text" placeholder="Especie" patron="{{=texto}}" mensaje="">
 
 <div class="icon picture verFotoEspecie" onclick="verImagenEspecie(this.previousSibling)"></div>
     <div name="imgUrl" class="oculto"></div>
