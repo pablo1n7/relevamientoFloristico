@@ -11,12 +11,44 @@ Y.add('transectaModelo',function(Y){
                     _this.set('id',data.insertId);
                     for(var i=0;i < _this.get("nombreEspecies").length;i++){
                         var q2 = "INSERT INTO TransectaEspecie ('idTransecta','nombreEspecie') values("+_this.get('id')+",'"+_this.get('nombreEspecies')[i]+"');";
-                    db.transaction(function(t){
-                                t.executeSql(q2, [],null,null);
+                    (function(q){db.transaction(function(t){
+                                t.executeSql(q, [],null,null);
                             });
+                    })(q2);
+
                     }
                     callback();
                 },function(a){callbackError();console.log(a);});
+            });
+        },
+
+        borrar:function(){
+            var _this = this;
+            Y.Visita.obtenerVisitasTransecta(this,function(visitas){
+                visitas.map(function(v){
+
+                    Y.Punto.completarPuntos(v.get("puntos"),v,function(){
+                        v.borrar();
+                    });
+
+
+
+
+                });
+                var q = "delete from TransectaEspecie where idTransecta="+_this.get("id")+";";
+                    db.transaction(function (t){
+                        t.executeSql(q, null, function (t, data) {
+                            /*for (var i = 0; i < data.rows.length; i++) {
+                                console.log(data.rows.item(i));
+                            };*/
+                            var q1 = "delete from Transecta where id="+_this.get("id")+";";
+                            db.transaction(function (t){
+                                t.executeSql(q1, null, function (t, data) {
+                                  //  mensajeExitoso("Transecta Eliminada");
+                                });
+                        });
+                        });
+                });
             });
         }
 

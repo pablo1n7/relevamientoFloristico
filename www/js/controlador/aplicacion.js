@@ -1,5 +1,5 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/vistaPuntosVacio.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl','js/vista/sincronizacion.tpl'], //These are the views we will use with the controller
     init:function(){
         popularBD();
         CANTIDAD_PUNTOS = 11;
@@ -44,7 +44,8 @@ $.mvc.controller.create("aplicacion", {
         });
     },
     default:function(){
-
+        $("#mainSeguimiento").html($.template('js/vista/main.tpl'));
+        $("#vistaPuntos").html($.template('js/vista/vistaPuntosVacio.tpl'));
         Y.TipoEjemplar.obtenerTipoEjemplares(function(tipoEjemplar){tipoEjemplares.push(tipoEjemplar);});
 
         Y.Familia.obtenerFamilias(function(familia){familias.push(familia);});
@@ -52,7 +53,8 @@ $.mvc.controller.create("aplicacion", {
         Y.Campania.obtenerCampanias(function(campania){campañas.push(campania)});
         tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
 
-    verificarVisitas();
+    //verificarVisitas();
+    comprobandoHardware();
     },
 
     seleccionarPropiedad: function(){
@@ -419,6 +421,24 @@ $.mvc.controller.create("aplicacion", {
         });
     },
 
+
+     borrarCampania:function(nombreCodificado,fecha){
+        var nombre = decodeURIComponent(nombreCodificado);
+         mensajeConfirmacion("Eliminar Campaña","esta seguro que desea eliminar la campaña '"+nombre+"' y todas sus transectas? " ,function(){
+            Y.Campania.obtenerCampania(nombre,fecha,function(camp){
+                $("#"+nombre+"/"+fecha).remove();
+                campañas.splice(campañas.indexOf(campañas.filter(function(c){return (c.nombre==nombre && c.fecha==fecha)})[0]),1);
+                setTimeout(function(){
+                    camp.borrar();
+                },5000);
+                mensajeExitoso("Campaña Eliminada.");
+            });
+
+         },function(){})
+
+    },
+
+
     desactivarCampania:function(){
         /*campañaActiva = null;
         transectaActiva = null;
@@ -431,6 +451,9 @@ $.mvc.controller.create("aplicacion", {
                     transectaActiva = null;
                     campañaActiva = null;
                     $.mvc.route("aplicacion/listaCampanias");
+                    $("#mainSeguimiento").html($.template('js/vista/main.tpl'));
+                    $("#vistaPuntos").html($.template('js/vista/vistaPuntosVacio.tpl'));
+//clearInterval(intervaloRefreshJustgage);
                 },function(){
                     console.log("no continuo");
                     return;
@@ -438,7 +461,10 @@ $.mvc.controller.create("aplicacion", {
         }else{
             campañaActiva = null;
             transectaActiva = null;
+            $("#mainSeguimiento").html($.template('js/vista/main.tpl'));
             $.mvc.route("aplicacion/listaCampanias");
+            $("#vistaPuntos").html($.template('js/vista/vistaPuntosVacio.tpl'));
+//clearInterval(intervaloRefreshJustgage);
         }
     },
 
@@ -673,14 +699,16 @@ objetoBrujulaTransecta.vueltas = 0;
 
 
         });
-
+//intervaloRefreshJustgage = setInterval(refrescarJustgage,2000);
     },
 
     crearPunto:function(){
 
         if(transectaActiva.get("visitas").length == 0 || transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length != CANTIDAD_PUNTOS){
             $("#mainCrearPunto").html($.template('js/vista/crearPunto.tpl',{}));
-            mostrarModal("#crearPunto","fade","Recolectar Punto",eliminarImagenes);
+            mostrarModal("#crearPunto","fade","Recolectar Punto",function(){
+                eliminarImagenes("#datosPlantas");
+            });
         }else{
             mensajeError("Visita Completa!");
         }
@@ -738,12 +766,8 @@ objetoBrujulaTransecta.vueltas = 0;
         cerrarModal();
         $("#metrosRestantes").empty();
         $("#metrosRestantes").append(transectaActiva.get("distanciaEntrePuntos")*(CANTIDAD_PUNTOS-cantPuntos));
-
-        var valorJustgage = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
-        $("#justgageTransecta").empty();
-        justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
-
         mensajeExitoso("Punto Recolectado");
+        arregloImgResiduales = [];
 
     },
 
@@ -821,7 +845,7 @@ objetoBrujulaTransecta.vueltas = 0;
 
     relevarRecolectableVisita: function(){
         $("#mainRelevarRecolectable").html($.template('js/vista/relevarRecolectable.tpl',{}));
-        mostrarModal("#relevarRecolectable","fade","Recolectar",function(){});
+        mostrarModal("#relevarRecolectable","fade","Recolectar",function(){eliminarImagenes("#recolectableVisita")});
 
     },
 
@@ -931,7 +955,21 @@ objetoBrujulaTransecta.vueltas = 0;
 
         $("#contenedorFlechaSeguimiento").css({height: $("#contenedorDistancia").offset().height+"px"});
 
+    },
+
+    sincronizacion:function(){
+        activarSubPagina("#sincronizacion","Sincronización");
+        $("#mainSincronizacion").html($.template('js/vista/sincronizacion.tpl',{}));
+
+    },
+
+    buscarServidor:function(){
+        mostrarMascara("Buscando Servidores");
+
     }
 
 
+
+
 });
+

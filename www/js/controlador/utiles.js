@@ -33,6 +33,13 @@ function desactivarBotonesHeader(){
     $("#funcionalidad").unbind();
 }
 
+
+// deseleccionar icono ==== $($("#navbar").find(".pressed")[0]).removeClass("pressed")
+// seleccionar icono ===== $($("#navbar").find("a")[0]).addClass("pressed")
+// #mainsub #uib_page_1 #uib_page_2 #uib_page_3
+
+var subpaginas = ["#mainsub","#uib_page_1","#uib_page_2","#uib_page_3"];
+
 function activarSubPagina(nombreSubPagina,titulo){
     $($(nombreSubPagina).parent()[0]).unbind("doubleTap");
     navigator.compass.clearWatch(idBrujula);
@@ -43,6 +50,12 @@ function activarSubPagina(nombreSubPagina,titulo){
     if( (typeof diccionarioAyuda !== "undefined") && diccionarioAyuda[nombreSubPagina])
         $($(nombreSubPagina).parent()[0]).bind("doubleTap",function(){activarModoAyuda(nombreSubPagina,diccionarioAyuda[nombreSubPagina])});
     $("#mainpage").scroller().scrollToTop("0ms");
+
+    if(subpaginas.indexOf(nombreSubPagina) != -1){
+        $($("#navbar").find(".pressed")[0]).removeClass("pressed");
+        $($("#navbar").find("a")[subpaginas.indexOf(nombreSubPagina)]).addClass("pressed");
+
+    }
 
 
 
@@ -127,16 +140,7 @@ function agregarAyuda(contexto,diccionario){
 //
 
 function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
-    /*$.ui.popup( {
-       title:titulo,
-       message:mensaje,
-       doneText:"Aceptar",
-       doneCallback: funcionAceptar,
-       cancelText:"Cancelar",
-       cancelCallback: funcionCancelar,
-       cancelOnly:false
-    });*/
-		var $mascaraPopUp = $('<div id="mascaraPopUp" class="mascaraPopUp"></div>');
+		var $mascaraPopUp = $('<div id="mascaraConfirmacionPopUp" class="mascaraPopUp mascaraConfirmacionPopUp"></div>');
 		$("body").append($mascaraPopUp);
 		var $divPopUp = $('<div class="popUp"/>');
 		$mascaraPopUp.append($divPopUp);
@@ -147,11 +151,11 @@ function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
 		$contenedorBotones.append('<input type="button" id="aceptar" class="botonAceptar" value="Aceptar"/><input type="button" id="cancelar" class="botonCancelar" value="Cancelar"/>');
 		$divPopUp.append($contenedorBotones);
 		$("#cancelar").click(function(){
-            $("#mascaraPopUp").remove()
+            $("#mascaraConfirmacionPopUp").remove()
             funcionCancelar()
         });
 		$("#aceptar").click(function(){
-		 	$("#mascaraPopUp").remove();
+		 	$("#mascaraConfirmacionPopUp").remove();
             funcionAceptar();
 		 });
 
@@ -253,25 +257,33 @@ function toogleAlto(idElemento,height){
 
 function activarBrujula(callback,listo){
     var options = {
-        frequency: 1000
+        frequency: 500
     };
     var watchID = navigator.compass.watchHeading(callback, null, options);
     listo(watchID);
 }
 
-
+arregloImgResiduales = [];
 callbackCapturaImg = null;
+callbackCancelImg = null;
 function listenerCamara(e){
 
     /*var rutaImg = intel.xdk.camera.getPictureURL(e.filename);*/
+    arregloImgResiduales.push(e.filename);
     callbackCapturaImg(e.filename);
 
 }
 
-document.addEventListener("intel.xdk.camera.picture.add",listenerCamara);
+function listenerCancelCamara(){
+    callbackCancelImg();
+}
 
-function tomarFoto(callback){
+document.addEventListener("intel.xdk.camera.picture.add",listenerCamara);
+document.addEventListener("intel.xdk.camera.picture.cancel",listenerCancelCamara);
+
+function tomarFoto(callback,callbackCancel){
     callbackCapturaImg = callback;
+    callbackCancelImg = callbackCancel;
     intel.xdk.camera.takePicture(80,false,"jpg");
 }
 
@@ -301,6 +313,10 @@ function eliminarFoto(elemento){
     $(elemento.parentElement).parent().attr("style","background-color:white");
     var nombreFoto = $($(elemento.parentElement).find('[name|=imgUrl]')[0]).html();
     intel.xdk.camera.deletePicture(nombreFoto);
+
+    //buscarla y elimianrla del arreglo residual
+    arregloImgResiduales.splice(arregloImgResiduales.indexOf(nombreFoto),1);
+
     $($(elemento.parentElement).find('[name|=imgUrl]')[0]).empty();
 
     $($(elemento.parentElement).find('[name|=verFoto]')[0]).addClass('oculto');
@@ -317,14 +333,16 @@ function eliminarFoto(elemento){
 function eliminarRecolectable(spanX){
 
     var nombreFoto = $($(spanX).parent().parent().find('[name|=imgUrl]')[0]).html();
-    if(nombreFoto != '')
+    if(nombreFoto != ''){
         intel.xdk.camera.deletePicture(nombreFoto);
+         arregloImgResiduales.splice(arregloImgResiduales.indexOf(nombreFoto),1);
+    }
     $(spanX.parentElement).parent().parent().remove();
 
 }
 
-function eliminarImagenes(){
-    var divsImg= $("#datosPlantas").find("[name |= imgUrl]");
+function eliminarImagenes(idDiv){
+    var divsImg= $(idDiv).find("[name |= imgUrl]");
     for(var i=0; i<divsImg.length ; i++){
         var nombreFoto = $(divsImg[i]).html();
         if(nombreFoto != ""){
@@ -617,6 +635,7 @@ function asociarItemVisita(){
     //$.ui.hideModal();
     mensajeExitoso("Item Recolectado");
     cerrarModal();
+    arregloImgResiduales = [];
 }
 
 function recolectarItem(item){
@@ -641,6 +660,7 @@ function asociarPlantaVisita(){
 //    $.ui.hideModal();
     mensajeExitoso("Planta Recolectada");
     cerrarModal();
+    arregloImgResiduales = [];
 }
 
 function recolectarPlanta(planta){
@@ -760,6 +780,7 @@ function asignarFuncionCierreModal(callback){
         console.log("Cerrando Modal!");
         $("#botonCerrarModal").remove();
         cerrarModal();
+        arregloImgResiduales = [];
         callback();
     });
 
@@ -915,4 +936,68 @@ function visualizarPunto(indiceVisita,indicePunto){
 function cerrarModal(){
     $("#flechaSeguimiento").removeClass("esconder");
     $.ui.hideModal();
+}
+
+
+function comprobandoHardware(){
+    var $mascaraPopUp = $('<div id="mascaraPopUpComprobacion" class="mascaraPopUp"></div>');
+    $("body").append($mascaraPopUp);
+    var $divPopUp = $('<div class="popUp"/>');
+    $mascaraPopUp.append($divPopUp);
+    $divPopUp.append('<div class="cabeceraPopUp"><i class="fa fa-exclamation-triangle"></i>  Comprobando Hardware</div>');
+    var $cuerpoPopUp = $('<div class="cuerpoPopUp"><div>Espere por favor:</div></div>');
+    $cuerpoPopUp.append('<br>');
+    $cuerpoPopUp.append('<div>Comprobando Brujula...<img id="comprobandoBrujula" class="imagenComprobando" src="img/comprobando.gif" /></div>');
+    $cuerpoPopUp.append('<div id="mensajeErrorBrujula" class="errorComprobacion oculto">ERROR!: Este dispositivo no posee sensor GeoMagnético.</div>');
+    $cuerpoPopUp.append('<br>');
+    $cuerpoPopUp.append('<div>Comprobando GPS...<img id="comprobandoGPS" class="imagenComprobando" src="img/comprobando.gif" /></div>');
+    $cuerpoPopUp.append('<div id="mensajeErrorGPS" class="errorComprobacion oculto">ERROR!: Este dispositivo no posee GPS o está desactivado.</div>');
+    $cuerpoPopUp.append('<br>');
+    $cuerpoPopUp.append('<div id="mensajeErrorGeneral" class="errorComprobacion errorGeneral oculto">Fallo la Comprobación: Habilite los sensores y reinicie la App.</div>');
+
+    $divPopUp.append($cuerpoPopUp);
+
+    contadorHardware = 0;
+
+    navigator.geolocation.getCurrentPosition(function(e){
+        console.log(e);
+        $("#comprobandoGPS").attr("src","img/ok.png");
+        contadorHardware++;
+    },function(e){
+        console.log(e);
+        if(e.code == 2){
+            $("#comprobandoGPS").attr("src","img/noOk.png");
+            $("#mensajeErrorGPS").removeClass("oculto");
+            $("#mensajeErrorGeneral").removeClass("oculto");
+        }else{
+            $("#comprobandoGPS").attr("src","img/ok.png");
+            contadorHardware++;
+        }
+    },{timeout: 15000,enableHighAccuracy: true });
+
+    navigator.compass.getCurrentHeading(function(e){
+            console.log(e);
+            $("#comprobandoBrujula").attr("src","img/ok.png");
+        contadorHardware++;
+        },function(e){
+            console.log(e);
+            $("#comprobandoBrujula").attr("src","img/noOk.png");
+            $("#mensajeErrorBrujula").removeClass("oculto");
+            $("#mensajeErrorGeneral").removeClass("oculto");
+        });
+
+    intervaloComprobacion = setInterval(function(){
+        if(contadorHardware == 2){
+            clearInterval(intervaloComprobacion);
+            $("#mascaraPopUpComprobacion").remove();
+            verificarVisitas();
+        }
+        },2000);
+}
+
+
+function refrescarJustgage(){
+    var valorJustgage = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
+    $("#justgageTransecta").empty();
+    justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
 }

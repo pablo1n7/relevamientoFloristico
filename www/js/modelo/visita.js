@@ -142,7 +142,7 @@ Y.add('visitaModelo',function(Y){
 
     Y.Visita.obtenerVisitasTransecta = function(transecta,callback){
          var q = "select * from Visita where idTransecta="+transecta.get("id")+";";
-         contadorVisitas = 0;
+         var contadorVisitas = 0;
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     var visitas = [];

@@ -358,6 +358,9 @@ footer .button{
     position: relative;
 }
 
+.botonGrande>i{
+    font-size: 90px !important;
+}
 
 #planta1 .right{
     display: none;
@@ -786,6 +789,10 @@ footer .button{
 
 
 
+.mascaraConfirmacionPopUp{
+    z-index: 10000 !important;
+}
+
 .mascaraPopUp{
 	top:0px;
 	position: absolute;
@@ -893,4 +900,53 @@ footer .button{
 
 .botonCerrarModal{
     z-index: 100 !important;
+}
+
+.imagenComprobando{
+    float: right;
+}
+
+.errorComprobacion{
+    margin: 6px;
+    font-size: 15px !important;
+    text-transform: none;
+}
+
+.errorGeneral{
+    border-top-style: ridge;
+    padding-top: 10px;
+}
+
+#afui.ios7 .panel, #afui.ios7 #modalContainer{
+    background-image: url("../img/marcaDeAgua.png");
+    background-size: cover;
+}
+
+.contenedorLogo{
+    width: 100%;
+}
+
+.contenedorLogo img{
+    width: 100%;
+}
+
+.contenedorTouch{
+    width: 100%;
+}
+
+.contenedorTouch img{
+    border-radius: 12px;
+}
+
+.contenedorSwip{
+    width: 100%;
+}
+
+.contenedorSwip img{
+    width: 100%;
+    border-radius: 12px;
+}
+
+.listaDispositivos{
+    margin-top: 50px;
 }

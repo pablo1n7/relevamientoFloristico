@@ -63,9 +63,15 @@
                                         verImagen(urlImg,_this,false,eliminarFoto);
                                     });
                                     $(_this).removeClass('desenlazar');
-                                    if(fotoAnt != '')
+                                    if(fotoAnt != ''){
                                         intel.xdk.camera.deletePicture(fotoAnt);
-                                    });
+                                        arregloImgResiduales.splice(arregloImgResiduales.indexOf(fotoAnt),1);
+                                    }
+                                    },function(){
+
+                                        $(_this).removeClass('desenlazar');
+
+                                  });
 
                                   ">
         <div class="icon camera iconoCamara">

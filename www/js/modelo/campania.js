@@ -26,6 +26,28 @@ Y.add('campaniaModelo',function(Y){
                 });
             },
 
+            borrar: function(){
+                console.log("pepe");
+                this.get("transectas").map(function(transecta){
+                    transecta.borrar();
+                });
+                var _this = this;
+                var q = "delete from CampaniaTipoEjemplar where nombreCampania='"+this.get("nombre")+"' and fecha="+this.get("fecha")+" ;";
+                    db.transaction(function (t){
+                        t.executeSql(q, null, function (t, data) {
+
+                            var q1 = "delete from Campania where nombre='"+_this.get("nombre")+"' and fecha="+_this.get("fecha")+" ;";
+                                db.transaction(function (t){
+                                    t.executeSql(q1, null, function (t, data) {
+                                        console.log("Campania Eliminada");
+                                        //mensajeExitoso("Campaña Eliminada.");
+                                    });
+                            });
+                        });
+                });
+
+            },
+
             obtenerTiposAsociados: function(callback){
                 var q = "select idTipoEjemplar from CampaniaTipoEjemplar where nombreCampania='"+this.get('nombre')+"' and fecha="+this.get('fecha');
                 var _this = this;

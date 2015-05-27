@@ -89,8 +89,6 @@
         <script src="js/init-app.js"></script>
         <script src="js/init-dev.js"></script>
 
-
-
         <!--
                         You may substitute jQuery for the App Framework selector library.
                         See http://app-framework-software.intel.com/documentation.php#afui/afui_jquery
@@ -110,6 +108,8 @@
         <script type="application/javascript" src="justgage/gauges.js"></script>
 
         <script type="application/javascript" src="js/alertify.min.js"></script>
+
+        <script type="application/javascript" src="phonegap-checkGPS-master/www/checkgps.js"></script>
 
     </head>
 
@@ -186,6 +186,18 @@
 
                                     </div>
                                 </div><span class="uib_shim"></span>
+                            </div>
+                        </div>
+                        <span class="uib_shim"></span>
+                    </div>
+                </div>
+                <div id="sincronizacion" class="upage-content hidden">
+
+                    <div class="grid grid-pad urow uib_row_17 row-height-17" data-uib="layout/row" data-ver="0">
+                        <div class="col uib_col_17 col-0_12-12" data-uib="layout/col" data-ver="0">
+                            <div class="widget-container content-area vertical-col">
+                                <div id="mainSincronizacion" ></div>
+                                <span class="uib_shim"></span>
                             </div>
                         </div>
                         <span class="uib_shim"></span>
@@ -364,7 +376,14 @@
                                     <li class="widget uib_w_13" data-uib="app_framework/listitem" data-ver="1"><a href="/aplicacion/listaFamilias"><i class="fa fa-tree"></i>
 Familia</a>
                                     </li>
-                                </ul><span class="uib_shim"></span>
+                                </ul>
+
+                                <ul class="list widget uib_w_10 d-margins" data-uib="app_framework/listview" data-ver="1">
+                                    <li class="widget uib_w_11" data-uib="app_framework/listitem" data-ver="1"><a class="" href="/aplicacion/sincronizacion"><i class="fa fa-cloud-download"></i>Sincronización</a>
+                                    </li>
+                                </ul>
+
+                                <span class="uib_shim"></span>
                             </div>
                         </div>
                         <span class="uib_shim"></span>
@@ -411,7 +430,7 @@ Familia</a>
                 <!-- /upage-content -->
 
                 <footer class="inner-element uib_w_3" data-uib="app_framework/footer" data-ver="1" id="af-footer-0"><a class="widget uib_w_7 d-margins" data-uib="app_framework/button" data-ver="1"><i class="fa fa-home"></i>Inicio</a><a class="widget uib_w_6 d-margins icon home" data-uib="app_framework/button" data-ver="1">Campaña</a><a class="widget uib_w_5 d-margins"
-                    data-uib="app_framework/button" data-ver="1"><i class="fa fa-compress"></i>Puntos</a><a class="widget uib_w_4 d-margins icon settings" data-uib="app_framework/button" data-ver="1">Configuración</a>
+                    data-uib="app_framework/button" data-ver="1"><i class="fa fa-compress"></i>Puntos</a><a class="widget uib_w_4 d-margins icon settings" data-uib="app_framework/button" data-ver="1">Miscelánea</a>
                 </footer>
             </div>
             <!-- /upage-outer -->

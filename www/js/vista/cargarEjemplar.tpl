@@ -24,8 +24,10 @@
                                   tomarFoto(function(nombre){
                                 var urlImg = intel.xdk.camera.getPictureURL(nombre);
                                   var fotoAnt = $($(_this).parent().find('[name|=imgUrl]')[0]).html();
-                                if(fotoAnt != '')
+                                if(fotoAnt != ''){
                                     intel.xdk.camera.deletePicture(fotoAnt);
+                                    arregloImgResiduales.splice(arregloImgResiduales.indexOf(fotoAnt),1);
+                                }
 
                                 $($(_this).parent().find('[name|=imgUrl]')[0]).empty();
                                 $($(_this).parent().find('[name|=imgUrl]')[0]).append(nombre);
@@ -44,6 +46,10 @@
                                         verImagen(urlImg,_this,false,eliminarFoto);
                                         $(_this).removeClass('desenlazar');
                                     });
+
+                                  },function(){
+
+                                        $(_this).removeClass('desenlazar');
 
                                   });
 

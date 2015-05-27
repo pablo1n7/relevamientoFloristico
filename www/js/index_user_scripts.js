@@ -13,6 +13,7 @@
             desactivarBotonesHeader();
             */
              activarSubPagina("#mainsub","Inicio");
+             refrescarJustgage();
 
         });
         $(document).on("click", ".uib_w_6", function(evt){
@@ -32,7 +33,7 @@
         $(document).on("click", ".uib_w_4", function(evt){
             /*activate_subpage("#uib_page_3");
             desactivarBotonesHeader();*/
-            activarSubPagina("#uib_page_3","Configuración");
+            activarSubPagina("#uib_page_3","Miscelánea");
         });
 
         $(document).on("click", ".uib_w_11", function(evt){

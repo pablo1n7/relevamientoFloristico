@@ -93,8 +93,13 @@ var Gps = (function(){
     };
 
     var callbackErrorGps= function(error){
-        mensajeError('code: '    + error.code    + '\n' +
-                'message: ' + error.message + '\n');
+
+        if(error.code==2){
+            mensajeError('Active el GPS');
+        }else{
+            mensajeError('Demora de GPS');
+        }
+
 
     };
 
