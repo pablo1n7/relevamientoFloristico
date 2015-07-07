@@ -61,6 +61,49 @@ Y.add('propiedadModelo',function(Y){
                 null);
                 });
             });
+        },
+        sincronizar:function(servidor,callback){
+
+            if(this.get("id_servidor")!=null){
+                callback(servidor);
+                return;
+            }
+
+            var datosPropiedad = {id:this.get("id"), nombre: this.get("nombre"),descripcion:this.get("descripcion"),tiposPropiedad:{}};
+            _this = this;
+            datosPropiedad.tiposPropiedad = this.get("tipo").normalizar();
+            //this.get("tipo").sincronizar(servidor,function(servidor){
+                $.ajax({
+                type: "POST",
+                url: servidor,
+                data: {'nombre':'propiedad','identidad':identidad,"datos":JSON.stringify(datosPropiedad)},
+                success: function(dataJson){
+                        console.log(dataJson);
+                        var elementoPropiedad = JSON.parse(dataJson);
+                        (function(elemento){
+                                  db.transaction(function(t){
+                                      //t.executeSql("UPDATE HistoriaUsuario SET 'ultimaActivacion'="+Date.now()+"  where id="+historiaUsuario.id+";",[],function(t,data){
+
+                                        t.executeSql("UPDATE Propiedad SET 'id_servidor'="+elemento.id_servidor+" where id="+elemento.id+";", [],
+                                        function (t, data) {
+                                            _this.set("id_servidor",elemento.id_servidor);
+                                            (function(tipoPropiedad){
+                                                  db.transaction(function(t){
+                                                        t.executeSql("UPDATE TipoPropiedad SET 'id_servidor'= "+tipoPropiedad.id_servidor+" where id="+tipoPropiedad.idPadre+";", [],
+                                                        function (t, data) {
+                                                            callback(servidor);
+                                                        },null);
+                                                    });
+                                            }(elemento.tiposPropiedad));
+                                        },null);
+                                    });
+                            }(elementoPropiedad));
+                    },
+                    fail:function(data){
+                        mensajeError("Error en sincroniazción de 'Especie'");
+                    }
+                });
+            //});
         }
 
     },{
@@ -76,6 +119,9 @@ Y.add('propiedadModelo',function(Y){
                     value: 'No se cuenta con una descripción'
                 },
                 tipo:{
+                    value: null
+                },
+                id_servidor:{
                     value: null
                 }
             },
@@ -111,7 +157,7 @@ Y.add('propiedadModelo',function(Y){
                 for (var i = 0; i < data.rows.length; i++) {
                     (function(i){
                         Y.TipoPropiedad.obtenerTipoPropiedad(data.rows.item(i).idTipoPropiedad,function(tipo){
-                            propiedad = new Y.Propiedad({"id":data.rows.item(i).id,"nombre":data.rows.item(i).nombre,"descripcion":data.rows.item(i).descripcion,"tipo":tipo});
+                            propiedad = new Y.Propiedad({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"nombre":data.rows.item(i).nombre,"descripcion":data.rows.item(i).descripcion,"tipo":tipo});
                             Y.Propiedad.propiedades.push(propiedad);
                             callback(propiedad);
                         });

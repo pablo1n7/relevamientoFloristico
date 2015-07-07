@@ -6,6 +6,9 @@ Y.add('alfanumericoModelo',function(Y){
                 $input.attr({'placeholder':'a,b,cd...',"type":"text"});
                 return $input;
             }
+
+
+
         },{
             ATTRS:{
 

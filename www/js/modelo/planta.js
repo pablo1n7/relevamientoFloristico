@@ -13,7 +13,7 @@ Y.add('plantaModelo',function(Y){
                 if(this.get("estadoFenologico")=="")
                     this.set("estadoFenologico","No Definido");
 
-                var q = "INSERT INTO Planta('idTransecta','fecha','idPunto','nombreEspecie','toques','foto','estadoFenologico') values("+visita.get("idTransecta")+","+visita.get("fecha")+","+idPunto+",'"+_this.get("especie")+"',"+_this.get("toques")+",'"+_this.get("foto")+"','"+this.get("estadoFenologico")+"');";
+                var q = "INSERT INTO Planta('idTransecta','fecha','idPunto','especie','toques','foto','estadoFenologico') values("+visita.get("idTransecta")+","+visita.get("fecha")+","+idPunto+",'"+_this.get("especie")+"',"+_this.get("toques")+",'"+_this.get("foto")+"','"+this.get("estadoFenologico")+"');";
                 db.transaction(function(t){
                     t.executeSql(q, [],
                     function (t, data) {
@@ -86,7 +86,7 @@ Y.add('plantaModelo',function(Y){
             t.executeSql(q, null, function (t, data) {
                 var plantas = [];
                 for (var i = 0; i < data.rows.length; i++) {
-                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).nombreEspecie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
                     plantas.push(planta);
                 };
                 callback(plantas);
@@ -101,7 +101,7 @@ Y.add('plantaModelo',function(Y){
             t.executeSql(q, null, function (t, data) {
                 var plantas = [];
                 for (var i = 0; i < data.rows.length; i++) {
-                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).nombreEspecie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
                     plantas.push(planta);
                 };
                 callback(plantas);
@@ -117,7 +117,7 @@ Y.add('plantaModelo',function(Y){
             t.executeSql(q, null, function (t, data) {
                 var plantas = [];
                 for (var i = 0; i < data.rows.length; i++) {
-                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).nombreEspecie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    var planta = new Y.Planta({"id":data.rows.item(i).id,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
                     plantas.push(planta);
                 };
                 callback(plantas);

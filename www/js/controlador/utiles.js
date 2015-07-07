@@ -189,7 +189,7 @@ function obtenerValoresBD(nombreTabla,arreglo){
     db.transaction(function (t) {
         t.executeSql(q, null, function (t, data) {
             for (var i = 0; i < data.rows.length; i++) {
-                arreglo.push(data.rows.item(i).nombre);
+                arreglo.push({"id":data.rows.item(i).id_servidor,"nombre":data.rows.item(i).nombre});
                 //console.log(data.rows.item(i));
             };
         });
@@ -1001,3 +1001,35 @@ function refrescarJustgage(){
     $("#justgageTransecta").empty();
     justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
 }
+
+function sincronizarElementoSimple(servidor,elemento,tabla,mensaje,callback,callbackVacio) {
+   $.ajax({
+            type: "GET",
+            url: servidor,
+            data: {'nombre':elemento,'identidad':'pepe'},
+            success: function(dataJson){
+                    console.log(dataJson);
+                    var q1 = "delete from "+tabla+";";
+                    db.transaction(function(t){
+                        t.executeSql(q1, [],function (t, data) {
+                            elementos = JSON.parse(dataJson);
+                            callbackVacio();
+                            for(var i =0; i < elementos.length;i++){
+                                (function(id,nombre){
+                                      db.transaction(function(t){
+                                            t.executeSql("INSERT INTO "+tabla+"('id_servidor','nombre') values("+id+",'"+nombre+"');", [],
+                                            function (t, data) {
+                                                //data.insertId
+                                                callback({"id":id,"nombre":nombre});
+                                            },null);
+                                        });
+                                }(elementos[i].id,elementos[i].nombre));
+                            }
+                        },function(){});
+                    });
+            },
+            fail:function(data){
+                mensajeError("Error en sincroniazción de '"+mensaje+"'");
+            }
+        });
+    };

@@ -8,7 +8,7 @@
     <span>Familia</span>
     <select id="familia">
         {{for(var i=0; i<= it.familias.length-1;i++){ }}
-            <option>{{=it.familias[i].get("nombre")}}</option>
+            <option value="{{=it.familias[i].get("id")}}" >{{=it.familias[i].get("nombre")}}</option>
         {{ } }}
     </select>
 </div>
@@ -17,7 +17,7 @@
     <span>Forma Biologico</span>
     <select id="formaBiologica">
         {{for(var i=0; i<= it.formasBiologicas.length-1;i++){ }}
-            <option>{{=it.formasBiologicas[i]}}</option>
+            <option value="{{=it.formasBiologicas[i].id}}">{{=it.formasBiologicas[i].nombre}}</option>
         {{ } }}
     </select>
 </div>
@@ -25,7 +25,7 @@
     <span>Tipo Biologico</span>
     <select id="tipoBiologica">
         {{for(var i=0; i<= it.tiposBiologicos.length-1;i++){ }}
-            <option>{{=it.tiposBiologicos[i]}}</option>
+            <option value="{{=it.tiposBiologicos[i].id}}">{{=it.tiposBiologicos[i].nombre}}</option>
         {{ } }}
     </select>
 
@@ -34,7 +34,7 @@
     <span>Estado de Conservación</span>
     <select id="estadoDeConservacion">
         {{for(var i=0; i<= it.estadosDeConservacion.length-1;i++){ }}
-            <option>{{=it.estadosDeConservacion[i]}}</option>
+            <option value="{{=it.estadosDeConservacion[i].id}}">{{=it.estadosDeConservacion[i].nombre}}</option>
         {{ } }}
     </select>
 
@@ -43,7 +43,7 @@
     <span>Distribución Geografica</span>
     <select id="distribucionGeografica">
         {{for(var i=0; i<= it.distribuciones.length-1;i++){ }}
-            <option>{{=it.distribuciones[i]}}</option>
+            <option value="{{=it.distribuciones[i].id}}">{{=it.distribuciones[i].nombre}}</option>
         {{ } }}
     </select>
 

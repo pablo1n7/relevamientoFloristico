@@ -16,6 +16,17 @@ Y.add('especieModelo',function(Y){
                     callback();
                 },function(a){callbackError();console.log(a);});
             });
+        },
+
+        humanizar:function(){
+            var id = this.get("estadoDeConservacion");
+            this.set("estadoDeConservacion",estadosDeConservacion.filter(function(v){return v.id == id;})[0]);
+            id = this.get("formaBiologica");
+            this.set("formaBiologica",formasBiologicas.filter(function(v){return v.id == id;})[0]);
+            id = this.get("tipoBiologico");
+            this.set("tipoBiologico",tiposBiologicos.filter(function(v){return v.id == id;})[0]);
+            id = this.get("distribucionGeografica");
+            this.set("distribucionGeografica",distribuciones.filter(function(v){return v.id == id;})[0]);
         }
 
 
@@ -48,6 +59,9 @@ Y.add('especieModelo',function(Y){
                 },
                 forrajera:{
                     value: 1
+                },
+                id_servidor:{
+                    value: -1
                 }
 
             },
@@ -60,14 +74,61 @@ Y.add('especieModelo',function(Y){
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     for (var i = 0; i < data.rows.length; i++) {
-                        var especie = new Y.Especie({"nombre":data.rows.item(i).nombre,"familia":data.rows.item(i).familia,"formaBiologica":data.rows.item(i).formaBiologica,"tipoBiologico":data.rows.item(i).tipoBiologico,"estadoDeConservacion":data.rows.item(i).estadoDeConservacion,"distribucionGeografica":data.rows.item(i).distribucionGeografica,"indiceDeCalidad":data.rows.item(i).indiceDeCalidad,"imagen":data.rows.item(i).imagen,"forrajera":data.rows.item(i).forrajera});
+                        var familia = familias.filter(function(f){return f.get("id") == data.rows.item(i).familia;})[0];
+                        var especie = new Y.Especie({"id":data.rows.item(i).id,"nombre":data.rows.item(i).nombre,"familia":familia,"formaBiologica":data.rows.item(i).formaBiologica,"tipoBiologico":data.rows.item(i).tipoBiologico,"estadoDeConservacion":data.rows.item(i).estadoDeConservacion,"distribucionGeografica":data.rows.item(i).distribucionGeografica,"indiceDeCalidad":data.rows.item(i).indiceDeCalidad,"imagen":data.rows.item(i).imagen,"forrajera":data.rows.item(i).forrajera,"id_servidor":data.rows.item(i).id_servidor});
                         //especies.push(especie);
+                        especie.humanizar();
                         callback(especie);
                         //console.log(data.rows.item(i));
 
                     };
                 });
             });
+    };
+
+     Y.Especie.sincronizar= function(servidor){
+        var familiasDicc = [];
+        familias.map(function(f){familiasDicc[f.get("id")] = f.get("id_servidor")});
+        var especiesDicc = especies.map(function(e){return {"id":e.get("id"),"id_servidor":e.get("id_servidor"),"nombre":e.get("nombre"),"familiaLocal":e.get("familia").get("id"),"familia":familiasDicc[e.get("familia").get("id")],"formaBiologica":e.get("formaBiologica").id,"tipoBiologico":e.get("tipoBiologico").id,"estadoDeConservacion":e.get("estadoDeConservacion").id,"distribucionGeografica":e.get("distribucionGeografica").id,"indiceDeCalidad":e.get("indiceDeCalidad"),"forrajera":e.get("forrajera")}});   // Y SI TENIA UNA IMAGEN POR QUE SE MURIO???
+
+        $.ajax({
+            type: "POST",
+            url: servidor,
+            data: {'nombre':'especie','identidad':identidad,"datos":JSON.stringify(especiesDicc)},
+            success: function(dataJson){
+                    console.log(dataJson);
+                    var q1 = "delete from Especie;";
+                    db.transaction(function(t){
+                        t.executeSql(q1, [],function (t, data) {
+                            elementos = JSON.parse(dataJson)
+                            especies = [];
+                            for(var i =0; i < elementos.length;i++){
+
+                                if(!elementos[i].hasOwnProperty("id")){
+                                    elementos[i].id = null;
+                                    elementos[i].familiaLocal = familias.filter(function(f){return f.get("id_servidor") == elementos[i].familia})[0].get("id");
+                                }
+
+                                (function(id,ids,nombre,familia,familiaLocal,formaBiologica,tipoBiologico,estadoDeConservacion,distribucionGeografica,indiceDeCalidad,forrajera,imagen){
+                                      db.transaction(function(t){
+                                            t.executeSql("INSERT INTO Especie('id','id_servidor','nombre','formaBiologica','tipoBiologico','estadoDeConservacion','distribucionGeografica','indiceDeCalidad','forrajera','imagen','familia') values("+id+","+ids+",'"+nombre+"',"+formaBiologica+","+tipoBiologico+","+estadoDeConservacion+","+distribucionGeografica+","+indiceDeCalidad+","+forrajera+",'"+imagen+"',"+familiaLocal+");", [],
+                                            function (t, data) {
+                                                //data.insertId
+                                                var familia = familias.filter(function(f){return f.get("id") == familiaLocal;})[0];
+                                                var especie = new Y.Especie({"id":id,"id_servidor":ids,"nombre":nombre,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologico,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceDeCalidad,"forrajera":forrajera,"imagen":imagen});
+                                                especie.humanizar();
+                                                especies.push(especie);
+                                            },null);
+                                        });
+                                }(elementos[i].id,elementos[i].id_servidor,elementos[i].nombre,elementos[i].familia,elementos[i].familiaLocal,elementos[i].formaBiologica,elementos[i].tipoBiologico,elementos[i].estadoDeConservacion,elementos[i].distribucionGeografica,elementos[i].indiceDeCalidad,elementos[i].forrajera,elementos[i].imagen));
+                            }
+                        },function(){});
+                    });
+            },
+            fail:function(data){
+                mensajeError("Error en sincroniazción de 'Especie'");
+            }
+        });
     };
 
 }, '0.0.1', { requires: ['model','familiaModelo']});

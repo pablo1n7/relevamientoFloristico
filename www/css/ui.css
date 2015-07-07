@@ -948,5 +948,25 @@ footer .button{
 }
 
 .listaDispositivos{
-    margin-top: 50px;
+    margin-top: 25px !important;
+}
+
+.listaDispositivos>li>a:after {
+    content: "" !important;
+}
+
+.servidor{
+    overflow: auto;
+}
+
+.servidor div{
+    float: right;
+}
+
+.anchorServidor{
+    float: left !important;
+}
+
+.servidorExterno{
+    margin-top: 40px;
 }

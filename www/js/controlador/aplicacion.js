@@ -16,7 +16,7 @@ $.mvc.controller.create("aplicacion", {
         tiposBiologicos =[];
         tiposSuelos=[];
         distribuciones = [];
-
+        identidad="pepota";
         idBrujula = -1;
 
         obtenerValoresBD("EstadoDeConservacion",estadosDeConservacion);
@@ -402,6 +402,7 @@ $.mvc.controller.create("aplicacion", {
 
 
     activarCampania:function(nombreCodificado,fecha,reanudacion){
+
         var reanudacion = reanudacion || 0;
         var nombre = decodeURIComponent(nombreCodificado);
         Y.Campania.obtenerCampania(nombre,fecha,function(camp){
@@ -419,6 +420,7 @@ $.mvc.controller.create("aplicacion", {
 
 
         });
+
     },
 
 
@@ -660,8 +662,48 @@ objetoBrujulaTransecta.vueltas = 0;
     activacionTransecta:function(id,reanudacion){
         var valorJustgage = 0;
         var metrosRestantes = 0;
-         mostrarMascara('Activando Transecta...');
-        Y.Transecta.obtenerTransecta(id,function(transecta){
+        mostrarMascara('Activando Transecta...');
+        Y.Campania.obtenerCampaniaPorTransecta(id,function(camp){
+            campañaActiva = camp;
+            transectaActiva = campañaActiva.get("transectas").filter(function(t){ return t.get("id") == id })[0];
+            if(parseInt(reanudacion) == 0){
+                var visita = new Y.Visita({fecha:Date.now()});
+                visita.save(transectaActiva.get("id"));
+                transectaActiva.get("visitas").push(visita);
+                metrosRestantes = CANTIDAD_PUNTOS * transectaActiva.get("distanciaEntrePuntos");
+            }else{
+                valorJustgage = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
+                console.log("valor Justgage ="+valorJustgage);
+                metrosRestantes = (CANTIDAD_PUNTOS - valorJustgage) * transectaActiva.get("distanciaEntrePuntos");
+                //$.mvc.route("/aplicacion/activarCampania/"+encodeURIComponent(transectaActiva.get("nombreCampania"))+"/"+transectaActiva.get("fechaCampania")+"/1");
+
+            }
+            activarBrujulaSeguimiento(transectaActiva.get("sentido"));
+            activarSubPagina("#mainsub","Pagina Principal");
+             $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
+
+            justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+            $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
+
+            $("#metrosRestantes").empty();
+            $("#metrosRestantes").append(metrosRestantes);
+
+            ocultarMascara();
+            if (transectaActiva.get("visitas").length != 1 && transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length == 0){
+
+                if(parseInt(reanudacion)==0)
+                    ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
+
+                $.mvc.route("/aplicacion/guiarPrimerPunto/"+transectaActiva.get("visitas")[0].get("puntos")[0].get("coordenadas"));
+            }else{
+                 if(parseInt(reanudacion)==0)
+                    $.mvc.route("aplicacion/crearPunto");
+            }
+        });
+
+
+
+       /* Y.Transecta.obtenerTransecta(id,function(transecta){
             transectaActiva = transecta;
             if(parseInt(reanudacion) == 0){
                 var visita = new Y.Visita({fecha:Date.now()});
@@ -698,7 +740,7 @@ objetoBrujulaTransecta.vueltas = 0;
             }
 
 
-        });
+        });*/
 //intervaloRefreshJustgage = setInterval(refrescarJustgage,2000);
     },
 
@@ -960,13 +1002,75 @@ objetoBrujulaTransecta.vueltas = 0;
     sincronizacion:function(){
         activarSubPagina("#sincronizacion","Sincronización");
         $("#mainSincronizacion").html($.template('js/vista/sincronizacion.tpl',{}));
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Configuración");});
 
     },
 
+
     buscarServidor:function(){
         mostrarMascara("Buscando Servidores");
+        $("#buscarServidores").addClass("desenlazar");
+        var ipServidorExterno = $("#servidorExterno").val();
+        if(ipServidorExterno != ""){
+            $.ajax({
+              type: "POST",
+              url: "http://"+ipServidorExterno+":8000/quienSos/",
+              data: {'nombre':'pepito'},
+              success: function(data){
+                  var infoServidor = JSON.parse(data);
+                  if(infoServidor.hasOwnProperty("nombrePC")){
+                      var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+                      $("#dispositivos").removeClass("oculto");
+                      $("#noServidores").addClass("oculto");
+                      $("#dispositivos").append($servidor);
+
+                  }
+                }
+            });
+        }
+
+        var ipRed = "http://192.168.1.";
+        for (i=2;i<255;i++){
+            $.ajax({
+              type: "POST",
+              url: ipRed+i+":8000/quienSos/",
+              data: {'nombre':'pepito'},
+              success: function(data){
+                  var infoServidor = JSON.parse(data);
+                  if(infoServidor.hasOwnProperty("nombrePC")){
+                      var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-desktop"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+                      $("#dispositivos").removeClass("oculto");
+                      $("#noServidores").addClass("oculto");
+                      $("#dispositivos").append($servidor);
+//class="listaDispositivos"
+                  }
+                }
+            });
+        }
+        setTimeout(function(){ocultarMascara();},5000);
+    },
+
+    sincronizar:function(direccion){
+        var servidor = "http://"+direccion+":8000/sinc";
+
+        /*
+           obtenerValoresBD("EstadoDeConservacion",estadosDeConservacion);
+        obtenerValoresBD("FormaBiologica",formasBiologicas);
+        obtenerValoresBD("TipoBiologico",tiposBiologicos);
+        obtenerValoresBD("DistribucionGeografica",distribuciones);
+        obtenerValoresBD("TipoSuelo",tiposSuelos);
+
+        */
+/*        sincronizarElementoSimple(servidor,"suelo","TipoSuelo","Suelo",function(s){tiposSuelos.push(s)},function(){tiposSuelos=[]});
+        sincronizarElementoSimple(servidor,"dist","DistribucionGeografica","Distribución Geográfica",function(s){distribuciones.push(s)},function(){distribuciones=[]});
+        sincronizarElementoSimple(servidor,"forma","FormaBiologica","Forma Biológica",function(s){formasBiologicas.push(s)},function(){formasBiologicas=[]});
+        sincronizarElementoSimple(servidor,"tipo","TipoBiologico","Tipo Biológico",function(s){tiposBiologicos.push(s)},function(){tiposBiologicos=[]});
+        sincronizarElementoSimple(servidor,"estado","EstadoDeConservacion","Estado De Conservación",function(s){estadosDeConservacion.push(s)},function(){estadosDeConservacion=[]});
+        Y.Familia.sincronizar(servidor);*/
+        Y.Especie.sincronizar(servidor);
 
     }
+
 
 
 

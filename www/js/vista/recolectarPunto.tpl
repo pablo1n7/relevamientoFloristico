@@ -10,7 +10,7 @@
                 <div class="headerElemento headerSuelo">Suelo</div>
                 <select id="tipoSuelo" name="tipoSuelo">
                     {{for(var i = 0; i<it.suelos.length; i++){ }}
-                        <option> {{=it.suelos[i]}} </option>
+                        <option value="{{=it.suelos[i].id}}"> {{=it.suelos[i].nombre}} </option>
                     {{ } }}
                 </select>
             </div>

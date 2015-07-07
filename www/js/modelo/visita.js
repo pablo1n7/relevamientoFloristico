@@ -66,6 +66,9 @@ Y.add('visitaModelo',function(Y){
             this.set("imagenes",this.get("imagenes").filter(function(elemento){return elemento != nombre}));
 
         },
+        enviarImagenes:function(){
+
+        },
 
         almacenarPunto:function(punto){
             this.get("puntos").push(punto);
@@ -78,6 +81,41 @@ Y.add('visitaModelo',function(Y){
         almacenarItem:function(item){
             this.get("items").push(item);
             item.save(this);
+        },
+        sincronizar:function(servidor,idTransectaServidor){
+                if(this.get("id_servidor")!=null){
+                    /*var visitas = this.get("visitas");
+                    for(var i=0;i < visitas.length;i++){
+                        visitas[i].sincronizar(servidor,this.get("id_servidor"));
+                    }*/
+                    return;
+                }else{
+                    var _this = this;
+                    datosVisita={'transecta':idTransectaServidor,'fecha':this.get("fecha")};
+                    $.ajax({
+                    type: "POST",
+                    url: servidor,
+                    data: {'nombre':'visita','identidad':identidad,"datos":JSON.stringify(datosVisita)},
+                    success: function(dataJson){
+                            console.log(dataJson);
+                            var elementoVisita = JSON.parse(dataJson);
+                            (function(elemento){
+                                      db.transaction(function(t){
+                                            t.executeSql("UPDATE Visita SET 'id_servidor'="+elemento.id_servidor+" where idTransecta="+_this.get('idTransecta')+" and fecha="+_this.get('fecha')+";", [],
+                                            function (t, data) {
+                                                _this.set("id_servidor",elemento.id_servidor);
+                                                _this.sincronizar(servidor,idTransectaServidor);
+                                            },null);
+                                        });
+                                }(elementoVisita));
+                        },
+                        fail:function(data){
+                            mensajeError("Error en sincroniazción de 'Transecta'");
+                        }
+                    });
+
+
+                }
         }
 
     },{
@@ -85,6 +123,9 @@ Y.add('visitaModelo',function(Y){
             ATTRS:{
                 idTransecta:{
                     value: -1
+                },
+                id_transecta:{
+                    value:null
                 },
                 fecha: {
                     value: '15/02/2015'
@@ -97,6 +138,9 @@ Y.add('visitaModelo',function(Y){
                 },
                 imagenes:{
                     value:[]
+                },
+                id_servidor:{
+                    value: null
                 }
             },
         

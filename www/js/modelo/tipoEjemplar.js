@@ -58,11 +58,51 @@ Y.add('tipoEjemplarModelo',function(Y){
             null);
         });
 
+        },
+
+        sincronizar:function(servidor,callback){
+
+            if(this.get("id_servidor")!=null){
+                callback(servidor);
+                return;
+            }
+            var _this = this;
+            var propiedades = this.get("campos");
+            for(var i=0; i< propiedades.length;i++){
+                if(propiedades[i].get("id_servidor")==null)
+                    return propiedades[i].sincronizar(servidor,function(servidor){_this.sincronizar(servidor,callback);});
+            }
+            var idPropiedades = propiedades.map(function(propiedad){return propiedad.get("id_servidor")});
+            var datosTipoEjemplar = {id:this.get("id"), nombre: this.get("nombre"),descripcion:this.get("descripcion"),campos:idPropiedades};
+                $.ajax({
+                type: "POST",
+                url: servidor,
+                data: {'nombre':'tipoEjemplar','identidad':identidad,"datos":JSON.stringify(datosTipoEjemplar)},
+                success: function(dataJson){
+                        console.log(dataJson);
+                        var elementoTipoEjemplar = JSON.parse(dataJson);
+                        (function(elemento){
+                                  db.transaction(function(t){
+                                        t.executeSql("UPDATE TipoEjemplar SET 'id_servidor'="+elemento.id_servidor+" where id="+elemento.id+";", [],
+                                        function (t, data) {
+                                            _this.set("id_servidor",elemento.id_servidor);
+                                            callback(servidor);
+                                        },null);
+                                    });
+                            }(elementoTipoEjemplar));
+                    },
+                    fail:function(data){
+                        mensajeError("Error en sincroniazción de 'Tipo Ejemplar'");
+                    }
+                });
         }
     },{
             ATTRS:{
                 id:{
                     value:"-1"
+                },
+                id_servidor:{
+                    value:null
                 },
                 nombre:{
                     value: "por defecto"
@@ -97,7 +137,7 @@ Y.add('tipoEjemplarModelo',function(Y){
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
-                    var tipoEjemplar = new Y.TipoEjemplar({"id":data.rows.item(i).id,"nombre":data.rows.item(i).nombre,"descripcion":data.rows.item(i).descripcion});
+                    var tipoEjemplar = new Y.TipoEjemplar({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"nombre":data.rows.item(i).nombre,"descripcion":data.rows.item(i).descripcion});
                     Y.TipoEjemplar.obtenerPropiedades(tipoEjemplar);
                     callback(tipoEjemplar);
                     //console.log(data.rows.item(i));

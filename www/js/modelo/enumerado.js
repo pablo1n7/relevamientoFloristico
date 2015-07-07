@@ -43,6 +43,10 @@ Y.add('enumeradoModelo',function(Y){
 
                 };
 
+            },
+            normalizar:function(){
+                var tipo = {idPadre:this.get("idPadre"),id:this.get("id"),valores:this.get("valores"),tipo:"enumerado"}
+                return tipo;
             }
     },{
                 

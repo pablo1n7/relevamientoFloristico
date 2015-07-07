@@ -40,6 +40,11 @@ Y.add('rangoModelo',function(Y){
 
                 };
 
+            },
+
+            normalizar:function(){
+                var tipo = {idPadre:this.get("idPadre"),id:this.get("id"),valorMax:this.get("valorMax"),valorMin:this.get("valorMin"),tipo:"rango"}
+                return tipo;
             }
 
 

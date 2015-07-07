@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "https://edge-intel.s3.amazonaws.com/jsapp/production/release-2014-ww37/template-tab-view-appdesigner/sample.zip",
       "projectGuid": "962a665a-38e2-4d93-8209-5a3218ca6c99",
-      "lastModifiedDate": 1432316623346,
+      "lastModifiedDate": 1434485163326,
       "creationDate": 1414852525848
     },
     "XDK-app-designer": "true",
@@ -119,6 +119,24 @@
         "custom": "true",
         "name": "softKeyboard",
         "origin": "SoftKeyboardPlugin-master",
+        "originType": "local"
+      },
+      {
+        "id": "org.apache.cordova.network-information",
+        "version": "0.2.8",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "com.albahra.plugin.networkinterface",
+        "version": "",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {},
+        "custom": "true",
+        "name": "com.albahra.plugin.networkinterface",
+        "origin": "cordova-plugin-networkinterface-master",
         "originType": "local"
       }
     ],

@@ -50,14 +50,50 @@ Y.add('transectaModelo',function(Y){
                         });
                 });
             });
+        },
+        sincronizar:function(servidor,idCampaniaServidor){
+                 if(this.get("id_servidor")!=null){
+                    var visitas = this.get("visitas");
+                    for(var i=0;i < visitas.length;i++){
+                        visitas[i].sincronizar(servidor,this.get("id_servidor"));
+                    }
+                    return;
+                }else{
+                    var _this = this;
+                    datosTransecta={'id':this.get("id"),'sentido':this.get("sentido"),'ambiente':this.get("ambiente"),'cuadro':this.get("cuadro"),'campania':idCampaniaServidor,'distanciaEntrePuntos':this.get("distanciaEntrePuntos")};
+                    $.ajax({
+                    type: "POST",
+                    url: servidor,
+                    data: {'nombre':'transecta','identidad':identidad,"datos":JSON.stringify(datosTransecta)},
+                    success: function(dataJson){
+                            console.log(dataJson);
+                            var elementoTransecta = JSON.parse(dataJson);
+                            (function(elemento){
+                                      db.transaction(function(t){
+                                            t.executeSql("UPDATE Transecta SET 'id_servidor'="+elemento.id_servidor+" where id="+elemento.id+";", [],
+                                            function (t, data) {
+                                                _this.set("id_servidor",elemento.id_servidor);
+                                                _this.sincronizar(servidor,idCampaniaServidor);
+                                            },null);
+                                        });
+                                }(elementoTransecta));
+                        },
+                        fail:function(data){
+                            mensajeError("Error en sincroniazción de 'Transecta'");
+                        }
+                    });
+
+
+                }
         }
-
-
     },{
                 
             ATTRS:{
                 id:{
                     value: -1
+                },
+                id_servidor:{
+                    value:null
                 },
                 sentido:{
                     value: 360
@@ -86,13 +122,26 @@ Y.add('transectaModelo',function(Y){
         }
     );
 
-    Y.Transecta.obtenerTransectas = function(nombre,fecha,callback){
+    Y.Transecta.obtenerTransectas = function(nombre,fecha,callback,callbackDeVacio){
         var q = "select * from Transecta where nombreCampania='"+nombre+"' and fechaCampania="+fecha+";"
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
-                    callback(new Y.Transecta({"id":data.rows.item(i).id,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro, "distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos}));
+                    var transecta = new Y.Transecta({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro, "distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos});
+
+                    (function(t,callback){
+                        Y.Visita.obtenerVisitasTransecta(t,function(visitas){
+                            t.set("visitas",visitas);
+                            callback(transecta);
+                        })
+
+                    }(transecta,callback))
+
+                    //callback();
                 };
+                if (data.rows.length == 0){
+                    callbackDeVacio();
+                }
             });
         });
 
@@ -103,7 +152,7 @@ Y.add('transectaModelo',function(Y){
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
-                    var transecta = new Y.Transecta({"id":data.rows.item(i).id,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro,"distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos,"nombreCampania":data.rows.item(i).nombreCampania,"fechaCampania":data.rows.item(i).fechaCampania});
+                    var transecta = new Y.Transecta({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro,"distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos,"nombreCampania":data.rows.item(i).nombreCampania,"fechaCampania":data.rows.item(i).fechaCampania});
                     Y.Visita.obtenerVisitasTransecta(transecta,function(visitas){
                         transecta.set("visitas",visitas);
                         callback(transecta);

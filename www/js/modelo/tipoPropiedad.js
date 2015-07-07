@@ -42,9 +42,38 @@ Y.add('tipoPropiedadModelo',function(Y){
                 }else{
                     callback();
                 };
+            },
+            normalizar:function(){
+                var tipo = {idPadre:this.get("idPadre"),id:this.get("idPadre"),tipo:"simple"};
+                return tipo;
             }
-
-
+        /*sincronizar:function(servidor,callback){
+            var _this = this;
+            var datosTipoPropiedad = {}
+            if(this.get("idPadre")==1  || this.get("idPadre")==2){
+                callback(servidor);
+                return;
+            }
+            $.ajax({
+                    type: "POST",
+                    url: servidor,
+                    data: {'nombre':_this.get("nombre"),'identidad':identidad,"datos":JSON.stringify(datosTipoPropiedad)},
+                    success: function(dataJson){
+                            console.log(dataJson);
+                            elementos = JSON.parse(dataJson)
+                            especies = [];
+                            (function(id,ids,nombre){
+                                      db.transaction(function(t){
+                                            t.executeSql("UPDATE Propiedad('id','id_servidor','nombre')values("+id+","+ids+",'"+nombre+");", [],
+                                            function (t, data) {},null);
+                                        });
+                                }(elementos[i].id,elementos[i].id_servidor,elementos[i].nombre));
+                        },
+                        fail:function(data){
+                            mensajeError("Error en sincroniazción de 'Especie'");
+                            }
+            });
+        }*/
     },{
         
             ATTRS:{

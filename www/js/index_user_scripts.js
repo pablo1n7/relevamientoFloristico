@@ -13,7 +13,7 @@
             desactivarBotonesHeader();
             */
              activarSubPagina("#mainsub","Inicio");
-             refrescarJustgage();
+
 
         });
         $(document).on("click", ".uib_w_6", function(evt){
