@@ -366,7 +366,7 @@ function verImagenEspecie(selectEspecies){
 function autocompletadoEspecies(idElemento,sugerirSiempre){
     var especiesJson = [];
     for (var i=0;i<especies.length;i++){
-        especiesJson.push({ 'id':especies[i].get("nombre"), 'value':especies[i].get("nombre"), 'info':especies[i].get("familia")});
+        especiesJson.push({ 'id':especies[i].get("nombre"), 'value':especies[i].get("nombre"), 'info':especies[i].get("familia").get("nombre")});
 	}
 
     var options = {
@@ -669,7 +669,8 @@ function recolectarPlanta(planta){
     var toques = campo.find("[name|=toquesPlanta]")[0].value;
     var nombreEspecie = campo.find("[name|=especie]")[0].value;
     var estadoFenologico = campo.find("[name|=estadoFenologico]")[0].value;
-    var planta = new Y.Planta({"especie":nombreEspecie,"toques":toques,"foto":foto,"estadoFenologico":estadoFenologico});
+    var especie = especies.filter(function(e){return e.get("nombre")==nombreEspecie})[0];
+    var planta = new Y.Planta({"especie":especie,"toques":toques,"foto":foto,"estadoFenologico":estadoFenologico});
 
     return planta;
 }

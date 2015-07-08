@@ -91,6 +91,7 @@ Y.add('propiedadModelo',function(Y){
                                                   db.transaction(function(t){
                                                         t.executeSql("UPDATE TipoPropiedad SET 'id_servidor'= "+tipoPropiedad.id_servidor+" where id="+tipoPropiedad.idPadre+";", [],
                                                         function (t, data) {
+                                                            _this.set("id_servidor",elemento.id_servidor);
                                                             callback(servidor);
                                                         },null);
                                                     });

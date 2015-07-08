@@ -102,7 +102,44 @@ Y.add('ejemplarModelo',function(Y){
                 //callback(ejemplares);
             });
         });
-    }
+    },
+
+        sincronizar:function(servidor,idVisitaServidor,idPuntoServidor){
+            var idPuntoServidor = idPuntoServidor || "null";
+            if(this.get("id_servidor")!=null){
+                var idEjemplar = this.get("id_servidor");
+                var valores = this.get("valores");
+                valores.map(function(valor){
+                    valor.sincronizar(servidor,idEjemplar);
+                });
+                return;
+            }
+            var _this = this;
+            var idTipoEjemplarServidor = _this.get("tipoEjemplar").get("id_servidor");
+            /* foto */
+            datosItem={'visita':idVisitaServidor,'punto':idPuntoServidor,'tipoEjemplar':idTipoEjemplarServidor};
+            $.ajax({
+            type: "POST",
+            url: servidor,
+            data: {'nombre':'ejemplar','identidad':identidad,"datos":JSON.stringify(datosItem)},
+            success: function(dataJson){
+                    console.log(dataJson);
+                    var elementoItem = JSON.parse(dataJson);
+                    (function(elemento){
+                              db.transaction(function(t){
+                                    t.executeSql("UPDATE Ejemplar SET 'id_servidor'="+elemento.id_servidor+" where id="+_this.get('id')+";", [],
+                                    function (t, data) {
+                                        _this.set("id_servidor",elemento.id_servidor);
+                                        _this.sincronizar(servidor);
+                                    },null);
+                                });
+                        }(elementoItem));
+                },
+                fail:function(data){
+                    mensajeError("Error en sincroniazción de 'Ejemplar'");
+                }
+            });
+        }
 
 
     },{
@@ -118,7 +155,11 @@ Y.add('ejemplarModelo',function(Y){
                 },
                 id:{
                     value:-1
+                },
+                id_servidor:{
+                    value:null
                 }
+
 
             }
         }
@@ -127,16 +168,17 @@ Y.add('ejemplarModelo',function(Y){
     Y.Ejemplar.obtenerEjemplaresAsociados = function(idPunto,idTransecta,fecha,callback){
         var q = "";
         if(idPunto == null)
-            q = "select ej.id, ej.idTipoEjemplar, ej.foto, te.nombre from Ejemplar ej, TipoEjemplar te where ej.idPunto isnull and ej.idTransecta="+idTransecta+" and ej.fecha="+fecha+" and ej.idTipoEjemplar=te.id;";
+            q = "select ej.id, ej.idTipoEjemplar, ej.foto, te.nombre, ej.id_servidor from Ejemplar ej, TipoEjemplar te where ej.idPunto isnull and ej.idTransecta="+idTransecta+" and ej.fecha="+fecha+" and ej.idTipoEjemplar=te.id;";
         else
-            q = "select ej.id, ej.idTipoEjemplar, ej.foto, te.nombre from Ejemplar ej, TipoEjemplar te where ej.idPunto="+idPunto+" and ej.idTransecta="+idTransecta+" and ej.fecha="+fecha+" and ej.idTipoEjemplar=te.id;";
+            q = "select ej.id, ej.idTipoEjemplar, ej.foto, te.nombre, ej.id_servidor from Ejemplar ej, TipoEjemplar te where ej.idPunto="+idPunto+" and ej.idTransecta="+idTransecta+" and ej.fecha="+fecha+" and ej.idTipoEjemplar=te.id;";
 //            q = "select * from Ejemplar where idPunto="+idPunto+" and idTransecta="+idTransecta+" and fecha="+fecha+";";
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 var ejemplares = [];
                 for (var i = 0; i < data.rows.length; i++) {
+                    var tipo = tipoEjemplares.filter(function(t){return t.get("id") == data.rows.item(i).idTipoEjemplar})[0];
 //                    var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"tipoEjemplar":data.rows.item(i).idTipoEjemplar,"foto":data.rows.item(i).foto});
-                    var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"tipoEjemplar":new Y.TipoEjemplar({id:data.rows.item(i).idTipoEjemplar,nombre:data.rows.item(i).nombre}),"foto":data.rows.item(i).foto});
+                    var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"tipoEjemplar":tipo,"foto":data.rows.item(i).foto});
                     ejemplar.obtenerValores();
                     ejemplares.push(ejemplar);
                 };

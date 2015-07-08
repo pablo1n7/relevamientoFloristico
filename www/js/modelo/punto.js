@@ -47,6 +47,45 @@ Y.add('puntoModelo',function(Y){
                 });
             });
 
+        },
+        sincronizar:function(servidor,idVisitaServidor){
+            if(this.get("id_servidor") != null){
+                //sincronizar ITEMS y todo lo demas
+                var items = this.get("items");
+                var idPuntoServidor =this.get("id_servidor");
+                items.map(function(item){
+                    item.sincronizar(servidor,idVisitaServidor,idPuntoServidor);
+                });
+                return;
+            }
+
+            var _this = this;
+            var suelo = this.get("suelo");
+            var estado = this.get("estado");
+            var coordenadas = this.get("coordenadas");
+            var datosPunto = {'visita':idVisitaServidor,'suelo':suelo,'coordenadas':coordenadas,"estado":estado};
+            $.ajax({
+            type: "POST",
+            url: servidor,
+            data: {'nombre':'punto','identidad':identidad,"datos":JSON.stringify(datosPunto)},
+            success: function(dataJson){
+                    console.log(dataJson);
+                    var elementoPunto = JSON.parse(dataJson);
+                    (function(elemento){
+                              db.transaction(function(t){
+                                    t.executeSql("UPDATE Punto SET 'id_servidor'="+elemento.id_servidor+" where id="+_this.get('id')+";", [],
+                                    function (t, data) {
+                                        _this.set("id_servidor",elemento.id_servidor);
+                                        _this.sincronizar(servidor,idVisitaServidor);
+                                    },null);
+                                });
+                        }(elementoPunto));
+                },
+                fail:function(data){
+                    mensajeError("Error en sincroniazción de 'Punto'");
+                }
+            });
+
         }
 
 
@@ -69,6 +108,9 @@ Y.add('puntoModelo',function(Y){
                 },
                 coordenadas:{
                     value: null
+                },
+                id_servidor:{
+                    value:null
                 }
             },
         
@@ -111,7 +153,7 @@ Y.add('puntoModelo',function(Y){
                 t.executeSql(q, null, function (t, data) {
                     var puntos = [];
                     for (var i = 0; i < data.rows.length; i++) {
-                        var punto = new Y.Punto({"id":data.rows.item(i).id,"estado":data.rows.item(i).estadoPunto,"coordenadas":data.rows.item(i).coordenada, "suelo": data.rows.item(i).tipoSuelo });
+                        var punto = new Y.Punto({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"estado":data.rows.item(i).estadoPunto,"coordenadas":data.rows.item(i).coordenada, "suelo": data.rows.item(i).tipoSuelo });
                         puntos.push(punto);
                     }
                     callback(puntos);

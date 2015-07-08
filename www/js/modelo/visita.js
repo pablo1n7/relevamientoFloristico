@@ -84,10 +84,15 @@ Y.add('visitaModelo',function(Y){
         },
         sincronizar:function(servidor,idTransectaServidor){
                 if(this.get("id_servidor")!=null){
-                    /*var visitas = this.get("visitas");
-                    for(var i=0;i < visitas.length;i++){
-                        visitas[i].sincronizar(servidor,this.get("id_servidor"));
-                    }*/
+                    var idVisitaServidor = this.get("id_servidor");
+                    var items = this.get("items");
+                    for(var i=0;i < items.length;i++){
+                        items[i].sincronizar(servidor,this.get("id_servidor"));
+                    }
+                    var puntos = this.get("puntos");
+                    puntos.map(function(p){
+                        p.sincronizar(servidor,idVisitaServidor);
+                    });
                     return;
                 }else{
                     var _this = this;
@@ -152,33 +157,41 @@ Y.add('visitaModelo',function(Y){
     Y.Visita.obtenerVisitaTransecta = function(idTransecta,fecha,callback){
 
         var visita = new Y.Visita({"idTransecta":idTransecta,"fecha":fecha});
-        //items y plantas.
-        (function(v){
-            Y.Planta.obtenerPlantasAsociadas(null,v.get("idTransecta"),v.get("fecha"),function(plantas){
-                console.log("Obteniendo plantas");
-                //v.get("items").concat(plantas);
-                v.set("items",v.get("items").concat(plantas));
-                (function(v){Y.Punto.obtenerPuntosVisita(visita,function(puntos){
-                        console.log("Obteniendo Puntos, Items y todo eso");
-                        v.set("puntos",puntos);
-                        (function(v){Y.Ejemplar.obtenerEjemplaresAsociados(null,v.get("idTransecta"),v.get("fecha"),function(ejemplares){
-                            console.log("Obteniendo Ejemplares");
-                            //v.get("items").concat(ejemplares);
-                            v.set("items",v.get("items").concat(ejemplares))
+        var q = "select * from Visita where idTransecta="+transecta.get("id")+" and fecha="+fecha+";";
+        db.transaction(function (t) {
+                t.executeSql(q, null, function (t, data) {
+                    visita.set("id_servidor",data.rows.item(0).id_servidor);
 
-                            Y.Punto.completarPuntos(v.get("puntos"),v,function(puntos){
-                                callback(v);
-                            });
+                    (function(v){
+                        Y.Planta.obtenerPlantasAsociadas(null,v.get("idTransecta"),v.get("fecha"),function(plantas){
+                            console.log("Obteniendo plantas");
+                            //v.get("items").concat(plantas);
+                            v.set("items",v.get("items").concat(plantas));
+                            (function(v){Y.Punto.obtenerPuntosVisita(visita,function(puntos){
+                                    console.log("Obteniendo Puntos, Items y todo eso");
+                                    v.set("puntos",puntos);
+                                    (function(v){Y.Ejemplar.obtenerEjemplaresAsociados(null,v.get("idTransecta"),v.get("fecha"),function(ejemplares){
+                                        console.log("Obteniendo Ejemplares");
+                                        //v.get("items").concat(ejemplares);
+                                        v.set("items",v.get("items").concat(ejemplares))
+
+                                        Y.Punto.completarPuntos(v.get("puntos"),v,function(puntos){
+                                            callback(v);
+                                        });
 
 
 
 
+                                    });
+                                    }(v));
+                                });
+                            }(v));
                         });
-                        }(v));
-                    });
-                }(v));
-            });
-        }(visita));
+                    }(visita));
+                },null) });
+        //items y plantas.
+
+
 
     };
 
@@ -196,7 +209,7 @@ Y.add('visitaModelo',function(Y){
                     }
                     contadorVisitas = data.rows.length;
                     for (var i = 0; i < data.rows.length; i++) {
-                        var visita = new Y.Visita({"idTransecta":transecta.get("id"),"fecha":data.rows.item(i).fecha});
+                        var visita = new Y.Visita({"id_servidor":data.rows.item(i).id_servidor,"idTransecta":transecta.get("id"),"fecha":data.rows.item(i).fecha});
                         //items y plantas.
                         (function(v){
                             Y.Planta.obtenerPlantasAsociadas(null,v.get("idTransecta"),v.get("fecha"),function(plantas){

@@ -9,10 +9,13 @@ Y.add('especieModelo',function(Y){
         },
 
         save:function(callback,callbackError){
+            var _this = this;
             var q = "INSERT INTO Especie ('nombre','tipoBiologico','formaBiologica','distribucionGeografica','indiceDeCalidad','estadoDeConservacion','familia','forrajera') values('"+this.get("nombre")+"','"+this.get("tipoBiologico")+"','"+this.get("formaBiologica")+"','"+this.get("distribucionGeografica")+"',"+this.get("indiceDeCalidad")+",'"+this.get("estadoDeConservacion")+"','"+this.get("familia")+"',"+this.get("forrajera")+");";
             db.transaction(function(t){
                 t.executeSql(q, [],
                 function (t, data) {
+                    _this.set("id",data.insertId);
+                    _this.humanizar();
                     callback();
                 },function(a){callbackError();console.log(a);});
             });
@@ -27,6 +30,8 @@ Y.add('especieModelo',function(Y){
             this.set("tipoBiologico",tiposBiologicos.filter(function(v){return v.id == id;})[0]);
             id = this.get("distribucionGeografica");
             this.set("distribucionGeografica",distribuciones.filter(function(v){return v.id == id;})[0]);
+            id = this.get("familia");
+            this.set("familia",familias.filter(function(f){return f.get("id") == id;})[0]);
         }
 
 
@@ -61,7 +66,7 @@ Y.add('especieModelo',function(Y){
                     value: 1
                 },
                 id_servidor:{
-                    value: -1
+                    value: null
                 }
 
             },
@@ -74,7 +79,7 @@ Y.add('especieModelo',function(Y){
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     for (var i = 0; i < data.rows.length; i++) {
-                        var familia = familias.filter(function(f){return f.get("id") == data.rows.item(i).familia;})[0];
+                        var familia = data.rows.item(i).familia;
                         var especie = new Y.Especie({"id":data.rows.item(i).id,"nombre":data.rows.item(i).nombre,"familia":familia,"formaBiologica":data.rows.item(i).formaBiologica,"tipoBiologico":data.rows.item(i).tipoBiologico,"estadoDeConservacion":data.rows.item(i).estadoDeConservacion,"distribucionGeografica":data.rows.item(i).distribucionGeografica,"indiceDeCalidad":data.rows.item(i).indiceDeCalidad,"imagen":data.rows.item(i).imagen,"forrajera":data.rows.item(i).forrajera,"id_servidor":data.rows.item(i).id_servidor});
                         //especies.push(especie);
                         especie.humanizar();
@@ -114,7 +119,7 @@ Y.add('especieModelo',function(Y){
                                             t.executeSql("INSERT INTO Especie('id','id_servidor','nombre','formaBiologica','tipoBiologico','estadoDeConservacion','distribucionGeografica','indiceDeCalidad','forrajera','imagen','familia') values("+id+","+ids+",'"+nombre+"',"+formaBiologica+","+tipoBiologico+","+estadoDeConservacion+","+distribucionGeografica+","+indiceDeCalidad+","+forrajera+",'"+imagen+"',"+familiaLocal+");", [],
                                             function (t, data) {
                                                 //data.insertId
-                                                var familia = familias.filter(function(f){return f.get("id") == familiaLocal;})[0];
+                                                var familia = familiaLocal;
                                                 var especie = new Y.Especie({"id":id,"id_servidor":ids,"nombre":nombre,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologico,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceDeCalidad,"forrajera":forrajera,"imagen":imagen});
                                                 especie.humanizar();
                                                 especies.push(especie);

@@ -18,7 +18,40 @@ Y.add('valorModelo',function(Y){
             var tipo = this.get("propiedad").get("tipo");
             this.set("valor",tipo.obtenerValor(campo));
 
+        },
+
+         sincronizar:function(servidor,idEjemplarServidor){
+/*            if(this.get("id_servidor")!=null){
+                return;
+            }*/
+            var _this = this;
+            var idPropiedadServidor = _this.get("propiedad").get("id_servidor");
+            var valor = _this.get("valor");
+            /* foto */
+            datosItem={'propiedad':idPropiedadServidor,'valor':valor,'ejemplar':idEjemplarServidor};
+            $.ajax({
+            type: "POST",
+            url: servidor,
+            data: {'nombre':'valor','identidad':identidad,"datos":JSON.stringify(datosItem)},
+            success: function(dataJson){
+                    console.log(dataJson);
+                    /*var elementoItem = JSON.parse(dataJson);
+                    (function(elemento){
+                              db.transaction(function(t){
+                                    t.executeSql("UPDATE Valor SET 'id_servidor'="+elemento.id_servidor+" where id="+_this.get('id')+";", [],
+                                    function (t, data) {
+//                                        _this.set("id_servidor",elemento.id_servidor);
+                                        _this.sincronizar(servidor);
+                                    },null);
+                                });
+                        }(elementoItem));*/
+                },
+                fail:function(data){
+                    mensajeError("Error en sincroniazción de 'Ejemplar'");
+                }
+            });
         }
+
     },{
 
             ATTRS:{
@@ -31,6 +64,9 @@ Y.add('valorModelo',function(Y){
                 propiedad:{
                     value: null
                 }
+               /* id_servidor:{
+                    value: null
+                },*/
             },
 
         }
