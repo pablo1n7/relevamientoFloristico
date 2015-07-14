@@ -63,7 +63,7 @@ Y.add('puntoModelo',function(Y){
             var suelo = this.get("suelo");
             var estado = this.get("estado");
             var coordenadas = this.get("coordenadas");
-            var datosPunto = {'visita':idVisitaServidor,'suelo':suelo,'coordenadas':coordenadas,"estado":estado};
+            var datosPunto = {'visita':idVisitaServidor,'suelo':suelo,'coordenadas':coordenadas,"estado":estado,"orden":_this.get("id")};
             $.ajax({
             type: "POST",
             url: servidor,
@@ -156,7 +156,9 @@ Y.add('puntoModelo',function(Y){
                         var punto = new Y.Punto({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"estado":data.rows.item(i).estadoPunto,"coordenadas":data.rows.item(i).coordenada, "suelo": data.rows.item(i).tipoSuelo });
                         puntos.push(punto);
                     }
-                    callback(puntos);
+                    // ESTO LO MODIFICAMOS
+                    Y.Punto.completarPuntos(puntos,visita,callback);
+                    //callback(puntos);
                 });
             });
     };

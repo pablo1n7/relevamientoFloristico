@@ -3,7 +3,7 @@ Y.add('familiaModelo',function(Y){
     Y.Familia = Y.Base.create('familia', Y.Model, [],{
 
         save: function(callback,callbackError){
-            var q = "INSERT INTO Familia('nombre') values('"+this.get("nombre")+"');";
+            var q = "INSERT INTO Familia('id_servidor','nombre') values("+this.get("id_servidor")+",'"+this.get("nombre")+"');";
             var _this = this;
             db.transaction(function(t){
                 t.executeSql(q, [],
@@ -27,7 +27,7 @@ Y.add('familiaModelo',function(Y){
                     value: '-1'
                 },
                 id_servidor:{
-                    value: '-1'
+                    value: null
                 }
             },
         
@@ -48,38 +48,43 @@ Y.add('familiaModelo',function(Y){
             });
     };
 
-     Y.Familia.sincronizar= function(servidor){
+     Y.Familia.sincronizar= function(servidor,callback){
         var familiasDicc = familias.map(function(f){return {"id":f.get("id"),"id_servidor":f.get("id_servidor"),"nombre":f.get("nombre")}});
         $.ajax({
             type: "POST",
             url: servidor,
             data: {'nombre':'familia','identidad':identidad,"datos":JSON.stringify(familiasDicc)},
             success: function(dataJson){
-                    console.log(dataJson);
-                    var q1 = "delete from Familia;";
-                    db.transaction(function(t){
-                        t.executeSql(q1, [],function (t, data) {
-                            elementos = JSON.parse(dataJson)
-                            familias = [];
-                            for(var i =0; i < elementos.length;i++){
-
-                                if(!elementos[i].hasOwnProperty("id")){
-                                    elementos[i].id = null;
-                                }
-
-                                (function(id,ids,nombre){
-                                      db.transaction(function(t){
-                                            t.executeSql("INSERT INTO Familia('id','id_servidor','nombre') values("+id+","+ids+",'"+nombre+"');", [],
-                                            function (t, data) {
-                                                //data.insertId
-                                                var familia = new Y.Familia({"id":id,"nombre":nombre,"id_servidor":ids});
-                                                familias.push(familia);
-                                            },null);
-                                        });
-                                }(elementos[i].id,elementos[i].id_servidor,elementos[i].nombre));
-                            }
-                        },function(){});
-                    });
+                console.log(dataJson);
+                elementos = JSON.parse(dataJson);
+                        //familias = [];
+                for(var i =0; i < elementos.length;i++){
+                    if(elementos[i].hasOwnProperty("id")){
+                        var fam = familias.filter(function(f){return f.get("id") == elementos[i].id;})[0];
+                        fam.set("nombre",elementos[i].nombre);
+                        fam.set("id_servidor",elementos[i].id_servidor);
+                    }else{
+                        var familia = new Y.Familia({"nombre":elementos[i].nombre,"id_servidor":elementos[i].id_servidor});
+                        familias.push(familia);
+                    }
+                }
+                for(var i =0; i < elementos.length;i++){
+                    if(!elementos[i].hasOwnProperty("id")){
+                        (function(ids,nombre){
+                            // var familia = new Y.Familia({"nombre":nombre,"id_servidor":ids});
+                            var familia = familias.filter(function(f){return f.get("id_servidor") == ids;})[0];
+                            familia.save(function() {},function(){});
+                        }(elementos[i].id_servidor,elementos[i].nombre));
+                    }else{
+                        (function(id,ids,nombre){
+                              db.transaction(function(t){
+                                    t.executeSql("UPDATE Familia SET nombre='"+ nombre +"', id_servidor="+ids+" WHERE id="+id+";", [],
+                                    function (t, data) {},null);
+                                });
+                        }(elementos[i].id,elementos[i].id_servidor,elementos[i].nombre));
+                    }
+                }
+                callback();
             },
             fail:function(data){
                 mensajeError("Error en sincroniazción de 'Familia'");

@@ -10,7 +10,14 @@ Y.add('especieModelo',function(Y){
 
         save:function(callback,callbackError){
             var _this = this;
-            var q = "INSERT INTO Especie ('nombre','tipoBiologico','formaBiologica','distribucionGeografica','indiceDeCalidad','estadoDeConservacion','familia','forrajera') values('"+this.get("nombre")+"','"+this.get("tipoBiologico")+"','"+this.get("formaBiologica")+"','"+this.get("distribucionGeografica")+"',"+this.get("indiceDeCalidad")+",'"+this.get("estadoDeConservacion")+"','"+this.get("familia")+"',"+this.get("forrajera")+");";
+            if(typeof(_this.get("familia")) != "number"){
+                if(_this.get("familia").get("id") == -1){
+                    return setTimeout(function(){_this.save(callback,callbackError);},1000);
+                }else{
+                    _this.set("familia",_this.get("familia").get("id"));
+                }
+            }
+            var q = "INSERT INTO Especie ('id_servidor','nombre','tipoBiologico','formaBiologica','distribucionGeografica','indiceDeCalidad','estadoDeConservacion','familia','forrajera') values("+this.get("id_servidor")+",'"+this.get("nombre")+"','"+this.get("tipoBiologico")+"','"+this.get("formaBiologica")+"','"+this.get("distribucionGeografica")+"',"+this.get("indiceDeCalidad")+",'"+this.get("estadoDeConservacion")+"','"+this.get("familia")+"',"+this.get("forrajera")+");";
             db.transaction(function(t){
                 t.executeSql(q, [],
                 function (t, data) {
@@ -91,10 +98,20 @@ Y.add('especieModelo',function(Y){
             });
     };
 
-     Y.Especie.sincronizar= function(servidor){
+     Y.Especie.sincronizar= function(servidor,callback){
         var familiasDicc = [];
         familias.map(function(f){familiasDicc[f.get("id")] = f.get("id_servidor")});
-        var especiesDicc = especies.map(function(e){return {"id":e.get("id"),"id_servidor":e.get("id_servidor"),"nombre":e.get("nombre"),"familiaLocal":e.get("familia").get("id"),"familia":familiasDicc[e.get("familia").get("id")],"formaBiologica":e.get("formaBiologica").id,"tipoBiologico":e.get("tipoBiologico").id,"estadoDeConservacion":e.get("estadoDeConservacion").id,"distribucionGeografica":e.get("distribucionGeografica").id,"indiceDeCalidad":e.get("indiceDeCalidad"),"forrajera":e.get("forrajera")}});   // Y SI TENIA UNA IMAGEN POR QUE SE MURIO???
+        var especiesDicc = especies.map(function(e){return {"id":e.get("id"),
+                                                            "id_servidor":e.get("id_servidor"),
+                                                            "nombre":e.get("nombre"),
+                                                            "familiaLocal":e.get("familia").get("id"),
+                                                            "familia":familiasDicc[e.get("familia").get("id")],
+                                                            "formaBiologica":e.get("formaBiologica").id,
+                                                            "tipoBiologico":e.get("tipoBiologico").id,
+                                                            "estadoDeConservacion":e.get("estadoDeConservacion").id,
+                                                            "distribucionGeografica":e.get("distribucionGeografica").id,
+                                                            "indiceDeCalidad":e.get("indiceDeCalidad"),
+                                                            "forrajera":e.get("forrajera")}});   // Y SI TENIA UNA IMAGEN POR QUE SE MURIO???
 
         $.ajax({
             type: "POST",
@@ -102,33 +119,55 @@ Y.add('especieModelo',function(Y){
             data: {'nombre':'especie','identidad':identidad,"datos":JSON.stringify(especiesDicc)},
             success: function(dataJson){
                     console.log(dataJson);
-                    var q1 = "delete from Especie;";
-                    db.transaction(function(t){
-                        t.executeSql(q1, [],function (t, data) {
-                            elementos = JSON.parse(dataJson)
-                            especies = [];
-                            for(var i =0; i < elementos.length;i++){
+                    elementos = JSON.parse(dataJson)
+                    for(var i =0; i < elementos.length;i++){
+                        var fam = familias.filter(function(f){return f.get("id_servidor") == elementos[i].familia;})[0];
+                        if(elementos[i].hasOwnProperty("id")){
+                            var especie = especies.filter(function(f){return f.get("id") == elementos[i].id;})[0];
+                            especie.set("nombre",elementos[i].nombre);
+                            especie.set("id_servidor",elementos[i].id_servidor);
+                            especie.set("familia",fam);
+                            var id = elementos[i].estadoDeConservacion;
+                            especie.set("estadoDeConservacion",estadosDeConservacion.filter(function(v){return v.id == id;})[0]);
+                            id = elementos[i].formaBiologica;
+                            especie.set("formaBiologica",formasBiologicas.filter(function(v){return v.id == id;})[0]);
+                            id = elementos[i].tipoBiologico;
+                            especie.set("tipoBiologico",tiposBiologicos.filter(function(v){return v.id == id;})[0]);
+                            id = elementos[i].distribucionGeografica;
+                            especie.set("distribucionGeografica",distribuciones.filter(function(v){return v.id == id;})[0]);
+                            especie.set("indiceDeCalidad",elementos[i].nombre);
+                            especie.set("forrajera",elementos[i].forrajera);
+                            especie.set("imagen",elementos[i].imagen);
 
-                                if(!elementos[i].hasOwnProperty("id")){
-                                    elementos[i].id = null;
-                                    elementos[i].familiaLocal = familias.filter(function(f){return f.get("id_servidor") == elementos[i].familia})[0].get("id");
-                                }
+                        }else{
 
-                                (function(id,ids,nombre,familia,familiaLocal,formaBiologica,tipoBiologico,estadoDeConservacion,distribucionGeografica,indiceDeCalidad,forrajera,imagen){
-                                      db.transaction(function(t){
-                                            t.executeSql("INSERT INTO Especie('id','id_servidor','nombre','formaBiologica','tipoBiologico','estadoDeConservacion','distribucionGeografica','indiceDeCalidad','forrajera','imagen','familia') values("+id+","+ids+",'"+nombre+"',"+formaBiologica+","+tipoBiologico+","+estadoDeConservacion+","+distribucionGeografica+","+indiceDeCalidad+","+forrajera+",'"+imagen+"',"+familiaLocal+");", [],
-                                            function (t, data) {
-                                                //data.insertId
-                                                var familia = familiaLocal;
-                                                var especie = new Y.Especie({"id":id,"id_servidor":ids,"nombre":nombre,"familia":familia,"formaBiologica":formaBiologica,"tipoBiologico":tipoBiologico,"estadoDeConservacion":estadoDeConservacion,"distribucionGeografica":distribucionGeografica,"indiceDeCalidad":indiceDeCalidad,"forrajera":forrajera,"imagen":imagen});
-                                                especie.humanizar();
-                                                especies.push(especie);
-                                            },null);
-                                        });
-                                }(elementos[i].id,elementos[i].id_servidor,elementos[i].nombre,elementos[i].familia,elementos[i].familiaLocal,elementos[i].formaBiologica,elementos[i].tipoBiologico,elementos[i].estadoDeConservacion,elementos[i].distribucionGeografica,elementos[i].indiceDeCalidad,elementos[i].forrajera,elementos[i].imagen));
-                            }
-                        },function(){});
-                    });
+                            var especie = new Y.Especie({"id_servidor":elementos[i].id_servidor,"nombre":elementos[i].nombre,"familia":fam,"formaBiologica":elementos[i].formaBiologica,"tipoBiologico":elementos[i].tipoBiologico,"estadoDeConservacion":elementos[i].estadoDeConservacion,"distribucionGeografica":elementos[i].distribucionGeografica,"indiceDeCalidad":elementos[i].indiceDeCalidad,"forrajera":elementos[i].forrajera,"imagen":elementos[i].imagen});
+                            especies.push(especie);
+
+                        }
+                    }
+
+                    for(var i =0; i < elementos.length;i++){
+
+                        if(!elementos[i].hasOwnProperty("id")){
+                            (function(ids,nombre){
+                                // var familia = new Y.Familia({"nombre":nombre,"id_servidor":ids});
+                                var especie = especies.filter(function(e){return e.get("id_servidor") == ids;})[0];
+                                especie.save(function() {},function(){});
+                            }(elementos[i].id_servidor,elementos[i].nombre));
+                        }else{
+                            (function(id,ids,nombre,familia,familiaLocal,formaBiologica,tipoBiologico,estadoDeConservacion,distribucionGeografica,indiceDeCalidad,forrajera,imagen){
+                            //(function(id,ids,nombre){
+                                console.log("UPDATE Especie SET nombre='"+ nombre +"', id_servidor = "+ids+", formaBiologica ="+formaBiologica+", tipoBiologico ="+tipoBiologico+",estadoDeConservacion = "+estadoDeConservacion+", distribucionGeografica = "+distribucionGeografica+", indiceDeCalidad = "+indiceDeCalidad+", forrajera = "+forrajera+", imagen = '"+imagen+"', familia = "+familiaLocal+"  where id_servidor = "+ids+";");
+                                  db.transaction(function(t){
+                                        t.executeSql("UPDATE Especie SET nombre='"+ nombre +"', id_servidor = "+ids+", formaBiologica ="+formaBiologica+", tipoBiologico ="+tipoBiologico+",estadoDeConservacion = "+estadoDeConservacion+", distribucionGeografica = "+distribucionGeografica+", indiceDeCalidad = "+indiceDeCalidad+", forrajera = "+forrajera+", imagen = '"+imagen+"', familia = "+familiaLocal+"  where id = "+id+";", [],
+
+                                        function (t, data) {},null);
+                                    });
+                              }(elementos[i].id,elementos[i].id_servidor,elementos[i].nombre,elementos[i].familia,elementos[i].familiaLocal,elementos[i].formaBiologica,elementos[i].tipoBiologico,elementos[i].estadoDeConservacion,elementos[i].distribucionGeografica,elementos[i].indiceDeCalidad,elementos[i].forrajera,elementos[i].imagen));
+                        }
+                    }
+                    callback();
             },
             fail:function(data){
                 mensajeError("Error en sincroniazción de 'Especie'");

@@ -1052,22 +1052,22 @@ objetoBrujulaTransecta.vueltas = 0;
 
     sincronizar:function(direccion){
         var servidor = "http://"+direccion+":8000/sinc";
-
-        /*
-           obtenerValoresBD("EstadoDeConservacion",estadosDeConservacion);
-        obtenerValoresBD("FormaBiologica",formasBiologicas);
-        obtenerValoresBD("TipoBiologico",tiposBiologicos);
-        obtenerValoresBD("DistribucionGeografica",distribuciones);
-        obtenerValoresBD("TipoSuelo",tiposSuelos);
-
-        */
-/*        sincronizarElementoSimple(servidor,"suelo","TipoSuelo","Suelo",function(s){tiposSuelos.push(s)},function(){tiposSuelos=[]});
+        sincronizarElementoSimple(servidor,"suelo","TipoSuelo","Suelo",function(s){tiposSuelos.push(s)},function(){tiposSuelos=[]});
         sincronizarElementoSimple(servidor,"dist","DistribucionGeografica","Distribución Geográfica",function(s){distribuciones.push(s)},function(){distribuciones=[]});
         sincronizarElementoSimple(servidor,"forma","FormaBiologica","Forma Biológica",function(s){formasBiologicas.push(s)},function(){formasBiologicas=[]});
         sincronizarElementoSimple(servidor,"tipo","TipoBiologico","Tipo Biológico",function(s){tiposBiologicos.push(s)},function(){tiposBiologicos=[]});
         sincronizarElementoSimple(servidor,"estado","EstadoDeConservacion","Estado De Conservación",function(s){estadosDeConservacion.push(s)},function(){estadosDeConservacion=[]});
-        Y.Familia.sincronizar(servidor);*/
-        Y.Especie.sincronizar(servidor);
+        Y.Familia.sincronizar(servidor,function(){
+            console.log("termino la familia y comienza ...");
+            Y.Especie.sincronizar(servidor,function(){
+                console.log("termino la especie y termino");
+                campañas.map(function(c){
+                    Y.Campania.obtenerCampania(c.nombre,c.fecha,function(campania){
+                        campania.sincronizar(servidor);
+                    });
+                })
+            });
+        });
 
     }
 

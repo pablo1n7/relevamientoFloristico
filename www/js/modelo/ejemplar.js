@@ -90,13 +90,16 @@ Y.add('ejemplarModelo',function(Y){
 
             },
 
-        obtenerValores:function(){
+        obtenerValores:function(tipo){
             var _this = this;
             var  q = "select va.id,va.valor,pr.nombre, pr.id as prId from Valor va, Propiedad pr where va.idEjemplar="+this.get("id")+" and va.idPropiedad = pr.id;";
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
+                var propiedades = tipo.get("campos");
                 for (var i = 0; i < data.rows.length; i++) {
-                    var valor = new Y.Valor({"id":data.rows.item(i).id,"valor":data.rows.item(i).valor,"propiedad":new Y.Propiedad({id:data.rows.item(i).prId,nombre:data.rows.item(i).nombre})});
+                    var prop = propiedades.filter(function(p){return p.get("id") == data.rows.item(i).prId;})[0];
+                    //var valor = new Y.Valor({"id":data.rows.item(i).id,"valor":data.rows.item(i).valor,"propiedad":new Y.Propiedad({id:data.rows.item(i).prId,nombre:data.rows.item(i).nombre})});
+                    var valor = new Y.Valor({"id":data.rows.item(i).id,"valor":data.rows.item(i).valor,"propiedad":prop});
                     _this.get("valores").push(valor);
                 };
                 //callback(ejemplares);
@@ -107,11 +110,11 @@ Y.add('ejemplarModelo',function(Y){
         sincronizar:function(servidor,idVisitaServidor,idPuntoServidor){
             var idPuntoServidor = idPuntoServidor || "null";
             if(this.get("id_servidor")!=null){
-                var idEjemplar = this.get("id_servidor");
+                /*var idEjemplar = this.get("id_servidor");
                 var valores = this.get("valores");
                 valores.map(function(valor){
                     valor.sincronizar(servidor,idEjemplar);
-                });
+                });*/
                 return;
             }
             var _this = this;
@@ -131,6 +134,10 @@ Y.add('ejemplarModelo',function(Y){
                                     function (t, data) {
                                         _this.set("id_servidor",elemento.id_servidor);
                                         _this.sincronizar(servidor);
+                                        var valores = _this.get("valores");
+                                        valores.map(function(valor){
+                                            valor.sincronizar(servidor,elemento.id_servidor);
+                                        });
                                     },null);
                                 });
                         }(elementoItem));
@@ -179,7 +186,7 @@ Y.add('ejemplarModelo',function(Y){
                     var tipo = tipoEjemplares.filter(function(t){return t.get("id") == data.rows.item(i).idTipoEjemplar})[0];
 //                    var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"tipoEjemplar":data.rows.item(i).idTipoEjemplar,"foto":data.rows.item(i).foto});
                     var ejemplar = new Y.Ejemplar({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"tipoEjemplar":tipo,"foto":data.rows.item(i).foto});
-                    ejemplar.obtenerValores();
+                    ejemplar.obtenerValores(tipo);
                     ejemplares.push(ejemplar);
                 };
                 callback(ejemplares);
