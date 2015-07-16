@@ -1,12 +1,12 @@
 {
   "project": {
-    "projectSettingsVersion": "1.1",
+    "projectSettingsVersion": "1.2",
     "creationData": {
       "type": "App Designer",
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "https://edge-intel.s3.amazonaws.com/jsapp/production/release-2014-ww37/template-tab-view-appdesigner/sample.zip",
       "projectGuid": "962a665a-38e2-4d93-8209-5a3218ca6c99",
-      "lastModifiedDate": 1434485163326,
+      "lastModifiedDate": 1436903280399,
       "creationDate": 1414852525848
     },
     "XDK-app-designer": "true",
@@ -14,22 +14,7 @@
     "startFile": "index.html",
     "projectFiles": {},
     "projectDirectories": {},
-    "libraries": [
-      {
-        "name": "Cordova",
-        "version": "2.9.0",
-        "data": {
-          "default": true
-        }
-      },
-      {
-        "name": "intelXDK",
-        "version": "4.0.0",
-        "data": {
-          "default": true
-        }
-      }
-    ],
+    "libraries": [],
     "serviceMethods": [],
     "cordovaPluginsDirectory": "plugins",
     "cordovaPlugins": [
@@ -38,66 +23,86 @@
         "version": "0.2.9",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "org.apache.cordova.device-orientation",
         "version": "0.3.6",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "org.apache.cordova.device",
         "version": "0.2.5",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "org.apache.cordova.file",
         "version": "0.2.5",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "org.apache.cordova.media",
         "version": "0.2.8",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "org.apache.cordova.splashscreen",
         "version": "0.2.5",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "intel.xdk.audio",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "intel.xdk.camera",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "intel.xdk.file",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "intel.xdk.player",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "org.apache.cordova.geolocation",
@@ -105,6 +110,8 @@
         "selectedState": "Included",
         "data": {},
         "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": [],
         "custom": "true",
         "name": "geolocation",
         "origin": "org.apache.cordova.geolocation",
@@ -116,6 +123,8 @@
         "selectedState": "Included",
         "data": {},
         "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": [],
         "custom": "true",
         "name": "softKeyboard",
         "origin": "SoftKeyboardPlugin-master",
@@ -126,7 +135,9 @@
         "version": "0.2.8",
         "selectedState": "Included",
         "data": {},
-        "paramvals": {}
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       },
       {
         "id": "com.albahra.plugin.networkinterface",
@@ -134,6 +145,8 @@
         "selectedState": "Included",
         "data": {},
         "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": [],
         "custom": "true",
         "name": "com.albahra.plugin.networkinterface",
         "origin": "cordova-plugin-networkinterface-master",
@@ -154,7 +167,11 @@
         "isActive_": true,
         "appName_": "relevamientoFloristico",
         "appID_": "xdk.template.tabview",
-        "appAccess_": "*",
+        "appAccess_": [
+          {
+            "origin": "*"
+          }
+        ],
         "icons_": [
           {
             "relPath": "img/splash/icon36.png",
@@ -211,9 +228,9 @@
             "orientation": "portrait"
           }
         ],
-        "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
+        "iosProvs_": [],
         "cordovaCLIVersion_": "3.5",
         "crosswalkVersion_": "stable",
         "appVersion_": "0.0.1",
@@ -232,14 +249,18 @@
         "isActive_": true,
         "appName_": "relevamientoFloristico",
         "appID_": "xdk.template.tabview",
-        "appAccess_": "*",
+        "appAccess_": [
+          {
+            "origin": "*"
+          }
+        ],
         "icons_": [],
         "splashes_": [],
-        "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
+        "iosProvs_": [],
         "cordovaCLIVersion_": "3.5",
-        "crosswalkVersion_": "stable",
+        "crosswalkVersion_": "11",
         "appVersion_": "0.0.1",
         "appDescription_": "",
         "appAuthor_": "",
@@ -256,12 +277,16 @@
         "isActive_": true,
         "appName_": "relevamientoFloristico",
         "appID_": "xdk.template.tabview",
-        "appAccess_": "*",
+        "appAccess_": [
+          {
+            "origin": "*"
+          }
+        ],
         "icons_": [],
         "splashes_": [],
-        "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
+        "iosProvs_": [],
         "cordovaCLIVersion_": "3.5",
         "crosswalkVersion_": "stable",
         "appVersion_": "0.0.1",
@@ -278,35 +303,100 @@
         "isActive_": true,
         "appName_": "relevamientoFloristico",
         "appID_": "xdk.template.tabview",
-        "appAccess_": "*",
+        "appAccess_": [
+          {
+            "origin": "*"
+          }
+        ],
         "icons_": [],
         "splashes_": [],
-        "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
+        "iosProvs_": [],
         "cordovaCLIVersion_": "3.5",
         "crosswalkVersion_": "stable",
         "appVersion_": "0.0.0.1",
         "appDescription_": ""
       },
-      "WindowsPhone8": {
-        "platform_": "wp8",
-        "runtime_": "Cordova 3.x",
-        "name_": "WindowsPhone8",
+      "WebApp": {
+        "platform_": "webapp",
+        "runtime_": "W3C",
+        "name_": "WebApp",
         "preferences_": {},
-        "isActive_": true,
+        "isActive_": false,
         "appName_": "relevamientoFloristico",
-        "appID_": "xdk.intel.ad.project",
-        "appAccess_": "*",
+        "appID_": "not.yet.specified",
+        "appAccess_": [
+          {
+            "origin": "*"
+          }
+        ],
         "icons_": [],
         "splashes_": [],
-        "iosProvs_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
-        "cordovaCLIVersion_": "3.5",
-        "crosswalkVersion_": "stable",
-        "appVersion_": "0.0.0.1"
+        "appVersion_": "0.0.1"
+      },
+      "Firefox": {
+        "platform_": "firefoxos",
+        "runtime_": "W3C on Firefox OS",
+        "name_": "Firefox",
+        "preferences_": {},
+        "isActive_": false,
+        "appName_": "relevamientoFloristico",
+        "appID_": "not.yet.specified",
+        "appAccess_": [
+          {
+            "origin": "*"
+          }
+        ],
+        "icons_": [],
+        "splashes_": [],
+        "addlPermissions_": "",
+        "excludedLibraries_": "",
+        "appVersion_": "0.0.1"
+      },
+      "Chrome": {
+        "platform_": "chromeos",
+        "runtime_": "W3C on Chrome OS",
+        "name_": "Chrome",
+        "preferences_": {},
+        "isActive_": false,
+        "appName_": "relevamientoFloristico",
+        "appID_": "not.yet.specified",
+        "appAccess_": [
+          {
+            "origin": "*"
+          }
+        ],
+        "icons_": [],
+        "splashes_": [],
+        "addlPermissions_": "",
+        "excludedLibraries_": "",
+        "appVersion_": "0.0.1"
+      },
+      "Facebook": {
+        "platform_": "facebook",
+        "runtime_": "W3C on Facebook",
+        "name_": "Facebook",
+        "preferences_": {},
+        "isActive_": false,
+        "appName_": "relevamientoFloristico",
+        "appID_": "not.yet.specified",
+        "appAccess_": [
+          {
+            "origin": "*"
+          }
+        ],
+        "icons_": [],
+        "splashes_": [],
+        "addlPermissions_": "",
+        "excludedLibraries_": "",
+        "appVersion_": "0.0.1"
       }
-    }
+    },
+    "gameAssetDirectory": "asset",
+    "gameMetadata": {},
+    "projectTags": []
   }
 }

@@ -157,8 +157,39 @@ Y.add('campaniaModelo',function(Y){
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     for (var i = 0; i < data.rows.length; i++) {
-                        campania = new Y.Campania({nombre:data.rows.item(i).nombre,id_servidor:data.rows.item(i).id_servidor,fecha:data.rows.item(i).fecha,descripcion:data.rows.item(i).descripcion});
-                        Y.Transecta.obtenerTransectas(data.rows.item(i).nombre,data.rows.item(i).fecha,function(transecta){
+                        campania = new Y.Campania({nombre:data.rows.item(i).nombre,
+                                                   id_servidor:data.rows.item(i).id_servidor,
+                                                   fecha:data.rows.item(i).fecha,
+                                                   descripcion:data.rows.item(i).descripcion});
+                        Y.Transecta.obtenerTransectas(data.rows.item(i).nombre,data.rows.item(i).fecha,
+                                                      function(transecta){
+                            transecta.set("campania",campania);
+                            campania.get("transectas").push(transecta);
+                            $("#listaTransectas").append('<li class="widget"><a href="/aplicacion/activarTransecta/'+transecta.get("id")+'">'+transecta.get("ambiente")+'</a></li>');
+                            //campania.obtenerTiposAsociados(callback);
+                        },function(){
+                            //campania.obtenerTiposAsociados(callback);
+                        });
+
+                        campania.obtenerTiposAsociados(callback);
+
+                    };
+                });
+            });
+
+    };
+
+    Y.Campania.obtenerCampaniaCompleta = function(nombre,fecha,callback){
+         var q = "select * from Campania where nombre='"+nombre+"' and fecha="+fecha;
+            db.transaction(function (t) {
+                t.executeSql(q, null, function (t, data) {
+                    for (var i = 0; i < data.rows.length; i++) {
+                        campania = new Y.Campania({nombre:data.rows.item(i).nombre,
+                                                   id_servidor:data.rows.item(i).id_servidor,
+                                                   fecha:data.rows.item(i).fecha,
+                                                   descripcion:data.rows.item(i).descripcion});
+                        Y.Transecta.obtenerTransectasCompletas(data.rows.item(i).nombre,data.rows.item(i).fecha,
+                                                      function(transecta){
                             transecta.set("campania",campania);
                             campania.get("transectas").push(transecta);
                             $("#listaTransectas").append('<li class="widget"><a href="/aplicacion/activarTransecta/'+transecta.get("id")+'">'+transecta.get("ambiente")+'</a></li>');

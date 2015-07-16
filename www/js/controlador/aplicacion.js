@@ -666,40 +666,44 @@ objetoBrujulaTransecta.vueltas = 0;
         Y.Campania.obtenerCampaniaPorTransecta(id,function(camp){
             campañaActiva = camp;
             transectaActiva = campañaActiva.get("transectas").filter(function(t){ return t.get("id") == id })[0];
-            if(parseInt(reanudacion) == 0){
-                var visita = new Y.Visita({fecha:Date.now()});
-                visita.save(transectaActiva.get("id"));
-                transectaActiva.get("visitas").push(visita);
-                metrosRestantes = CANTIDAD_PUNTOS * transectaActiva.get("distanciaEntrePuntos");
-            }else{
-                valorJustgage = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
-                console.log("valor Justgage ="+valorJustgage);
-                metrosRestantes = (CANTIDAD_PUNTOS - valorJustgage) * transectaActiva.get("distanciaEntrePuntos");
-                //$.mvc.route("/aplicacion/activarCampania/"+encodeURIComponent(transectaActiva.get("nombreCampania"))+"/"+transectaActiva.get("fechaCampania")+"/1");
+            Y.Visita.obtenerVisitasTransecta(transectaActiva,function(visitas){
+                transectaActiva.set("visitas",visitas);
 
-            }
-            activarBrujulaSeguimiento(transectaActiva.get("sentido"));
-            activarSubPagina("#mainsub","Pagina Principal");
-             $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
+                if(parseInt(reanudacion) == 0){
+                    var visita = new Y.Visita({fecha:Date.now()});
+                    visita.save(transectaActiva.get("id"));
+                    transectaActiva.get("visitas").push(visita);
+                    metrosRestantes = CANTIDAD_PUNTOS * transectaActiva.get("distanciaEntrePuntos");
+                }else{
+                    valorJustgage = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
+                    console.log("valor Justgage ="+valorJustgage);
+                    metrosRestantes = (CANTIDAD_PUNTOS - valorJustgage) * transectaActiva.get("distanciaEntrePuntos");
+                    //$.mvc.route("/aplicacion/activarCampania/"+encodeURIComponent(transectaActiva.get("nombreCampania"))+"/"+transectaActiva.get("fechaCampania")+"/1");
 
-            justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
-            $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
+                }
+                activarBrujulaSeguimiento(transectaActiva.get("sentido"));
+                activarSubPagina("#mainsub","Pagina Principal");
+                 $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
 
-            $("#metrosRestantes").empty();
-            $("#metrosRestantes").append(metrosRestantes);
+                justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+                $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
 
-            ocultarMascara();
-            if (transectaActiva.get("visitas").length != 1 && transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length == 0){
+                $("#metrosRestantes").empty();
+                $("#metrosRestantes").append(metrosRestantes);
 
-                if(parseInt(reanudacion)==0)
-                    ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
+                ocultarMascara();
+                if (transectaActiva.get("visitas").length != 1 && transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length == 0){
 
-                $.mvc.route("/aplicacion/guiarPrimerPunto/"+transectaActiva.get("visitas")[0].get("puntos")[0].get("coordenadas"));
-            }else{
-                 if(parseInt(reanudacion)==0)
-                    $.mvc.route("aplicacion/crearPunto");
-            }
-        });
+                    if(parseInt(reanudacion)==0)
+                        ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
+
+                    $.mvc.route("/aplicacion/guiarPrimerPunto/"+transectaActiva.get("visitas")[0].get("puntos")[0].get("coordenadas"));
+                }else{
+                     if(parseInt(reanudacion)==0)
+                        $.mvc.route("aplicacion/crearPunto");
+                }
+        })
+    });
 
 
 
@@ -1062,7 +1066,7 @@ objetoBrujulaTransecta.vueltas = 0;
             Y.Especie.sincronizar(servidor,function(){
                 console.log("termino la especie y termino");
                 campañas.map(function(c){
-                    Y.Campania.obtenerCampania(c.nombre,c.fecha,function(campania){
+                    Y.Campania.obtenerCampaniaCompleta(c.nombre,c.fecha,function(campania){
                         campania.sincronizar(servidor);
                     });
                 })

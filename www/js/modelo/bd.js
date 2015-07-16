@@ -5,7 +5,7 @@ function vaciarBD(){
     var q = "select name from sqlite_master where type = 'table';"
     db.transaction(function (t) {
         t.executeSql(q, null, function (t, data) {
-            for (var i = 2; i < data.rows.length; i++) {
+            for (var i = 0; i < data.rows.length; i++) {
                 console.log(data.rows.item(i));
                 var eliminar = 'DROP TABLE '+data.rows.item(i).name;
                 (function(e){

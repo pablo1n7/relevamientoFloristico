@@ -66,7 +66,37 @@ Y.add('visitaModelo',function(Y){
             this.set("imagenes",this.get("imagenes").filter(function(elemento){return elemento != nombre}));
 
         },
-        enviarImagenes:function(){
+        enviarImagenes:function(servidor,indice){
+            var _this = this;
+            var indice = indice || 0;
+            //for(var i = 0; i<this.get("imagenes").lenght;i++){
+            if(indice > _this.get("imagenes").lenght)
+                return;
+
+            var nombreImg = intel.xdk.camera.getPictureURL(_this.get("imagenes")[indice]);
+            var img = new Image();
+            img.src = nombreImg;
+            var canvas = $("<canvas/>").get(0);
+            var contexto = canvas.getContext("2d");
+            contexto.drawImage(img,0,0,img.width,img.height);
+            var imgSource = canvas.toDataURL("image/png");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var imgSource = canvas.toDataURL("image/png");
+            datosImg={'imagen':imgSource,'visita':_this.get("id_servidor")};
+            $.ajax({
+                type: "POST",
+                url: servidor,
+                data: {'nombre':'imagenVisita','identidad':identidad,"datos":JSON.stringify(datosImg)},
+                success: function(dataJson){
+                        console.log(dataJson);
+                        //_this.enviarImagenes(servidor,indice+1);
+                    },
+                    fail:function(data){
+                        mensajeError("Error en sincroniazción de 'Imagen'");
+                    }
+            });
+            //}
 
         },
 
@@ -157,7 +187,7 @@ Y.add('visitaModelo',function(Y){
     Y.Visita.obtenerVisitaTransecta = function(idTransecta,fecha,callback){
 
         var visita = new Y.Visita({"idTransecta":idTransecta,"fecha":fecha});
-        var q = "select * from Visita where idTransecta="+transecta.get("id")+" and fecha="+fecha+";";
+        var q = "select * from Visita where idTransecta="+idTransecta+" and fecha="+fecha+";";
         db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     visita.set("id_servidor",data.rows.item(0).id_servidor);
@@ -251,15 +281,18 @@ Y.add('visitaModelo',function(Y){
                         visitas.push(visita);
                     };
 
-                    idIntervaloVisitas = setInterval(function(){
-                        console.log("empezando indiada 2 (visitas)");
-                        if(contadorVisitas == 0){
-                            console.log("terminadndo Indiada 2 (visitas)");
-                            clearInterval(idIntervaloVisitas);
-                            callback(visitas);
+                    (function(){
+                        idIntervaloVisitas = setInterval(function(){
+                            console.log("empezando indiada 2 (visitas)");
+                            if(contadorVisitas == 0){
+                                console.log("terminadndo Indiada 2 (visitas)");
+                                clearInterval(idIntervaloVisitas);
+                                callback(visitas);
 
-                        }
-                    },5000);
+                            }
+                        },5000);
+                    }());
+
 
                 });
             });

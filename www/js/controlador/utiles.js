@@ -284,7 +284,7 @@ document.addEventListener("intel.xdk.camera.picture.cancel",listenerCancelCamara
 function tomarFoto(callback,callbackCancel){
     callbackCapturaImg = callback;
     callbackCancelImg = callbackCancel;
-    intel.xdk.camera.takePicture(80,false,"jpg");
+    intel.xdk.camera.takePicture(40,false,"jpg");
 }
 
 

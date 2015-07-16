@@ -10,7 +10,7 @@ Y.add('especieModelo',function(Y){
 
         save:function(callback,callbackError){
             var _this = this;
-            if(typeof(_this.get("familia")) != "number"){
+            if((typeof(_this.get("familia")) != "string") && (typeof(_this.get("familia")) != "number")){
                 if(_this.get("familia").get("id") == -1){
                     return setTimeout(function(){_this.save(callback,callbackError);},1000);
                 }else{
@@ -135,7 +135,7 @@ Y.add('especieModelo',function(Y){
                             especie.set("tipoBiologico",tiposBiologicos.filter(function(v){return v.id == id;})[0]);
                             id = elementos[i].distribucionGeografica;
                             especie.set("distribucionGeografica",distribuciones.filter(function(v){return v.id == id;})[0]);
-                            especie.set("indiceDeCalidad",elementos[i].nombre);
+                            especie.set("indiceDeCalidad",elementos[i].indiceDeCalidad);
                             especie.set("forrajera",elementos[i].forrajera);
                             especie.set("imagen",elementos[i].imagen);
 
