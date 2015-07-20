@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "https://edge-intel.s3.amazonaws.com/jsapp/production/release-2014-ww37/template-tab-view-appdesigner/sample.zip",
       "projectGuid": "962a665a-38e2-4d93-8209-5a3218ca6c99",
-      "lastModifiedDate": 1436903280399,
+      "lastModifiedDate": 1437428715138,
       "creationDate": 1414852525848
     },
     "XDK-app-designer": "true",
@@ -140,7 +140,7 @@
         "dependedBy": []
       },
       {
-        "id": "com.albahra.plugin.networkinterface",
+        "id": " com.cordova.plugins.fileopener",
         "version": "",
         "selectedState": "Included",
         "data": {},
@@ -148,9 +148,19 @@
         "dependsOn": [],
         "dependedBy": [],
         "custom": "true",
-        "name": "com.albahra.plugin.networkinterface",
-        "origin": "cordova-plugin-networkinterface-master",
-        "originType": "local"
+        "name": " com.cordova.plugins.fileopener",
+        "origin": "https://github.com/rafelbev/FileOpener.git",
+        "originType": "repo",
+        "sourceLocation": ""
+      },
+      {
+        "id": "org.apache.cordova.file-transfer",
+        "version": "0.4.8",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {},
+        "dependsOn": [],
+        "dependedBy": []
       }
     ],
     "buildConfigurations": {

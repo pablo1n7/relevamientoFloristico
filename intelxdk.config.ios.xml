@@ -20,7 +20,8 @@
 <intelxdk:plugin intelxdk:name="geolocation" intelxdk:value="org.apache.cordova.geolocation"/>
 <intelxdk:plugin intelxdk:name="softKeyboard" intelxdk:value="SoftKeyboardPlugin-master" intelxdk:type="local"/>
 <intelxdk:plugin intelxdk:name="Connection" intelxdk:value="org.apache.cordova.network-information" intelxdk:version="0.2.8"/>
-<intelxdk:plugin intelxdk:name="com.albahra.plugin.networkinterface" intelxdk:value="cordova-plugin-networkinterface-master" intelxdk:type="local"/>
+<intelxdk:plugin intelxdk:name=" com.cordova.plugins.fileopener" intelxdk:value="https://github.com/rafelbev/FileOpener.git"/>
+<intelxdk:plugin intelxdk:name="File Transfer" intelxdk:value="org.apache.cordova.file-transfer" intelxdk:version="0.4.8"/>
 <preference name="ios-target" value="5"/>
 <preference name="ios-configuration" value="adhoc"/>
 <!--creationInfo:{"src":"https://edge-intel.s3.amazonaws.com/jsapp/production/release-2014-ww37/template-tab-view-appdesigner/sample.zip","projectTypeName":"com.intel.xdk.projecttype.jsapp"}--></widget>

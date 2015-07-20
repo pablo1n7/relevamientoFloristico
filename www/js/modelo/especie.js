@@ -17,7 +17,7 @@ Y.add('especieModelo',function(Y){
                     _this.set("familia",_this.get("familia").get("id"));
                 }
             }
-            var q = "INSERT INTO Especie ('id_servidor','nombre','tipoBiologico','formaBiologica','distribucionGeografica','indiceDeCalidad','estadoDeConservacion','familia','forrajera') values("+this.get("id_servidor")+",'"+this.get("nombre")+"','"+this.get("tipoBiologico")+"','"+this.get("formaBiologica")+"','"+this.get("distribucionGeografica")+"',"+this.get("indiceDeCalidad")+",'"+this.get("estadoDeConservacion")+"','"+this.get("familia")+"',"+this.get("forrajera")+");";
+            var q = "INSERT INTO Especie ('id_servidor','nombre','tipoBiologico','formaBiologica','distribucionGeografica','indiceDeCalidad','estadoDeConservacion','familia','forrajera','imagen') values("+this.get("id_servidor")+",'"+this.get("nombre")+"','"+this.get("tipoBiologico")+"','"+this.get("formaBiologica")+"','"+this.get("distribucionGeografica")+"',"+this.get("indiceDeCalidad")+",'"+this.get("estadoDeConservacion")+"','"+this.get("familia")+"',"+this.get("forrajera")+",'"+this.get("imagen")+"');";
             db.transaction(function(t){
                 t.executeSql(q, [],
                 function (t, data) {
@@ -82,6 +82,7 @@ Y.add('especieModelo',function(Y){
     );
 
     Y.Especie.obtenerEspecies= function(callback){
+            especies = [];
             var q = "select * from Especie";
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
@@ -118,7 +119,7 @@ Y.add('especieModelo',function(Y){
             url: servidor,
             data: {'nombre':'especie','identidad':identidad,"datos":JSON.stringify(especiesDicc)},
             success: function(dataJson){
-                    console.log(dataJson);
+                  //  console.log(dataJson);
                     elementos = JSON.parse(dataJson)
                     for(var i =0; i < elementos.length;i++){
                         var fam = familias.filter(function(f){return f.get("id_servidor") == elementos[i].familia;})[0];

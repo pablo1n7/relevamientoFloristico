@@ -189,7 +189,8 @@ function obtenerValoresBD(nombreTabla,arreglo){
     db.transaction(function (t) {
         t.executeSql(q, null, function (t, data) {
             for (var i = 0; i < data.rows.length; i++) {
-                arreglo.push({"id":data.rows.item(i).id_servidor,"nombre":data.rows.item(i).nombre});
+                if (data.rows.item(i).id_servidor != 1)
+                    arreglo.push({"id":data.rows.item(i).id_servidor,"nombre":data.rows.item(i).nombre});
                 //console.log(data.rows.item(i));
             };
         });
@@ -945,7 +946,7 @@ function comprobandoHardware(){
     $("body").append($mascaraPopUp);
     var $divPopUp = $('<div class="popUp"/>');
     $mascaraPopUp.append($divPopUp);
-    $divPopUp.append('<div class="cabeceraPopUp"><i class="fa fa-exclamation-triangle"></i>  Comprobando Hardware</div>');
+    $divPopUp.append('<div class="cabeceraPopUp"><i class="fa fa-cog fa-spin"></i>  Comprobando Hardware</div>');
     var $cuerpoPopUp = $('<div class="cuerpoPopUp"><div>Espere por favor:</div></div>');
     $cuerpoPopUp.append('<br>');
     $cuerpoPopUp.append('<div>Comprobando Brujula...<img id="comprobandoBrujula" class="imagenComprobando" src="img/comprobando.gif" /></div>');
@@ -1017,6 +1018,10 @@ function sincronizarElementoSimple(servidor,elemento,tabla,mensaje,callback,call
                             callbackVacio();
                             for(var i =0; i < elementos.length;i++){
                                 (function(id,nombre){
+                                    console.log(tabla);
+                                    console.log(id);
+                                    console.log(nombre);
+                                    console.log("INSERT INTO "+tabla+"('id_servidor','nombre') values("+id+",'"+nombre+"');");
                                       db.transaction(function(t){
                                             t.executeSql("INSERT INTO "+tabla+"('id_servidor','nombre') values("+id+",'"+nombre+"');", [],
                                             function (t, data) {
@@ -1034,3 +1039,74 @@ function sincronizarElementoSimple(servidor,elemento,tabla,mensaje,callback,call
             }
         });
     };
+
+function estadoSincronizacion(){
+    var $mascaraPopUp = $('<div id="mascaraPopUpSinc" class="mascaraPopUp"></div>');
+    $("body").append($mascaraPopUp);
+    var $divPopUp = $('<div class="popUp"/>');
+    $mascaraPopUp.append($divPopUp);
+    $divPopUp.append('<div class="cabeceraPopUp"><i class="fa fa-refresh fa-spin"></i>  Sincronizando...</div>');
+    var $cuerpoPopUp = $('<div class="cuerpoPopUp"><div>Estableciendo Conección con: <br> Espere por favor:</div></div>');
+    $cuerpoPopUp.append('<br>');
+    $cuerpoPopUp.append('<div class="contenedorBarraProgreso"><div id="barraProgreso" class="barraProgreso"/></div>');
+    $divPopUp.append($cuerpoPopUp);
+}
+
+function buscarEnRed(red){
+    mostrarMascara("Buscando Servidores en red "+red);
+    var ipRedBase = "http://192.168.";
+    var ipRed = ipRedBase+red+".";
+    for (var i=2;i<255;i++){
+        $.ajax({
+          type: "POST",
+          url: ipRed+i+":8000/quienSos/",
+          //timeout: 3000,
+          data: {'nombre':'pepito'},
+          success: function(data){
+              var infoServidor = JSON.parse(data);
+              if(infoServidor.hasOwnProperty("nombrePC")){
+                  var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-desktop"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+infoServidor.nombrePC+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+                  $("#dispositivos").removeClass("oculto");
+                  $("#noServidores").addClass("oculto");
+                  $("#dispositivos").append($servidor);
+                  ocultarMascara();
+    //class="listaDispositivos"
+              }
+            }
+        }).fail(function(){console.log("fallo")});
+    }
+}
+/*
+enviarImagenes:function(servidor,indice){
+            var _this = this;
+            var indice = indice || 0;
+
+            if(indice > _this.get("imagenes").lenght)
+                return;
+
+            var win = function (r) {
+                console.log("Code = " + r.responseCode);
+                console.log("Response = " + r.response);
+                console.log("Sent = " + r.bytesSent);
+                _this.enviarImagenes(servidor,indice+1);
+            }
+
+            var fail = function (error) {
+                console.log("upload error source " + error.source);
+                console.log("upload error target " + error.target);
+                mensajeError("Error subiendo Imagen!");
+            }
+
+            fileURL =  intel.xdk.camera.getPictureURL(_this.get("imagenes")[indice]);
+            var options = new FileUploadOptions();
+            options.fileKey = "imagen";
+            options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+            options.mimeType = "image/jpg";
+
+            params={'identidad':identidad,'visita':_this.get("id_servidor")};
+            options.params = params;
+
+            var ft = new FileTransfer();
+            ft.upload(fileURL, encodeURI(servidor), win, fail, options);
+//            ft.upload(fileURL, encodeURI("http://192.168.1.68:8000/subirImagen"), win, fail, options);
+}*/

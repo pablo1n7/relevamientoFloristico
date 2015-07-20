@@ -36,6 +36,7 @@ Y.add('familiaModelo',function(Y){
 
      Y.Familia.obtenerFamilias= function(callback){
             var q = "select * from Familia";
+            familias = [];
             db.transaction(function (t) {
                 t.executeSql(q, null, function (t, data) {
                     for (var i = 0; i < data.rows.length; i++) {

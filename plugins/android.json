@@ -13,7 +13,8 @@
         "org.apache.cordova.device": {},
         "org.apache.cordova.media": {},
         "org.apache.cordova.splashscreen": {},
-        "org.apache.cordova.network-information": {}
+        "org.apache.cordova.network-information": {},
+        "org.apache.cordova.file-transfer": {}
     },
     "dependent_plugins": {}
 }

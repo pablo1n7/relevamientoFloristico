@@ -69,35 +69,35 @@ Y.add('visitaModelo',function(Y){
         enviarImagenes:function(servidor,indice){
             var _this = this;
             var indice = indice || 0;
-            //for(var i = 0; i<this.get("imagenes").lenght;i++){
+
             if(indice > _this.get("imagenes").lenght)
                 return;
 
-            var nombreImg = intel.xdk.camera.getPictureURL(_this.get("imagenes")[indice]);
-            var img = new Image();
-            img.src = nombreImg;
-            var canvas = $("<canvas/>").get(0);
-            var contexto = canvas.getContext("2d");
-            contexto.drawImage(img,0,0,img.width,img.height);
-            var imgSource = canvas.toDataURL("image/png");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var imgSource = canvas.toDataURL("image/png");
-            datosImg={'imagen':imgSource,'visita':_this.get("id_servidor")};
-            $.ajax({
-                type: "POST",
-                url: servidor,
-                data: {'nombre':'imagenVisita','identidad':identidad,"datos":JSON.stringify(datosImg)},
-                success: function(dataJson){
-                        console.log(dataJson);
-                        //_this.enviarImagenes(servidor,indice+1);
-                    },
-                    fail:function(data){
-                        mensajeError("Error en sincroniazción de 'Imagen'");
-                    }
-            });
-            //}
+            var win = function (r) {
+                console.log("Code = " + r.responseCode);
+                console.log("Response = " + r.response);
+                console.log("Sent = " + r.bytesSent);
+                _this.enviarImagenes(servidor,indice+1);
+            }
 
+            var fail = function (error) {
+                console.log("upload error source " + error.source);
+                console.log("upload error target " + error.target);
+                mensajeError("Error subiendo Imagen!");
+            }
+
+            fileURL =  intel.xdk.camera.getPictureURL(_this.get("imagenes")[indice]);
+            var options = new FileUploadOptions();
+            options.fileKey = "imagen";
+            options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+            options.mimeType = "image/jpg";
+
+            params={'identidad':identidad,'visita':_this.get("id_servidor")};
+            options.params = params;
+
+            var ft = new FileTransfer();
+            ft.upload(fileURL, encodeURI(servidor), win, fail, options);
+//            ft.upload(fileURL, encodeURI("http://192.168.1.68:8000/subirImagen"), win, fail, options);
         },
 
         almacenarPunto:function(punto){
@@ -140,6 +140,8 @@ Y.add('visitaModelo',function(Y){
                                             function (t, data) {
                                                 _this.set("id_servidor",elemento.id_servidor);
                                                 _this.sincronizar(servidor,idTransectaServidor);
+                                                var serv = servidor.substr(0,servidor.lastIndexOf('/'));
+                                                _this.enviarImagenes(serv+"/subirImagen");
                                             },null);
                                         });
                                 }(elementoVisita));

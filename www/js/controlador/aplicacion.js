@@ -2,20 +2,22 @@ $.mvc.controller.create("aplicacion", {
     views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/vistaPuntosVacio.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl','js/vista/sincronizacion.tpl'], //These are the views we will use with the controller
     init:function(){
         popularBD();
+
         CANTIDAD_PUNTOS = 11;
         DISTANCIA_ACEPTABLE =10;
         tipoEjemplares=[];
-        familias = [];
+
         especies = [];
         campañas = [];
         campañaActiva = null;
         transectaActiva = null;
         estadoPunto=["Toque Directo","Muerto en Pie","Suelo Desnudo"];
-        estadosDeConservacion=[];
-        formasBiologicas=[];
-        tiposBiologicos =[];
-        tiposSuelos=[];
-        distribuciones = [];
+        familias = [];
+        estadosDeConservacion=[{"id":1,"nombre":"No Definido"}];
+        formasBiologicas=[{"id":1,"nombre":"No Definido"}];
+        tiposBiologicos =[{"id":1,"nombre":"No Definido"}];
+        tiposSuelos=[{"id":1,"nombre":"No Definido"}];
+        distribuciones = [{"id":1,"nombre":"No Definido"}];
         identidad="pepota";
         idBrujula = -1;
 
@@ -46,11 +48,12 @@ $.mvc.controller.create("aplicacion", {
     default:function(){
         $("#mainSeguimiento").html($.template('js/vista/main.tpl'));
         $("#vistaPuntos").html($.template('js/vista/vistaPuntosVacio.tpl'));
-        Y.TipoEjemplar.obtenerTipoEjemplares(function(tipoEjemplar){tipoEjemplares.push(tipoEjemplar);});
 
+        Y.TipoEjemplar.obtenerTipoEjemplares(function(tipoEjemplar){tipoEjemplares.push(tipoEjemplar);});
         Y.Familia.obtenerFamilias(function(familia){familias.push(familia);});
         Y.Especie.obtenerEspecies(function(especie){especies.push(especie);});
         Y.Campania.obtenerCampanias(function(campania){campañas.push(campania)});
+
         tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
 
     //verificarVisitas();
@@ -1012,8 +1015,8 @@ objetoBrujulaTransecta.vueltas = 0;
 
 
     buscarServidor:function(){
-        mostrarMascara("Buscando Servidores");
-        $("#buscarServidores").addClass("desenlazar");
+
+        $("#dispositivos").empty();
         var ipServidorExterno = $("#servidorExterno").val();
         if(ipServidorExterno != ""){
             $.ajax({
@@ -1027,34 +1030,25 @@ objetoBrujulaTransecta.vueltas = 0;
                       $("#dispositivos").removeClass("oculto");
                       $("#noServidores").addClass("oculto");
                       $("#dispositivos").append($servidor);
-
+                      ocultarMascara();
                   }
                 }
             });
         }
 
-        var ipRed = "http://192.168.1.";
-        for (i=2;i<255;i++){
-            $.ajax({
-              type: "POST",
-              url: ipRed+i+":8000/quienSos/",
-              data: {'nombre':'pepito'},
-              success: function(data){
-                  var infoServidor = JSON.parse(data);
-                  if(infoServidor.hasOwnProperty("nombrePC")){
-                      var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-desktop"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
-                      $("#dispositivos").removeClass("oculto");
-                      $("#noServidores").addClass("oculto");
-                      $("#dispositivos").append($servidor);
-//class="listaDispositivos"
-                  }
-                }
-            });
-        }
-        setTimeout(function(){ocultarMascara();},5000);
+        buscarEnRed(0);
+        setTimeout(function(){
+            var lis = $("#dispositivos").find("li");
+            ocultarMascara();
+            if(lis.length == 0){
+                buscarEnRed(1);
+                setTimeout(function(){ocultarMascara()},20000);
+            }
+
+        },10000);
     },
 
-    sincronizar:function(direccion){
+    sincronizar:function(direccion,nombrePC){
         var servidor = "http://"+direccion+":8000/sinc";
         sincronizarElementoSimple(servidor,"suelo","TipoSuelo","Suelo",function(s){tiposSuelos.push(s)},function(){tiposSuelos=[]});
         sincronizarElementoSimple(servidor,"dist","DistribucionGeografica","Distribución Geográfica",function(s){distribuciones.push(s)},function(){distribuciones=[]});

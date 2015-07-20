@@ -169,7 +169,8 @@ function createTablasPlantas(){
             db.transaction(function(t){
                 t.executeSql("INSERT INTO Familia('id_servidor','id','nombre') values(1,1,'No Definido');", [],
                 function (t, data) {
-                    //data.insertId
+                    Y.Familia.obtenerFamilias(function(familia){familias.push(familia);});
+
                 },null);
             });
 
@@ -236,6 +237,7 @@ function createTablasPlantas(){
                 t.executeSql("INSERT INTO Especie('id','id_servidor','nombre','familia','formaBiologica','tipoBiologico','distribucionGeografica','indiceDeCalidad','forrajera','estadoDeConservacion') values(1,1,'No Definido',1,1,1,1,0,0,1);", [],
                 function (t, data) {
                     //data.insertId
+                    Y.Especie.obtenerEspecies(function(especie){especies.push(especie);});
                 },null);
             });
 
