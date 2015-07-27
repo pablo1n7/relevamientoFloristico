@@ -154,16 +154,21 @@ Y.add('especieModelo',function(Y){
                             (function(ids,nombre){
                                 // var familia = new Y.Familia({"nombre":nombre,"id_servidor":ids});
                                 var especie = especies.filter(function(e){return e.get("id_servidor") == ids;})[0];
-                                especie.save(function() {},function(){});
+                                especie.save(function() {
+                                    auditor.actualizarProgreso("Especie");
+                                },function(){});
                             }(elementos[i].id_servidor,elementos[i].nombre));
                         }else{
                             (function(id,ids,nombre,familia,familiaLocal,formaBiologica,tipoBiologico,estadoDeConservacion,distribucionGeografica,indiceDeCalidad,forrajera,imagen){
                             //(function(id,ids,nombre){
-                                console.log("UPDATE Especie SET nombre='"+ nombre +"', id_servidor = "+ids+", formaBiologica ="+formaBiologica+", tipoBiologico ="+tipoBiologico+",estadoDeConservacion = "+estadoDeConservacion+", distribucionGeografica = "+distribucionGeografica+", indiceDeCalidad = "+indiceDeCalidad+", forrajera = "+forrajera+", imagen = '"+imagen+"', familia = "+familiaLocal+"  where id_servidor = "+ids+";");
                                   db.transaction(function(t){
                                         t.executeSql("UPDATE Especie SET nombre='"+ nombre +"', id_servidor = "+ids+", formaBiologica ="+formaBiologica+", tipoBiologico ="+tipoBiologico+",estadoDeConservacion = "+estadoDeConservacion+", distribucionGeografica = "+distribucionGeografica+", indiceDeCalidad = "+indiceDeCalidad+", forrajera = "+forrajera+", imagen = '"+imagen+"', familia = "+familiaLocal+"  where id = "+id+";", [],
 
-                                        function (t, data) {},null);
+                                        function (t, data) {
+                                            
+                                            auditor.actualizarProgreso("Especie");
+                                        
+                                        },null);
                                     });
                               }(elementos[i].id,elementos[i].id_servidor,elementos[i].nombre,elementos[i].familia,elementos[i].familiaLocal,elementos[i].formaBiologica,elementos[i].tipoBiologico,elementos[i].estadoDeConservacion,elementos[i].distribucionGeografica,elementos[i].indiceDeCalidad,elementos[i].forrajera,elementos[i].imagen));
                         }
@@ -171,7 +176,10 @@ Y.add('especieModelo',function(Y){
                     callback();
             },
             fail:function(data){
+                console.log("Error en sincroniazción de 'Especie'");
                 mensajeError("Error en sincroniazción de 'Especie'");
+                auditor.cantidadEspecies = 0;
+                auditor.actualizar();
             }
         });
     };

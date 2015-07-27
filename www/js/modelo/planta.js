@@ -83,7 +83,8 @@ Y.add('plantaModelo',function(Y){
                                     t.executeSql("UPDATE Planta SET 'id_servidor'="+elemento.id_servidor+" where id="+_this.get('id')+";", [],
                                     function (t, data) {
                                         _this.set("id_servidor",elemento.id_servidor);
-                                        _this.sincronizar(servidor);
+                                        var serv = servidor.substr(0,servidor.lastIndexOf('/'));
+                                        enviarFoto(serv+"/subirImagen",_this);
                                     },null);
                                 });
                         }(elementoItem));

@@ -18,7 +18,15 @@ $.mvc.controller.create("aplicacion", {
         tiposBiologicos =[{"id":1,"nombre":"No Definido"}];
         tiposSuelos=[{"id":1,"nombre":"No Definido"}];
         distribuciones = [{"id":1,"nombre":"No Definido"}];
-        identidad="pepota";
+        
+        identidad={"id":"-1","modelo":"desconocido"}
+        device.getInfo(function(a){
+            identidad.id = a.uuid;
+            identidad.modelo = a.model;
+            identidad = JSON.stringify(identidad);
+        });
+        
+        
         idBrujula = -1;
 
         obtenerValoresBD("EstadoDeConservacion",estadosDeConservacion);
@@ -57,7 +65,7 @@ $.mvc.controller.create("aplicacion", {
         tiposPropiedad={"Alfanumerico":Y.Alfanumerico.representacionComoCrear,"Enumerado":Y.Enumerado.representacionComoCrear,"Numerico":Y.Numerico.representacionComoCrear,"Rango":Y.Rango.representacionComoCrear};
 
     //verificarVisitas();
-    comprobandoHardware();
+//    comprobandoHardware();
     },
 
     seleccionarPropiedad: function(){
@@ -688,17 +696,20 @@ objetoBrujulaTransecta.vueltas = 0;
                 activarSubPagina("#mainsub","Pagina Principal");
                  $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
 
-                justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+               // justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+                
+                inicializarPie();
+                refrescarGraficoPie(valorJustgage);
+                
                 $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
-
                 $("#metrosRestantes").empty();
                 $("#metrosRestantes").append(metrosRestantes);
 
                 ocultarMascara();
                 if (transectaActiva.get("visitas").length != 1 && transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length == 0){
 
-                    if(parseInt(reanudacion)==0)
-                        ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
+//                    if(parseInt(reanudacion)!==0)
+                    ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
 
                     $.mvc.route("/aplicacion/guiarPrimerPunto/"+transectaActiva.get("visitas")[0].get("puntos")[0].get("coordenadas"));
                 }else{
@@ -808,7 +819,7 @@ objetoBrujulaTransecta.vueltas = 0;
             transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
         }
         cantPuntos=cantPuntos+1;
-        justgageTransecta.refresh(cantPuntos);
+        refrescarGraficoPie(cantPuntos);
 
 
         //$.ui.hideModal();
@@ -1015,7 +1026,10 @@ objetoBrujulaTransecta.vueltas = 0;
 
 
     buscarServidor:function(){
-
+        if(campañaActiva != null){
+            mensajeAviso('Campaña Activa','Debe desactivar la Campaña antes de poder sincronizar.<br>Para esto,valla al menú de "Campaña" y presione el botón "Desactivar" ubicado en la esquina superior izquierda');
+            return;
+        }
         $("#dispositivos").empty();
         var ipServidorExterno = $("#servidorExterno").val();
         if(ipServidorExterno != ""){
@@ -1026,7 +1040,7 @@ objetoBrujulaTransecta.vueltas = 0;
               success: function(data){
                   var infoServidor = JSON.parse(data);
                   if(infoServidor.hasOwnProperty("nombrePC")){
-                      var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+                      var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+encodeURI(infoServidor.nombrePC)+'/'+infoServidor.infoAdicional.especies+'/'+infoServidor.infoAdicional.familias+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
                       $("#dispositivos").removeClass("oculto");
                       $("#noServidores").addClass("oculto");
                       $("#dispositivos").append($servidor);
@@ -1036,19 +1050,21 @@ objetoBrujulaTransecta.vueltas = 0;
             });
         }
 
-        buscarEnRed(0);
-        setTimeout(function(){
-            var lis = $("#dispositivos").find("li");
-            ocultarMascara();
-            if(lis.length == 0){
-                buscarEnRed(1);
-                setTimeout(function(){ocultarMascara()},20000);
-            }
+     //   buscarEnRed(1);
+        //setTimeout(function(){
+          //  var lis = $("#dispositivos").find("li");
+        //    ocultarMascara();
+          //  if(lis.length == 0){
+            //    buscarEnRed(0);
+              //  setTimeout(function(){ocultarMascara()},20000);
+            //}
 
-        },10000);
+     //   },10000);
     },
 
-    sincronizar:function(direccion,nombrePC){
+    sincronizar:function(direccion,nombrePCCodificado,cantidadEspecies,cantidadFamilias){
+        var nombrePC = decodeURI(nombrePCCodificado);
+        auditor = new auditorActualizaciones(cantidadEspecies,cantidadFamilias,nombrePC);  
         var servidor = "http://"+direccion+":8000/sinc";
         sincronizarElementoSimple(servidor,"suelo","TipoSuelo","Suelo",function(s){tiposSuelos.push(s)},function(){tiposSuelos=[]});
         sincronizarElementoSimple(servidor,"dist","DistribucionGeografica","Distribución Geográfica",function(s){distribuciones.push(s)},function(){distribuciones=[]});

@@ -165,7 +165,7 @@ Y.add('campaniaModelo',function(Y){
                                                       function(transecta){
                             transecta.set("campania",campania);
                             campania.get("transectas").push(transecta);
-                            $("#listaTransectas").append('<li class="widget"><a href="/aplicacion/activarTransecta/'+transecta.get("id")+'">'+transecta.get("ambiente")+'</a></li>');
+                           // $("#listaTransectas").append('<li class="widget"><a href="/aplicacion/activarTransecta/'+transecta.get("id")+'">'+transecta.get("ambiente")+'</a></li>');
                             //campania.obtenerTiposAsociados(callback);
                         },function(){
                             //campania.obtenerTiposAsociados(callback);
@@ -192,7 +192,7 @@ Y.add('campaniaModelo',function(Y){
                                                       function(transecta){
                             transecta.set("campania",campania);
                             campania.get("transectas").push(transecta);
-                            $("#listaTransectas").append('<li class="widget"><a href="/aplicacion/activarTransecta/'+transecta.get("id")+'">'+transecta.get("ambiente")+'</a></li>');
+                           // $("#listaTransectas").append('<li class="widget"><a href="/aplicacion/activarTransecta/'+transecta.get("id")+'">'+transecta.get("ambiente")+'</a></li>');
                             campania.obtenerTiposAsociados(callback);
                         },function(){
                             campania.obtenerTiposAsociados(callback);

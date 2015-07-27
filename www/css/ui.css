@@ -529,6 +529,7 @@ footer .button{
     background-size: cover;
     padding-bottom: 61%;
     background-image: url("../img/flecha.png");
+    border-radius: 50%;
 }
 
 .flecha img{
@@ -539,7 +540,7 @@ footer .button{
     float: left;
     background-color: rgb(35,35,35);
     border-radius: 20px;
-    max-height: 200px;
+    max-height: 230px;
     width: 49%;
     margin-top: -12%;
 }
@@ -551,6 +552,11 @@ footer .button{
     font-size: 20px;
     font-weight: bold;
     padding: 12px;
+}
+
+.mayor{
+    font-size: 40px;
+    line-height: 250%;
 }
 
 .metrosRestantes{
@@ -604,6 +610,9 @@ footer .button{
     margin: 3%;
     background-color: #ABC;
     border-radius: 10px;
+    background-size: contain !important;
+    background-repeat: no-repeat;
+    background-position-x: center;
 }
 
 .imagenesVisita .imgRecolectable{
@@ -832,6 +841,11 @@ footer .button{
 .cuerpoPopUp{
     font-size: 20px;
     padding: 10px;
+    text-transform: none;
+
+}
+.centrado{
+    text-align: center;
 }
 
 .contenedorBotones{
@@ -927,11 +941,16 @@ footer .button{
 }
 
 .contenedorLogo img{
-    width: 100%;
+    width: 90%;
 }
 
 .contenedorTouch{
     width: 100%;
+    background-color: #383739;
+    border-radius: 12px;
+    margin-top: -20px;
+    text-align: center;
+    overflow: hidden;
 }
 
 .contenedorTouch img{
@@ -1014,6 +1033,7 @@ footer .button{
 }
 
 .barraProgreso{
+    text-align: center;
     height:30px;
     background-color:#1b1;
     width:2%;
@@ -1023,4 +1043,70 @@ footer .button{
 	-o-animation:barraProgreso-stripes 1s linear infinite;
 	animation:barraProgreso-stripes 1s linear infinite;
     border-radius: 3px;
+}
+
+
+
+
+
+
+ .pieContainer {
+    height: 150px;
+    padding: 0% 22%;
+    margin-bottom: 6%;
+ }
+ .pieBackground {
+      background-color: white;
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      -moz-border-radius: 50%;
+      -webkit-border-radius: 50%;
+      -o-border-radius: 50%;
+      -moz-box-shadow: -1px 1px 3px #000;
+      -webkit-box-shadow: -1px 1px 3px #000;
+      -o-box-shadow: -1px 1px 3px #000;
+      box-shadow: -1px 1px 3px #000;
+ } 
+
+
+
+ .pie {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      -moz-border-radius: 50%;
+      -webkit-border-radius: 50%;
+      -o-border-radius: 50%;
+      border-radius: 50%;
+      clip: rect(70px, 75px, 75px, 0px);
+ }
+ .hold {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      -moz-border-radius: 50%;
+      -webkit-border-radius: 50%;
+      -o-border-radius: 50%;
+      border-radius: 50%;
+      clip: rect(0px, 150px, 150px, 0px);
+ }
+ #pieSlice1 .pie {
+      background-color: #1b458b;
+      -webkit-transform:rotate(50deg);
+      -moz-transform:rotate(50deg);
+      -o-transform:rotate(50deg);
+      transform:rotate(50deg);
+ }
+
+.mascaraPie{
+    background-color: rgb(35,35,35);
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -o-border-radius: 50%;
+    margin: 10px 10px;
+    z-index: 10;
 }

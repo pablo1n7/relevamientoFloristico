@@ -57,7 +57,7 @@
 	z-index: 99999;
 	bottom: 60px;
 	right: 10px;
-	width: 300px;
+	width: 80%;
 }
 .alertify-logs-hidden {
 	display: none;

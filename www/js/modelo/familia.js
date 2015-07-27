@@ -74,13 +74,17 @@ Y.add('familiaModelo',function(Y){
                         (function(ids,nombre){
                             // var familia = new Y.Familia({"nombre":nombre,"id_servidor":ids});
                             var familia = familias.filter(function(f){return f.get("id_servidor") == ids;})[0];
-                            familia.save(function() {},function(){});
+                            familia.save(function() {
+                                auditor.actualizarProgreso("Familia");
+                            },function(){});
                         }(elementos[i].id_servidor,elementos[i].nombre));
                     }else{
                         (function(id,ids,nombre){
                               db.transaction(function(t){
                                     t.executeSql("UPDATE Familia SET nombre='"+ nombre +"', id_servidor="+ids+" WHERE id="+id+";", [],
-                                    function (t, data) {},null);
+                                    function (t, data) {
+                                        auditor.actualizarProgreso("Familia");
+                                    },null);
                                 });
                         }(elementos[i].id,elementos[i].id_servidor,elementos[i].nombre));
                     }
@@ -88,7 +92,10 @@ Y.add('familiaModelo',function(Y){
                 callback();
             },
             fail:function(data){
+                console.log("Error en sincroniazción de 'Familia'");
                 mensajeError("Error en sincroniazción de 'Familia'");
+                auditor.cantidadFamilias = 0;
+                auditor.actualizar();
             }
         });
     };

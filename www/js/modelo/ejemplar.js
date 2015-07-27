@@ -133,11 +133,12 @@ Y.add('ejemplarModelo',function(Y){
                                     t.executeSql("UPDATE Ejemplar SET 'id_servidor'="+elemento.id_servidor+" where id="+_this.get('id')+";", [],
                                     function (t, data) {
                                         _this.set("id_servidor",elemento.id_servidor);
-                                        _this.sincronizar(servidor);
                                         var valores = _this.get("valores");
                                         valores.map(function(valor){
                                             valor.sincronizar(servidor,elemento.id_servidor);
                                         });
+                                        var serv = servidor.substr(0,servidor.lastIndexOf('/'));
+                                        enviarFoto(serv+"/subirImagen",_this);
                                     },null);
                                 });
                         }(elementoItem));

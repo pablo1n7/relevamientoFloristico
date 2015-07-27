@@ -16,7 +16,7 @@
 <div id="justgageTransecta" class="justgagePersonalizado"  > </div>
 <div id="indicadorDistancia" class="justgagePersonalizado tabulado">
     <div>
-        Fin Transecta en:
+        Fin Transecta en
     </div>
     <div id="metrosRestantes" class="metrosRestantes">
         2205

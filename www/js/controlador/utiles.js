@@ -9,6 +9,9 @@ function activarBotonAtras(funcionClick){
 }
 
 function activarBotonFuncionalidad(nombre,funcionClick){
+    $("#funcionalidad").unbind();
+    $("#funcionalidad").empty();
+    ///////////////////////////
     $("#funcionalidad").append(nombre);
     $("#funcionalidad").css({"display":"none"});
     $("#funcionalidad").css({"visibility":"initial"});
@@ -28,9 +31,9 @@ function activarBotonFuncionalidad(nombre,funcionClick){
 function desactivarBotonesHeader(){
     $("#backButton").css({"visibility":"hidden"});
     $("#backButton").unbind();
-    $("#funcionalidad").css({"visibility":"hidden"});
-    $("#funcionalidad").empty();
-    $("#funcionalidad").unbind();
+    //$("#funcionalidad").css({"visibility":"hidden"});
+    //$("#funcionalidad").empty();
+   // $("#funcionalidad").unbind();
 }
 
 
@@ -46,6 +49,11 @@ function activarSubPagina(nombreSubPagina,titulo){
     $("#tituloSubPagina").empty()
     $("#tituloSubPagina").append(titulo);
     activate_subpage(nombreSubPagina);
+    ////
+    $("#funcionalidad").css({"visibility":"hidden"});
+    $("#funcionalidad").empty();
+    $("#funcionalidad").unbind();
+    /////
     desactivarBotonesHeader();
     if( (typeof diccionarioAyuda !== "undefined") && diccionarioAyuda[nombreSubPagina])
         $($(nombreSubPagina).parent()[0]).bind("doubleTap",function(){activarModoAyuda(nombreSubPagina,diccionarioAyuda[nombreSubPagina])});
@@ -162,6 +170,24 @@ function mensajeConfirmacion(titulo,mensaje,funcionAceptar,funcionCancelar){
 
 }
 
+function mensajeAviso(titulo,mensaje){
+		var $mascaraPopUp = $('<div id="mascaraConfirmacionPopUp" class="mascaraPopUp mascaraConfirmacionPopUp"></div>');
+		$("body").append($mascaraPopUp);
+		var $divPopUp = $('<div class="popUp"/>');
+		$mascaraPopUp.append($divPopUp);
+		$divPopUp.append('<div class="cabeceraPopUp">'+titulo+'</div>');
+		var $cuerpoPopUp = $('<div class="cuerpoPopUp">'+mensaje+'</div>');
+		$divPopUp.append($cuerpoPopUp);
+		var $contenedorBotones = $('<div class="contenedorBotones centrado"/>');
+		$contenedorBotones.append('<input type="button" id="cancelar" class="botonCancelar" value="Cancelar"/>');
+		$divPopUp.append($contenedorBotones);
+		$("#cancelar").click(function(){
+            $("#mascaraConfirmacionPopUp").remove()
+        });
+}
+
+
+
 function mensajeExitoso(mensaje){
     /*$.ui.popup( {
        title:"<div class='icon check exito' >Éxito</div>",
@@ -258,7 +284,7 @@ function toogleAlto(idElemento,height){
 
 function activarBrujula(callback,listo){
     var options = {
-        frequency: 500
+        frequency: 300
     };
     var watchID = navigator.compass.watchHeading(callback, null, options);
     listo(watchID);
@@ -683,8 +709,8 @@ var Radar = function(idContenedor,cantidad){
 		this.estadoZoom = 0;
 		this.contenedor = $("#"+idContenedor);
 		this.cantidad = cantidad;
-		_this = this;
-        idIntervalo=-1;
+		var _this = this;
+        var idIntervalo=-1;
 
 		this.agregarCuadro = function(clase){
 			var cuadro = $('<div class="cuadro '+clase+'"></div>');
@@ -749,7 +775,8 @@ var Radar = function(idContenedor,cantidad){
            }
 			_this.contenedor.append("<div id='objetivo'/>");
             $("#objetivo").css({marginLeft:x1+"%",marginTop:y1+"%"});
-			intermitente = 3;
+            
+			var intermitente = 3;
             if(idIntervalo==-1){
                 idIntervalo = setInterval(function(){
                     intermitente++;
@@ -802,6 +829,34 @@ function ocultarMascara(){
 
 function ordenarEspecies(especiesPredominante,ultimaVisita){
     diccionarioEspecies ={};
+    for (var i = 0; i< ultimaVisita.get("puntos").length; i++ ){
+        var plantasPunto = ultimaVisita.get("puntos")[i].get("items").filter(function(item){ return item.name == "Planta" });
+        plantasPunto.map(function(planta,indice){
+            if(diccionarioEspecies.hasOwnProperty(planta.get("especie").get("nombre")))
+                diccionarioEspecies[planta.get("especie").get("nombre")] = diccionarioEspecies[planta.get("especie").get("nombre")] +1;
+            else
+                diccionarioEspecies[planta.get("especie").get("nombre")] = 1;
+        });
+    }
+    
+    arregloObjetos=[];
+    var claves =Object.keys(diccionarioEspecies);
+    for(var i = 0; i < claves.length;  i++ ){
+        arregloObjetos.push({"nombre":claves[i],"valor":diccionarioEspecies[claves[i]]});
+    }
+
+    arregloObjetos.sort(function(c,d){ return c.valor < d.valor });
+    var cantidad = (3 >= arregloObjetos.length)?arregloObjetos.length:3;
+    for(var i=cantidad-1; i>=0 ;i--){
+        especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == arregloObjetos[i].nombre})[0]),1)[0]);
+    }
+
+
+
+}
+
+function ordenarEspecies1(especiesPredominante,ultimaVisita){
+    diccionarioEspecies ={};
     Y.Planta.obtenerPlantasVisita(ultimaVisita.get("idTransecta"),ultimaVisita.get("fecha"),function(plantas){
         plantas.map(function(planta,indice){
             if(diccionarioEspecies.hasOwnProperty(planta.get("especie")))
@@ -829,6 +884,7 @@ function ordenarEspecies(especiesPredominante,ultimaVisita){
     });
 
 }
+
 
 
 function validar($divPagina){
@@ -998,10 +1054,14 @@ function comprobandoHardware(){
 }
 
 
-function refrescarJustgage(){
-    var valorJustgage = transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length;
-    $("#justgageTransecta").empty();
-    justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
+function refrescarGraficoPie(porcentaje){
+    console.log("refrescando");
+    var $slices = $($('#pieSlice1').find(".pie"));
+    $("#valorPorcentaje").empty().append(porcentaje+"%");
+    $slices.addClass("oculto");
+    for(var i=0;i<porcentaje;i++){
+        $($slices[i]).removeClass("oculto");
+    }
 }
 
 function sincronizarElementoSimple(servidor,elemento,tabla,mensaje,callback,callbackVacio) {
@@ -1040,17 +1100,7 @@ function sincronizarElementoSimple(servidor,elemento,tabla,mensaje,callback,call
         });
     };
 
-function estadoSincronizacion(){
-    var $mascaraPopUp = $('<div id="mascaraPopUpSinc" class="mascaraPopUp"></div>');
-    $("body").append($mascaraPopUp);
-    var $divPopUp = $('<div class="popUp"/>');
-    $mascaraPopUp.append($divPopUp);
-    $divPopUp.append('<div class="cabeceraPopUp"><i class="fa fa-refresh fa-spin"></i>  Sincronizando...</div>');
-    var $cuerpoPopUp = $('<div class="cuerpoPopUp"><div>Estableciendo Conección con: <br> Espere por favor:</div></div>');
-    $cuerpoPopUp.append('<br>');
-    $cuerpoPopUp.append('<div class="contenedorBarraProgreso"><div id="barraProgreso" class="barraProgreso"/></div>');
-    $divPopUp.append($cuerpoPopUp);
-}
+
 
 function buscarEnRed(red){
     mostrarMascara("Buscando Servidores en red "+red);
@@ -1065,7 +1115,7 @@ function buscarEnRed(red){
           success: function(data){
               var infoServidor = JSON.parse(data);
               if(infoServidor.hasOwnProperty("nombrePC")){
-                  var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-desktop"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+infoServidor.nombrePC+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+                  var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-desktop"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+encodeURI(infoServidor.nombrePC)+'/'+infoServidor.infoAdicional.especies+'/'+infoServidor.infoAdicional.familias+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
                   $("#dispositivos").removeClass("oculto");
                   $("#noServidores").addClass("oculto");
                   $("#dispositivos").append($servidor);
@@ -1076,37 +1126,146 @@ function buscarEnRed(red){
         }).fail(function(){console.log("fallo")});
     }
 }
-/*
-enviarImagenes:function(servidor,indice){
-            var _this = this;
-            var indice = indice || 0;
 
-            if(indice > _this.get("imagenes").lenght)
+
+
+function enviarFoto(servidor,elemento){
+            if(elemento.get("foto")==""){
+                auditor.actualizarProgreso();
                 return;
+            }
 
             var win = function (r) {
                 console.log("Code = " + r.responseCode);
                 console.log("Response = " + r.response);
                 console.log("Sent = " + r.bytesSent);
-                _this.enviarImagenes(servidor,indice+1);
+                auditor.actualizarProgreso();
             }
 
             var fail = function (error) {
                 console.log("upload error source " + error.source);
                 console.log("upload error target " + error.target);
-                mensajeError("Error subiendo Imagen!");
+                mensajeError("Error subiendo Imagen de elemento "+elemento.name+"!");
+                auditor.actualizarProgreso();
             }
 
-            fileURL =  intel.xdk.camera.getPictureURL(_this.get("imagenes")[indice]);
+            var fileURL =  intel.xdk.camera.getPictureURL(elemento.get("foto"));
             var options = new FileUploadOptions();
             options.fileKey = "imagen";
             options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
             options.mimeType = "image/jpg";
 
-            params={'identidad':identidad,'visita':_this.get("id_servidor")};
+            params={'nombre':elemento.name,'identidad':identidad,'id_servidor':elemento.get("id_servidor")};
             options.params = params;
 
             var ft = new FileTransfer();
             ft.upload(fileURL, encodeURI(servidor), win, fail, options);
 //            ft.upload(fileURL, encodeURI("http://192.168.1.68:8000/subirImagen"), win, fail, options);
+}
+
+
+/*
+function inicializarPie(){
+    var unoPorciento = 3.6;
+    var $graficoPorcentaje = $('<div class="pieContainer"><div class="mascaraPie"><div id="valorPorcentaje" class="tabulado mayor">0%</div></div><div class="pieBackground"></div></div>');
+    var $contenedorSlices = $('<div id="pieSlice1" class="hold"></div>');
+    for(var i = 0; i < 100; i++){
+        var valor = 90+(unoPorciento*i);
+        var $pie = $('<div class="pie oculto" style="transform:rotate('+valor+'deg)"></div>');
+        $contenedorSlices.append($pie);
+    }
+    $graficoPorcentaje.append($contenedorSlices);
+    $("#justgageTransecta").append('<div class="tabulado">Porcentaje Transecta</div>');
+    $("#justgageTransecta").append($graficoPorcentaje);
 }*/
+
+function inicializarPie(){
+    var unoPorciento = 3.6;
+    var $graficoPorcentaje = $('<div class="pieContainer"><div class="mascaraPie"><div id="valorPorcentaje" class="tabulado mayor">0%</div></div><div class="pieBackground"></div></div>');
+    var $contenedorSlices = $('<div id="pieSlice1" class="hold"></div>');
+    for(var i = 0; i < 100; i++){
+        var valor = 90+(unoPorciento*i);
+        var $pie = $('<div class="pie oculto" style="transform:rotate('+valor+'deg)"></div>');
+        $contenedorSlices.append($pie);
+    }
+    $graficoPorcentaje.append($contenedorSlices);
+    $("#justgageTransecta").append('<div class="tabulado">Porcentaje Transecta</div>');
+    $("#justgageTransecta").append($graficoPorcentaje);
+}
+
+
+function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
+    this.equipo = equipo;
+    this.cantidadEjemplares = 0;
+    this.cantidadPlantas = 0;
+    this.cantidadVisitas = 0;
+    this.progreso = 0;
+    this.cantidadEspecies = cantidadEspecies;
+    this.cantidadFamilias = cantidadFamilias;
+    this.total = 2;
+    var _this = this;
+    db.transaction(function (t) {
+        t.executeSql("select (select COUNT(*) from ejemplar where ejemplar.id_servidor isnull) as cEjemplar,(select COUNT(*) from visita where visita.id_servidor isnull) as cVisita , COUNT(*) as cPlanta from planta as p where p.id_servidor isnull;", null, function (t, data) {
+            console.log("cantidad Planta para enviar: "+data.rows.item(0).cPlanta); 
+            _this.cantidadPlantas = data.rows.item(0).cPlanta;
+            console.log("cantidad Ejemplar para enviar: "+data.rows.item(0).cEjemplar);
+            _this.cantidadEjemplares = data.rows.item(0).cEjemplar;
+            console.log("cantidad Visitas para enviar: "+data.rows.item(0).cVisita);
+            _this.cantidadVisitas  = data.rows.item(0).cVisita;
+            _this.total = parseInt(_this.cantidadEjemplares) +parseInt(_this.cantidadEspecies) + parseInt(_this.cantidadFamilias) + parseInt(_this.cantidadPlantas) + parseInt(_this.cantidadVisitas);
+            _this.actualizar();
+        });
+    });
+    
+        
+    this.actualizarProgreso = function(clase){
+        this.progreso++;
+        this.actualizar();
+    }
+    
+    this.actualizar = function(){
+        console.log("total: "+this.total);
+        if(this.total == 0)
+            return;
+            var valor = (this.progreso / this.total)*100;
+        $("#barraProgreso").css({"width":valor+"%"});
+        if(this.total <= this.progreso){
+            setTimeout(function(){
+                $.mvc.route("aplicacion/init");
+                $.mvc.route("aplicacion/");
+                $("#mascaraPopUpSinc").remove();
+                mensajeExitoso("Sincronizacion Finalizada");
+                console.log("Sincronizacion Finalizada");
+            },20000);
+            $("#barraProgreso").append("Aplicando Cambios...");
+        }else{
+            console.log("menor a 100");
+        }
+    };
+
+    this.inicializar = function(){
+        var $mascaraPopUp = $('<div id="mascaraPopUpSinc" class="mascaraPopUp"></div>');
+        $("body").append($mascaraPopUp);
+        var $divPopUp = $('<div class="popUp"/>');
+        $mascaraPopUp.append($divPopUp);
+        $divPopUp.append('<div class="cabeceraPopUp"><i class="fa fa-refresh fa-spin"></i>  Sincronizando...</div>');
+        var $cuerpoPopUp = $('<div class="cuerpoPopUp"><div>Estableciendo Conección con"'+this.equipo+'" <br> Espere por favor:</div></div>');
+        $cuerpoPopUp.append('<br>');
+        $cuerpoPopUp.append('<div class="contenedorBarraProgreso"><div id="barraProgreso" class="barraProgreso"/></div>');
+        $divPopUp.append($cuerpoPopUp);
+    };
+    
+    this.inicializar();
+    return this;
+    
+}
+
+function verificarBateria(){
+    window.addEventListener("batterystatus", onBatteryStatus, false);
+}
+
+function onBatteryStatus(info) {
+    // Handle the online event
+    console.log("Level: " + info.level + " isPlugged: " + info.isPlugged);
+}
+

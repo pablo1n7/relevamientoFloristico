@@ -150,6 +150,7 @@ app.ready(function(){
 
 
     $.mvc.route("aplicacion/");
+//    comprobandoHardware();
 });
 });
 

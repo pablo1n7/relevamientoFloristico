@@ -70,8 +70,10 @@ Y.add('visitaModelo',function(Y){
             var _this = this;
             var indice = indice || 0;
 
-            if(indice > _this.get("imagenes").lenght)
+            if(indice >= _this.get("imagenes").length){
+                auditor.actualizarProgreso();
                 return;
+            }
 
             var win = function (r) {
                 console.log("Code = " + r.responseCode);
@@ -92,7 +94,7 @@ Y.add('visitaModelo',function(Y){
             options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
             options.mimeType = "image/jpg";
 
-            params={'identidad':identidad,'visita':_this.get("id_servidor")};
+            params={'nombre':_this.name,'identidad':identidad,'id_servidor':_this.get("id_servidor")};
             options.params = params;
 
             var ft = new FileTransfer();
@@ -117,7 +119,9 @@ Y.add('visitaModelo',function(Y){
                     var idVisitaServidor = this.get("id_servidor");
                     var items = this.get("items");
                     for(var i=0;i < items.length;i++){
-                        items[i].sincronizar(servidor,this.get("id_servidor"));
+                        (function(){
+                            items[i].sincronizar(servidor,this.get("id_servidor"));
+                        }());
                     }
                     var puntos = this.get("puntos");
                     puntos.map(function(p){
@@ -283,6 +287,9 @@ Y.add('visitaModelo',function(Y){
                         visitas.push(visita);
                     };
 
+                    var _this = this;
+                    var _t = transecta;
+                    var idIntervaloVisitas = -1;
                     (function(){
                         idIntervaloVisitas = setInterval(function(){
                             console.log("empezando indiada 2 (visitas)");
