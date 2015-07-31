@@ -67,15 +67,18 @@ Y.add('visitaModelo',function(Y){
 
         },
         enviarImagenes:function(servidor,indice){
+            
             var _this = this;
             var indice = indice || 0;
 
             if(indice >= _this.get("imagenes").length){
                 auditor.actualizarProgreso();
+                console.warn("-----------------------------------visita auditada");
                 return;
             }
 
             var win = function (r) {
+                console.warn("##############################  Mando imagen Visita #################################");
                 console.log("Code = " + r.responseCode);
                 console.log("Response = " + r.response);
                 console.log("Sent = " + r.bytesSent);
@@ -119,9 +122,7 @@ Y.add('visitaModelo',function(Y){
                     var idVisitaServidor = this.get("id_servidor");
                     var items = this.get("items");
                     for(var i=0;i < items.length;i++){
-                        (function(){
-                            items[i].sincronizar(servidor,this.get("id_servidor"));
-                        }());
+                        items[i].sincronizar(servidor,this.get("id_servidor"));
                     }
                     var puntos = this.get("puntos");
                     puntos.map(function(p){
@@ -139,14 +140,18 @@ Y.add('visitaModelo',function(Y){
                             console.log(dataJson);
                             var elementoVisita = JSON.parse(dataJson);
                             (function(elemento){
+                                console.log(elemento);
                                       db.transaction(function(t){
-                                            t.executeSql("UPDATE Visita SET 'id_servidor'="+elemento.id_servidor+" where idTransecta="+_this.get('idTransecta')+" and fecha="+_this.get('fecha')+";", [],
-                                            function (t, data) {
+                                            t.executeSql("UPDATE Visita SET id_servidor="+elemento.id_servidor+" where idTransecta="+_this.get('idTransecta')+" and fecha="+_this.get('fecha')+";", [],
+                                            function(t, data) {
                                                 _this.set("id_servidor",elemento.id_servidor);
-                                                _this.sincronizar(servidor,idTransectaServidor);
                                                 var serv = servidor.substr(0,servidor.lastIndexOf('/'));
                                                 _this.enviarImagenes(serv+"/subirImagen");
-                                            },null);
+                                                _this.sincronizar(servidor,idTransectaServidor);
+                                            },function(t,data){
+                                                console.log("Error");
+                                                console.log(data);
+                                            });
                                         });
                                 }(elementoVisita));
                         },

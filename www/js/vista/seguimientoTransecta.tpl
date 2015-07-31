@@ -13,13 +13,32 @@
     <div id="flechaSeguimiento" class="flecha">
     </div>
 </div>
-<div id="justgageTransecta" class="justgagePersonalizado"  > </div>
-<div id="indicadorDistancia" class="justgagePersonalizado tabulado">
-    <div>
-        Fin Transecta en
+<div id="justgageTransecta" class="justgagePersonalizado">
+    <div id="indicadorDistancia" class="tabulado bordeDashedDifuminado">
+        <div>
+            Fin De Transecta
+        </div>
+        <div id="metrosRestantes" class="metrosRestantes">
+            2205
+        </div>
+        <div>mts</div>
     </div>
-    <div id="metrosRestantes" class="metrosRestantes">
-        2205
+    <div class="tabulado bordeDashedDifuminado">
+        <div>
+            Porcentaje Transecta
+        </div>
+        <div id="porcentajeTransecta" class="metrosRestantes">
+            0%
+        </div>
+        <div style="color: transparent;">-</div>
     </div>
-    <div>mts</div>
+    <div class="tabulado bordeDashedDifuminado">
+        <div>
+            Nivel de Bateria
+        </div>
+        <div id="porcentajeBateria" class="metrosRestantes">
+            {{=nivelBateria}}%
+        </div>
+        <div style="color: transparent;">-</div>
+    </div>
 </div>

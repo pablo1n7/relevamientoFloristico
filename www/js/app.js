@@ -148,9 +148,11 @@ app.ready(function(){
     };
 
 
-
+    popularBD();
     $.mvc.route("aplicacion/");
-//    comprobandoHardware();
+    comprobandoHardware();
+    nivelBateria = 0;
+    verificarBateria();
 });
 });
 

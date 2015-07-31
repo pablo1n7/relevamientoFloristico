@@ -1,12 +1,10 @@
 $.mvc.controller.create("aplicacion", {
     views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/vistaPuntosVacio.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl','js/vista/sincronizacion.tpl'], //These are the views we will use with the controller
     init:function(){
-        popularBD();
 
         CANTIDAD_PUNTOS = 11;
         DISTANCIA_ACEPTABLE =10;
         tipoEjemplares=[];
-
         especies = [];
         campañas = [];
         campañaActiva = null;
@@ -698,10 +696,11 @@ objetoBrujulaTransecta.vueltas = 0;
 
                // justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
                 
-                inicializarPie();
-                refrescarGraficoPie(valorJustgage);
+               // inicializarPie(0,"porcentajeTransecta");
+                //inicializarPie(nivelBateria,"porcentajeBateria");
+                refrescarGraficoPie(valorJustgage,"porcentajeTransecta");
                 
-                $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
+//                $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
                 $("#metrosRestantes").empty();
                 $("#metrosRestantes").append(metrosRestantes);
 
@@ -819,7 +818,7 @@ objetoBrujulaTransecta.vueltas = 0;
             transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].almacenarPunto(punto);
         }
         cantPuntos=cantPuntos+1;
-        refrescarGraficoPie(cantPuntos);
+        refrescarGraficoPie(cantPuntos,"porcentajeTransecta");
 
 
         //$.ui.hideModal();

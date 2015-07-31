@@ -175,7 +175,7 @@ function mensajeAviso(titulo,mensaje){
 		$("body").append($mascaraPopUp);
 		var $divPopUp = $('<div class="popUp"/>');
 		$mascaraPopUp.append($divPopUp);
-		$divPopUp.append('<div class="cabeceraPopUp">'+titulo+'</div>');
+		$divPopUp.append('<div class="cabeceraPopUp"> <i class="fa fa-exclamation-triangle"></i>  '+titulo+' !</div>');
 		var $cuerpoPopUp = $('<div class="cuerpoPopUp">'+mensaje+'</div>');
 		$divPopUp.append($cuerpoPopUp);
 		var $contenedorBotones = $('<div class="contenedorBotones centrado"/>');
@@ -340,12 +340,9 @@ function eliminarFoto(elemento){
     $(elemento.parentElement).parent().attr("style","background-color:white");
     var nombreFoto = $($(elemento.parentElement).find('[name|=imgUrl]')[0]).html();
     intel.xdk.camera.deletePicture(nombreFoto);
-
     //buscarla y elimianrla del arreglo residual
     arregloImgResiduales.splice(arregloImgResiduales.indexOf(nombreFoto),1);
-
     $($(elemento.parentElement).find('[name|=imgUrl]')[0]).empty();
-
     $($(elemento.parentElement).find('[name|=verFoto]')[0]).addClass('oculto');
 }
 
@@ -1054,15 +1051,7 @@ function comprobandoHardware(){
 }
 
 
-function refrescarGraficoPie(porcentaje){
-    console.log("refrescando");
-    var $slices = $($('#pieSlice1').find(".pie"));
-    $("#valorPorcentaje").empty().append(porcentaje+"%");
-    $slices.addClass("oculto");
-    for(var i=0;i<porcentaje;i++){
-        $($slices[i]).removeClass("oculto");
-    }
-}
+
 
 function sincronizarElementoSimple(servidor,elemento,tabla,mensaje,callback,callbackVacio) {
    $.ajax({
@@ -1132,14 +1121,20 @@ function buscarEnRed(red){
 function enviarFoto(servidor,elemento){
             if(elemento.get("foto")==""){
                 auditor.actualizarProgreso();
+                console.warn("-----------------------------------"+elemento.name+" auditada SIN FOTO");
                 return;
             }
 
             var win = function (r) {
+                console.warn("-----------FOTO ENVIADA------------------------");
+                console.warn("-----------------------------------");
+                console.warn(r);
+                console.warn("-----------------------------------");
+                auditor.actualizarProgreso();
+                console.warn("-----------------------------------"+elemento.name+" auditada");
                 console.log("Code = " + r.responseCode);
                 console.log("Response = " + r.response);
                 console.log("Sent = " + r.bytesSent);
-                auditor.actualizarProgreso();
             }
 
             var fail = function (error) {
@@ -1164,34 +1159,15 @@ function enviarFoto(servidor,elemento){
 }
 
 
-/*
-function inicializarPie(){
-    var unoPorciento = 3.6;
-    var $graficoPorcentaje = $('<div class="pieContainer"><div class="mascaraPie"><div id="valorPorcentaje" class="tabulado mayor">0%</div></div><div class="pieBackground"></div></div>');
-    var $contenedorSlices = $('<div id="pieSlice1" class="hold"></div>');
-    for(var i = 0; i < 100; i++){
-        var valor = 90+(unoPorciento*i);
-        var $pie = $('<div class="pie oculto" style="transform:rotate('+valor+'deg)"></div>');
-        $contenedorSlices.append($pie);
-    }
-    $graficoPorcentaje.append($contenedorSlices);
-    $("#justgageTransecta").append('<div class="tabulado">Porcentaje Transecta</div>');
-    $("#justgageTransecta").append($graficoPorcentaje);
-}*/
 
-function inicializarPie(){
-    var unoPorciento = 3.6;
-    var $graficoPorcentaje = $('<div class="pieContainer"><div class="mascaraPie"><div id="valorPorcentaje" class="tabulado mayor">0%</div></div><div class="pieBackground"></div></div>');
-    var $contenedorSlices = $('<div id="pieSlice1" class="hold"></div>');
-    for(var i = 0; i < 100; i++){
-        var valor = 90+(unoPorciento*i);
-        var $pie = $('<div class="pie oculto" style="transform:rotate('+valor+'deg)"></div>');
-        $contenedorSlices.append($pie);
-    }
-    $graficoPorcentaje.append($contenedorSlices);
-    $("#justgageTransecta").append('<div class="tabulado">Porcentaje Transecta</div>');
-    $("#justgageTransecta").append($graficoPorcentaje);
+
+function refrescarGraficoPie(porcentaje,elemento){
+    console.log("refrescando");
+    $("#"+elemento).empty();
+    $("#"+elemento).append(porcentaje+"%");
 }
+
+
 
 
 function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
@@ -1201,6 +1177,7 @@ function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
     this.cantidadVisitas = 0;
     this.progreso = 0;
     this.cantidadEspecies = cantidadEspecies;
+    this.cantidadEspeciesAux =cantidadEspecies;
     this.cantidadFamilias = cantidadFamilias;
     this.total = 2;
     var _this = this;
@@ -1219,6 +1196,13 @@ function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
     
         
     this.actualizarProgreso = function(clase){
+        var clase = clase || "";
+        if (clase == "Especie"){
+            if (this.cantidadEspeciesAux >0)
+                this.cantidadEspeciesAux --;
+            else
+                return;
+        }
         this.progreso++;
         this.actualizar();
     }
@@ -1262,10 +1246,19 @@ function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
 
 function verificarBateria(){
     window.addEventListener("batterystatus", onBatteryStatus, false);
+    window.addEventListener("batterycritical", onBatteryCritical, false);
 }
 
 function onBatteryStatus(info) {
-    // Handle the online event
+    nivelBateria = info.level;
     console.log("Level: " + info.level + " isPlugged: " + info.isPlugged);
+    refrescarGraficoPie(info.level,"porcentajeBateria");
+}
+
+
+function onBatteryCritical(info) {
+    // Handle the battery critical event
+    mensajeAviso("Bateria Baja","Nivel de Bateria Critico. Porfavor conecte la alimentación del dispositivo");
+ //   alert("Battery Level Critical " + info.level + "%\nRecharge Soon!");
 }
 
