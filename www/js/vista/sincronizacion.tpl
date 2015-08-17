@@ -3,7 +3,7 @@
  Buscar Servidor</a>
 </div>
 
-<div class="input-group servidorExterno">Dirección Servidor Externo  <input id="servidorExterno" type="text" placeholder="Ej:112.3.2.12"/></div>
+<div class="input-group servidorExterno">Dirección Servidor Externo  <input id="servidorExterno" value="{{=it.conf.servidor}}" type="text" placeholder="Ej:112.3.2.12"/></div>
 
 <div class="widget-container content-area vertical-col">
     <ul id="dispositivos" name="listaDispositivos" class="list widget uib_w_10 d-margins oculto listaDispositivos">

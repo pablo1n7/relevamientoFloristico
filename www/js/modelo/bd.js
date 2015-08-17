@@ -24,6 +24,14 @@ function popularBD(){
     createTablasMetodoTrabajo();
     createTablasPlantas();
     cargarInstancias();
+    configuracion = localStorage.getItem('conf');
+    
+    if( configuracion == null){
+        configuracion = JSON.stringify({"servidor":"192.168.0.",puerto:"8000"});
+        localStorage.setItem('conf', configuracion);
+    }
+    configuracion = JSON.parse(configuracion);
+    
 }
 
 function cargarInstancias(){
@@ -129,7 +137,7 @@ function createTablas(){
     });
 
     db.transaction(function (t) {
-        t.executeSql('CREATE TABLE IF NOT EXISTS Ejemplar(id_servidor INT,id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,idTipoEjemplar INTEGER NOT NULL,idTransecta INTEGER NOT NULL, idPunto INTEGER,fecha INT NOT NULL, foto TEXT,FOREIGN KEY (idTipoEjemplar) REFERENCES TipoEjemplar(id),FOREIGN KEY (idPunto) REFERENCES Punto(id),FOREIGN KEY(idTransecta,fecha) REFERENCES Visita(idTransecta,fecha));', [], null, null);
+        t.executeSql('CREATE TABLE IF NOT EXISTS Ejemplar(id_servidor INT,id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,idTipoEjemplar INTEGER NOT NULL, imgSincronizada INTEGER,idTransecta INTEGER NOT NULL, idPunto INTEGER,fecha INT NOT NULL, foto TEXT,FOREIGN KEY (idTipoEjemplar) REFERENCES TipoEjemplar(id),FOREIGN KEY (idPunto) REFERENCES Punto(id),FOREIGN KEY(idTransecta,fecha) REFERENCES Visita(idTransecta,fecha));', [], null, null);
     });
 
     db.transaction(function (t) {
@@ -245,8 +253,9 @@ function createTablasPlantas(){
     });
 
         db.transaction(function (t) {
-            t.executeSql('CREATE TABLE IF NOT EXISTS Planta(id_servidor INT,id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, idTransecta INTEGER NOT NULL, fecha INT NOT NULL,idPunto INTEGER, especie INT NOT NULL, estadoFenologico TEXT, toques INTEGER NOT NULL, foto TEXT, FOREIGN KEY (especie) REFERENCES Especie(id),FOREIGN KEY(idTransecta,fecha) REFERENCES Visita(idTransecta,fecha),FOREIGN KEY (idPunto) REFERENCES Punto(id));', [], null, null);
+            t.executeSql('CREATE TABLE IF NOT EXISTS Planta(id_servidor INT,id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, imgSincronizada INTEGER, idTransecta INTEGER NOT NULL, fecha INT NOT NULL,idPunto INTEGER, especie INT NOT NULL, estadoFenologico TEXT, toques INTEGER NOT NULL, foto TEXT, FOREIGN KEY (especie) REFERENCES Especie(id),FOREIGN KEY(idTransecta,fecha) REFERENCES Visita(idTransecta,fecha),FOREIGN KEY (idPunto) REFERENCES Punto(id));', [], null, null);
         });
+    
 
 
 }

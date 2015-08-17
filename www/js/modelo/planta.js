@@ -13,7 +13,7 @@ Y.add('plantaModelo',function(Y){
                 if(this.get("estadoFenologico")=="")
                     this.set("estadoFenologico","No Definido");
 
-                var q = "INSERT INTO Planta('idTransecta','fecha','idPunto','especie','toques','foto','estadoFenologico') values("+visita.get("idTransecta")+","+visita.get("fecha")+","+idPunto+",'"+_this.get("especie").get("id")+"',"+_this.get("toques")+",'"+_this.get("foto")+"','"+this.get("estadoFenologico")+"');";
+                var q = "INSERT INTO Planta('idTransecta','fecha','idPunto','especie','toques','foto','estadoFenologico','imgSincronizada') values("+visita.get("idTransecta")+","+visita.get("fecha")+","+idPunto+",'"+_this.get("especie").get("id")+"',"+_this.get("toques")+",'"+_this.get("foto")+"','"+this.get("estadoFenologico")+"',"+_this.get('imgSincronizada')+");";
                 db.transaction(function(t){
                     t.executeSql(q, [],
                     function (t, data) {
@@ -62,10 +62,12 @@ Y.add('plantaModelo',function(Y){
 
         sincronizar:function(servidor,idVisitaServidor,idPuntoServidor){
             var idPuntoServidor = idPuntoServidor || "null";
+            var _this = this;
             if(this.get("id_servidor")!=null){
+                var serv = servidor.substr(0,servidor.lastIndexOf('/'));
+                enviarFoto(serv+"/subirImagen",_this);
                 return;
             }
-            var _this = this;
             var idEspecieServidor = _this.get("especie").get("id_servidor");
             var estadoFenologico = _this.get("estadoFenologico");
             var toques = _this.get("toques");
@@ -83,8 +85,9 @@ Y.add('plantaModelo',function(Y){
                                     t.executeSql("UPDATE Planta SET 'id_servidor'="+elemento.id_servidor+" where id="+_this.get('id')+";", [],
                                     function (t, data) {
                                         _this.set("id_servidor",elemento.id_servidor);
-                                        var serv = servidor.substr(0,servidor.lastIndexOf('/'));
-                                        enviarFoto(serv+"/subirImagen",_this);
+                                        _this.sincronizar(servidor,idVisitaServidor,idPuntoServidor)
+                                        //var serv = servidor.substr(0,servidor.lastIndexOf('/'));
+                                        //enviarFoto(serv+"/subirImagen",_this);
                                     },null);
                                 });
                         }(elementoItem));
@@ -114,6 +117,9 @@ Y.add('plantaModelo',function(Y){
                 },
                 id_servidor:{
                     value:null
+                },
+                imgSincronizada:{
+                    value:0
                 }
 
             }
@@ -129,7 +135,7 @@ Y.add('plantaModelo',function(Y){
             t.executeSql(q, null, function (t, data) {
                 var plantas = [];
                 for (var i = 0; i < data.rows.length; i++) {
-                    var planta = new Y.Planta({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    var planta = new Y.Planta({"imgSincronizada":data.rows.item(i).imgSincronizada,"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
                     planta.humanizar();
                     plantas.push(planta);
                 };
@@ -145,7 +151,7 @@ Y.add('plantaModelo',function(Y){
             t.executeSql(q, null, function (t, data) {
                 var plantas = [];
                 for (var i = 0; i < data.rows.length; i++) {
-                    var planta = new Y.Planta({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    var planta = new Y.Planta({"imgSincronizada":data.rows.item(i).imgSincronizada,"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
                     planta.humanizar();
                     plantas.push(planta);
                 };
@@ -162,7 +168,7 @@ Y.add('plantaModelo',function(Y){
             t.executeSql(q, null, function (t, data) {
                 var plantas = [];
                 for (var i = 0; i < data.rows.length; i++) {
-                    var planta = new Y.Planta({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
+                    var planta = new Y.Planta({"imgSincronizada":data.rows.item(i).imgSincronizada,"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"idPunto":data.rows.item(i).idPunto,"especie":data.rows.item(i).especie,"estadoFenologico":data.rows.item(i).estadoFenologico,"fecha":data.rows.item(i).fecha,"toques":data.rows.item(i).toques,"foto":data.rows.item(i).foto});
                     planta.humanizar();
                     plantas.push(planta);
                 };

@@ -574,7 +574,7 @@ footer .button{
 }
 
 .sliderPuntosVisita{
-    overflow: auto;
+    overflow: hidden;
     position: relative;
     float:left;
     padding-right: 7%;
@@ -1124,4 +1124,59 @@ footer .button{
     border-right-style: dashed;
     border-radius: 50%;
     border-left-style: dashed;
+}
+
+.pEspecie{
+    font-size: 22px !important;
+    margin-bottom: 17px !important;
+}
+
+
+.botonNavegacion{
+    width: 10%;
+    background-color: rgba(0,0,0,.1);
+    position: absolute;
+    z-index: 10;
+}
+
+.izquierda{
+    float: left;
+  
+}
+
+.derecha{
+    left: 80%;
+   
+}
+
+
+.headerVisita > div.derecha{
+    left: 88%;
+    top: 0%;
+    background-color: rgba(255,255,255,.1) !important;
+
+}
+
+.headerVisita > div.izquierda{
+    top: 0%;
+    left: 2%;
+    background-color: rgba(255,255,255,.1) !important;
+
+}
+
+.logError{
+    margin-top: 2%;
+    padding: 10px;
+    border-style: solid;
+    max-height: 194px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.divBotonLog{
+    margin-bottom: 5%;
+}
+
+.divBotonLog.desenlazar{
+    opacity: 0.2;
 }

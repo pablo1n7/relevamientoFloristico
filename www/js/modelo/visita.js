@@ -66,12 +66,12 @@ Y.add('visitaModelo',function(Y){
             this.set("imagenes",this.get("imagenes").filter(function(elemento){return elemento != nombre}));
 
         },
-        enviarImagenes:function(servidor,indice){
+        enviarImagenes:function(servidor,imagenes,indice){
             
             var _this = this;
             var indice = indice || 0;
 
-            if(indice >= _this.get("imagenes").length){
+            if(indice >= imagenes.length){
                 auditor.actualizarProgreso();
                 console.warn("-----------------------------------visita auditada");
                 return;
@@ -82,16 +82,25 @@ Y.add('visitaModelo',function(Y){
                 console.log("Code = " + r.responseCode);
                 console.log("Response = " + r.response);
                 console.log("Sent = " + r.bytesSent);
-                _this.enviarImagenes(servidor,indice+1);
+                db.transaction(function(t){
+                        t.executeSql("UPDATE VisitaFoto SET id_servidor=1 where nombreFoto = '"+imagenes[indice]+"' and idTransecta="+_this.get('idTransecta')+" and fecha="+_this.get('fecha')+";", [],
+                        function(t, data) {
+                            _this.enviarImagenes(servidor,imagenes,indice+1);
+                        },function(t,data){
+                            console.log("Error");
+                            console.log(data);
+                        });
+                    });
             }
 
             var fail = function (error) {
-                console.log("upload error source " + error.source);
-                console.log("upload error target " + error.target);
-                mensajeError("Error subiendo Imagen!");
+                //console.log("upload error source " + error.source);
+                //console.log("upload error target " + error.target);
+                auditor.actualizarProgreso("error","Error imagen "+_this.name+" #"+_this.get("id_servidor"));
+                //mensajeError("Error subiendo Imagen!");
             }
 
-            fileURL =  intel.xdk.camera.getPictureURL(_this.get("imagenes")[indice]);
+            fileURL =  intel.xdk.camera.getPictureURL(imagenes[indice]);
             var options = new FileUploadOptions();
             options.fileKey = "imagen";
             options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
@@ -106,11 +115,10 @@ Y.add('visitaModelo',function(Y){
         },
 
         almacenarPunto:function(punto){
-            this.get("puntos").push(punto);
-             punto.save(this,function(unPunto){console.log("GuARDO PUNTO");});
-            /*if(this.get("puntos").length == CANTIDAD_PUNTOS){
-                this.save(transectaActiva.get("id"));
-            }*/
+            if(this.get("puntos").length < CANTIDAD_PUNTOS){
+                this.get("puntos").push(punto);
+                punto.save(this,function(unPunto){console.log("GuARDO PUNTO");});
+            }
 
         },
         almacenarItem:function(item){
@@ -118,6 +126,7 @@ Y.add('visitaModelo',function(Y){
             item.save(this);
         },
         sincronizar:function(servidor,idTransectaServidor){
+                var _this = this;
                 if(this.get("id_servidor")!=null){
                     var idVisitaServidor = this.get("id_servidor");
                     var items = this.get("items");
@@ -128,9 +137,29 @@ Y.add('visitaModelo',function(Y){
                     puntos.map(function(p){
                         p.sincronizar(servidor,idVisitaServidor);
                     });
+                    
+                    var q = "select * from VisitaFoto where id_Servidor isnull and idTransecta="+_this.get("idTransecta")+" and fecha="+_this.get("fecha")+";";
+                    db.transaction(function(t){
+                        t.executeSql(q, [],
+                        function(t, data) {
+                            var listaImg = [];
+                            for (var i = 0; i < data.rows.length; i++) {
+                                listaImg.push(data.rows.item(i).nombreFoto);
+                            }
+                            var serv = servidor.substr(0,servidor.lastIndexOf('/'));
+                            _this.enviarImagenes(serv+"/subirImagen",listaImg);
+                           
+                        },function(t,data){
+                            console.log("Error");
+                            console.log(data);
+                        });
+                    });
+                    
+                    
+                    
+                    
                     return;
                 }else{
-                    var _this = this;
                     datosVisita={'transecta':idTransectaServidor,'fecha':this.get("fecha")};
                     $.ajax({
                     type: "POST",
@@ -145,8 +174,7 @@ Y.add('visitaModelo',function(Y){
                                             t.executeSql("UPDATE Visita SET id_servidor="+elemento.id_servidor+" where idTransecta="+_this.get('idTransecta')+" and fecha="+_this.get('fecha')+";", [],
                                             function(t, data) {
                                                 _this.set("id_servidor",elemento.id_servidor);
-                                                var serv = servidor.substr(0,servidor.lastIndexOf('/'));
-                                                _this.enviarImagenes(serv+"/subirImagen");
+                                                
                                                 _this.sincronizar(servidor,idTransectaServidor);
                                             },function(t,data){
                                                 console.log("Error");

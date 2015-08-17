@@ -533,21 +533,13 @@ var Slider = function(idSlider,claseHijos,ancho,callback){
     this.inicializar = function(){
         var divContenedor = $("#"+this.id);
         var contenedores = divContenedor.find("."+this.objetosMoviles);
-//        propiedades = $(contenedores[0]).offset();
         var cantSliders = contenedores.length;
-  //      $(contenedores[0]).css({width:this.ancho,overflowX:"hidden"});
-        $(contenedores[0]).css({width:"100%",overflowX:"hidden"});
+          $(contenedores[0]).css({width:"100%",overflowX:"hidden"});
         this.indice = 0;
         for(var i=1;i<cantSliders;i++){
             $(contenedores[i]).css({width:"100%"});
             $(contenedores[i]).hide();
         }
-
-//        var anchoContenedor = parseInt(this.ancho) * cantSliders+"px";
-/*
-        var anchoContenedor = (screen.width * cantSliders)+"px";
-        $("#"+this.id).css({width:anchoContenedor});
-*/
 
         var _this = this;
         $("#"+this.id).unbind();
@@ -567,6 +559,42 @@ var Slider = function(idSlider,claseHijos,ancho,callback){
                 $("body").removeClass("desenlazar");
             },500);
         });
+
+        
+//        var botonIzquierda = $("#"+_this.id).find("[name|=sliderDerecha]")[0];
+//        var botonDerecha = $("#"+_this.id).find("[name|=sliderDerecha]")[0];
+        
+/*        var botonIzquierda = $($("#"+_this.id).find("."+_this.objetosMoviles)).find("[name|=sliderIzquierda]")[0];
+        var botonDerecha = $($("#"+_this.id).find("."+_this.objetosMoviles)).find("[name|=sliderIzquierda]")[0];*/
+        var botonDerecha = [];
+        var botonIzquierda = [];
+        var arregloObjetos = $("#"+_this.id).find("."+_this.objetosMoviles);
+        for(var i = 0;i < arregloObjetos.length ;i++){
+            botonDerecha.push($(arregloObjetos[i]).find("[name|=sliderDerecha]")[0]);
+            botonIzquierda.push($(arregloObjetos[i]).find("[name|=sliderIzquierda]")[0]);
+        }
+        
+//        var alto = $($(botonDerecha).parent()).offset().height;
+        var alto = $($(botonDerecha[0]).parent()).offset().height;
+        $(botonDerecha).css({"height":alto+"px"});
+        $(botonIzquierda).css({"height":alto+"px"});
+        $(botonIzquierda).click(function(e){
+            $("body").addClass("desenlazar");
+            e.stopPropagation();
+            _this.derecha();
+            setTimeout(function(){
+                $("body").removeClass("desenlazar");
+            },500);
+        });
+        $(botonDerecha).click(function(e){
+            $("body").addClass("desenlazar");
+            e.stopPropagation();
+            _this.izquierda();
+            setTimeout(function(){
+                $("body").removeClass("desenlazar");
+            },500);
+        });
+        
     };
 
         this.inicializar();
@@ -707,7 +735,8 @@ var Radar = function(idContenedor,cantidad){
 		this.contenedor = $("#"+idContenedor);
 		this.cantidad = cantidad;
 		var _this = this;
-        var idIntervalo=-1;
+        this.seguimientoActivo =true;
+        this.objetivoEncontrado = false;
 
 		this.agregarCuadro = function(clase){
 			var cuadro = $('<div class="cuadro '+clase+'"></div>');
@@ -749,8 +778,28 @@ var Radar = function(idContenedor,cantidad){
 		});
 
         this.detener= function(){
-            clearInterval(idIntervalo);
+            _this.seguimientoActivo = false; 
 
+        };
+    
+        this.sonar = function(intermitente){
+            var intermitente = intermitente || 3;
+            intermitente++;
+            if(_this.seguimientoActivo){
+                setTimeout(function(){ 
+                    _this.sonar(intermitente);
+                },300);
+
+            }
+            if(_this.objetivoEncontrado){
+                if (intermitente >= 8){
+                    intermitente=3;
+                    intel.xdk.player.playSound("sonidos/bipRadar.mp3");
+                    console.log("BEEP");
+                }
+                var color= "rgba(255,255,0,0."+intermitente+")";
+                $("#objetivo").css({backgroundColor:color});
+            }
         };
 
 		this.marcarObjetivo = function(angulo,distancia){
@@ -773,19 +822,8 @@ var Radar = function(idContenedor,cantidad){
 			_this.contenedor.append("<div id='objetivo'/>");
             $("#objetivo").css({marginLeft:x1+"%",marginTop:y1+"%"});
             
-			var intermitente = 3;
-            if(idIntervalo==-1){
-                idIntervalo = setInterval(function(){
-                    intermitente++;
-                    if (intermitente == 8){
-                        intermitente=3;
-                        intel.xdk.player.playSound("sonidos/bipRadar.mp3");
-                        console.log("BEEP");
-                    }
-                    var color= "rgba(255,255,0,0."+intermitente+")";
-                    $("#objetivo").css({backgroundColor:color});
-                },200);
-            }
+			
+            _this.objetivoEncontrado=true;
 		}
 
 		this.marcarCentro = function(){
@@ -793,6 +831,7 @@ var Radar = function(idContenedor,cantidad){
 
 		}
 
+        this.sonar();
 	}
 
 function asignarFuncionCierreModal(callback){
@@ -941,10 +980,26 @@ function verificarVisitas(){
                                                $.mvc.route("aplicacion/activarTransecta/"+transectaAActivar+"/1");
                                     },function(){
                                         console.log("cancelo");
+                                        mostrarMascara("Eliminando visita, por favor espere");
                                         Y.Visita.obtenerVisitaTransecta(transectaAActivar,fechaAActivar,function(visita){
                                             visita.borrar();
+                                            mensajeExitoso("Visita Borrada");
+                                            ocultarMascara();
                                         });
                                     });
+                            }else{
+                                buscarRedConIP(configuracion.servidor,function(infoServidor){
+                                    mensajeConfirmacion("Sincronización","Se encontró activo el servidor: '"+infoServidor.nombrePC+"'. Desea acceder a la pantalla de sincronización?",function(){
+                                        $.mvc.route("/aplicacion/sincronizacion");
+                                        var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+encodeURI(infoServidor.nombrePC)+'/'+infoServidor.infoAdicional.especies+'/'+infoServidor.infoAdicional.familias+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+                                        $("#dispositivos").removeClass("oculto");
+                                        $("#noServidores").addClass("oculto");
+                                        $("#dispositivos").append($servidor);
+                                    },function(){
+
+                                    })
+                                });
+                                
                             }
                         });
                     });
@@ -1119,7 +1174,7 @@ function buscarEnRed(red){
 
 
 function enviarFoto(servidor,elemento){
-            if(elemento.get("foto")==""){
+            if(elemento.get("foto")=="" || elemento.get("imgSincronizada")==1){
                 auditor.actualizarProgreso();
                 console.warn("-----------------------------------"+elemento.name+" auditada SIN FOTO");
                 return;
@@ -1130,6 +1185,14 @@ function enviarFoto(servidor,elemento){
                 console.warn("-----------------------------------");
                 console.warn(r);
                 console.warn("-----------------------------------");
+                
+                db.transaction(function(t){
+                    t.executeSql("UPDATE "+elemento.name+" SET 'imgSincronizada'= 1 where id="+elemento.get('id')+";", [],
+                    function (t, data) {
+                        elemento.set("imgSincronizada",1);
+                    },null);
+                });
+                
                 auditor.actualizarProgreso();
                 console.warn("-----------------------------------"+elemento.name+" auditada");
                 console.log("Code = " + r.responseCode);
@@ -1140,8 +1203,8 @@ function enviarFoto(servidor,elemento){
             var fail = function (error) {
                 console.log("upload error source " + error.source);
                 console.log("upload error target " + error.target);
-                mensajeError("Error subiendo Imagen de elemento "+elemento.name+"!");
-                auditor.actualizarProgreso();
+                //mensajeError("Error subiendo Imagen de elemento "+elemento.name+"!");
+                auditor.actualizarProgreso("error","Error imagen "+elemento.name+" #"+elemento.get("id_servidor"));
             }
 
             var fileURL =  intel.xdk.camera.getPictureURL(elemento.get("foto"));
@@ -1182,7 +1245,8 @@ function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
     this.total = 2;
     var _this = this;
     db.transaction(function (t) {
-        t.executeSql("select (select COUNT(*) from ejemplar where ejemplar.id_servidor isnull) as cEjemplar,(select COUNT(*) from visita where visita.id_servidor isnull) as cVisita , COUNT(*) as cPlanta from planta as p where p.id_servidor isnull;", null, function (t, data) {
+     //   t.executeSql("select (select COUNT(*) from ejemplar where ejemplar.id_servidor isnull) as cEjemplar,(select COUNT(*) from visita where visita.id_servidor isnull) as cVisita , COUNT(*) as cPlanta from planta as p where p.id_servidor isnull;", null, function (t, data) {
+        t.executeSql("select (select COUNT(*) from ejemplar) as cEjemplar,(select COUNT(*) from visita) as cVisita , COUNT(*) as cPlanta from planta", null, function (t, data) {
             console.log("cantidad Planta para enviar: "+data.rows.item(0).cPlanta); 
             _this.cantidadPlantas = data.rows.item(0).cPlanta;
             console.log("cantidad Ejemplar para enviar: "+data.rows.item(0).cEjemplar);
@@ -1195,7 +1259,7 @@ function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
     });
     
         
-    this.actualizarProgreso = function(clase){
+    this.actualizarProgreso = function(clase,mensaje){
         var clase = clase || "";
         if (clase == "Especie"){
             if (this.cantidadEspeciesAux >0)
@@ -1203,6 +1267,13 @@ function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
             else
                 return;
         }
+        
+        if (clase == "error"){
+            $("#log").append('<p>'+mensaje+'</p>');
+            $("#log").removeClass("oculto");
+            $("#log").get(0).scrollTop=100000000000000;
+        }
+        
         this.progreso++;
         this.actualizar();
     }
@@ -1217,13 +1288,17 @@ function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
             setTimeout(function(){
                 $.mvc.route("aplicacion/init");
                 $.mvc.route("aplicacion/");
-                $("#mascaraPopUpSinc").remove();
+                //$("#mascaraPopUpSinc").remove();
+                $("#log").append('<p><b>Reintente Sincronizar Nuevamente para intentar solventar estos errores.</b></p>');
+                $("#log").get(0).scrollTop=100000000000000;
+                $("#barraProgreso").empty().append("Sincronización Finalizada");
+                $($(".divBotonLog")[0]).removeClass("desenlazar");
                 mensajeExitoso("Sincronizacion Finalizada");
                 console.log("Sincronizacion Finalizada");
-            },20000);
+            },10000);
             $("#barraProgreso").append("Aplicando Cambios...");
         }else{
-            console.log("menor a 100");
+            console.log("progreso "+this.progreso+ " de "+this.total);
         }
     };
 
@@ -1236,6 +1311,14 @@ function auditorActualizaciones(cantidadEspecies,cantidadFamilias,equipo){
         var $cuerpoPopUp = $('<div class="cuerpoPopUp"><div>Estableciendo Conección con"'+this.equipo+'" <br> Espere por favor:</div></div>');
         $cuerpoPopUp.append('<br>');
         $cuerpoPopUp.append('<div class="contenedorBarraProgreso"><div id="barraProgreso" class="barraProgreso"/></div>');
+        $cuerpoPopUp.append('<div id="log" class="logError oculto"><p><b>Informe de errores:</b></p></div>');
+        var $anchor = $('<a name="" class="anchorBoton">Aceptar</a>');
+        $anchor.click(function(e){
+            $("#mascaraPopUpSinc").remove();
+        });
+        var $divBoton = $('<div class="divBoton divBotonLog desenlazar" ></div>');
+        $divBoton.append($anchor)
+        $cuerpoPopUp.append($divBoton);
         $divPopUp.append($cuerpoPopUp);
     };
     
@@ -1260,5 +1343,21 @@ function onBatteryCritical(info) {
     // Handle the battery critical event
     mensajeAviso("Bateria Baja","Nivel de Bateria Critico. Porfavor conecte la alimentación del dispositivo");
  //   alert("Battery Level Critical " + info.level + "%\nRecharge Soon!");
+}
+
+function buscarRedConIP(ipServidorExterno,callbackExito){
+     if(ipServidorExterno != ""){
+            $.ajax({
+              type: "POST",
+              url: "http://"+ipServidorExterno+":"+configuracion.puerto+"/quienSos/",
+              data: {'nombre':'pepito'},
+              success: function(data){
+                  var infoServidor = JSON.parse(data);
+                  if(infoServidor.hasOwnProperty("nombrePC")){
+                      callbackExito(infoServidor);
+                  }
+                }
+            });
+    }
 }
 

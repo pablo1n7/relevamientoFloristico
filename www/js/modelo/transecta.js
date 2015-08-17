@@ -148,24 +148,45 @@ Y.add('transectaModelo',function(Y){
     };
 
     Y.Transecta.obtenerTransectasCompletas = function(nombre,fecha,callback,callbackDeVacio){
-        var q = "select * from Transecta where nombreCampania='"+nombre+"' and fechaCampania="+fecha+";"
+        var q = "select * from Transecta where nombreCampania='"+nombre+"' and fechaCampania="+fecha+";";
+        var arregloTransectas = [];
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
                     var transecta = new Y.Transecta({"id":data.rows.item(i).id,"id_servidor":data.rows.item(i).id_servidor,"ambiente":data.rows.item(i).ambiente,"sentido":data.rows.item(i).sentido,"cuadro":data.rows.item(i).cuadro, "distanciaEntrePuntos":data.rows.item(i).distanciaEntrePuntos});
 
-                    (function(t,callback){
+                    //(function(t,callback){
+                    (function(t){
                         Y.Visita.obtenerVisitasTransecta(t,function(visitas){
                             t.set("visitas",visitas);
-                            callback(t);
+                            arregloTransectas.push(t);
+                            //callback(t);
                         })
 
-                    }(transecta,callback))
+                    //}(transecta,callback));
+                    }(transecta));
 
                     //callback();
                 };
+                
+                var controlarTransectas = function(coleccionTransectas,totalTransectas,callback){
+                    console.warn("Indiada 3.0!");
+                    console.warn("Total: "+totalTransectas);
+                    console.warn("Tamaño arreglo: "+coleccionTransectas.length);
+                    if(coleccionTransectas.length < totalTransectas){
+                        setTimeout(function(){
+                            controlarTransectas(coleccionTransectas,totalTransectas,callback);
+                        },2000);
+                    }else{
+                        console.log("Finalizando Indiada 3.0");
+                        callback(coleccionTransectas);
+                    }
+                };
+                
                 if (data.rows.length == 0){
                     callbackDeVacio();
+                }else{
+                    controlarTransectas(arregloTransectas,data.rows.length,callback);
                 }
             });
         });

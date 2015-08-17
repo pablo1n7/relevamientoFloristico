@@ -1,16 +1,16 @@
 $.mvc.controller.create("aplicacion", {
-    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/vistaPuntosVacio.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl','js/vista/sincronizacion.tpl'], //These are the views we will use with the controller
+    views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/vistaPuntosVacio.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl','js/vista/sincronizacion.tpl','js/vista/configuracion.tpl'], //These are the views we will use with the controller
     init:function(){
 
         CANTIDAD_PUNTOS = 11;
         DISTANCIA_ACEPTABLE =10;
-        tipoEjemplares=[];
         especies = [];
         campañas = [];
+        familias = [];
+        tipoEjemplares=[];
         campañaActiva = null;
         transectaActiva = null;
         estadoPunto=["Toque Directo","Muerto en Pie","Suelo Desnudo"];
-        familias = [];
         estadosDeConservacion=[{"id":1,"nombre":"No Definido"}];
         formasBiologicas=[{"id":1,"nombre":"No Definido"}];
         tiposBiologicos =[{"id":1,"nombre":"No Definido"}];
@@ -52,9 +52,14 @@ $.mvc.controller.create("aplicacion", {
         });
     },
     default:function(){
+        
+        console.log("en Default!!!");
+        especies = [];
+        campañas = [];
+        familias = [];
+        tipoEjemplares=[];
         $("#mainSeguimiento").html($.template('js/vista/main.tpl'));
         $("#vistaPuntos").html($.template('js/vista/vistaPuntosVacio.tpl'));
-
         Y.TipoEjemplar.obtenerTipoEjemplares(function(tipoEjemplar){tipoEjemplares.push(tipoEjemplar);});
         Y.Familia.obtenerFamilias(function(familia){familias.push(familia);});
         Y.Especie.obtenerEspecies(function(especie){especies.push(especie);});
@@ -216,7 +221,7 @@ $.mvc.controller.create("aplicacion", {
         //activate_subpage("#tipoEjemplares");
         activarSubPagina("#tipoEjemplares","Tipos Existentes");
         $("#mainTipoEjemplares").html($.template('js/vista/listaTipoEjemplar.tpl',{tipoEjemplares:tipoEjemplares}));
-        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Configuración");});
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Miscelánea");});
         activarBotonFuncionalidad('<i class="fa fa-plus"></i>',function(){
             $.mvc.route("aplicacion/creacionTipoEjemplar");
         });
@@ -261,7 +266,7 @@ $.mvc.controller.create("aplicacion", {
     listaFamilias:function(){
         activarSubPagina("#familias","Familias");
         $("#mainFamilias").html($.template('js/vista/listaFamilias.tpl',{familias:familias}));
-        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Configuración");});
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Miscelánea");});
         activarBotonFuncionalidad('<i class="fa fa-plus"></i>',function(){
             $.mvc.route("aplicacion/creacionFamilia");
         });
@@ -298,7 +303,7 @@ $.mvc.controller.create("aplicacion", {
     listaEspecies:function(){
         activarSubPagina("#especies","Especies");
         $("#mainEspecies").html($.template('js/vista/listaEspecies.tpl',{especies:especies}));
-        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Configuración");});
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Miscelánea");});
         activarBotonFuncionalidad('<i class="fa fa-plus"></i>',function(){
             $.mvc.route("aplicacion/creacionEspecie");
         });
@@ -694,10 +699,6 @@ objetoBrujulaTransecta.vueltas = 0;
                 activarSubPagina("#mainsub","Pagina Principal");
                  $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
 
-               // justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
-                
-               // inicializarPie(0,"porcentajeTransecta");
-                //inicializarPie(nivelBateria,"porcentajeBateria");
                 refrescarGraficoPie(valorJustgage,"porcentajeTransecta");
                 
 //                $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
@@ -717,48 +718,6 @@ objetoBrujulaTransecta.vueltas = 0;
                 }
         })
     });
-
-
-
-       /* Y.Transecta.obtenerTransecta(id,function(transecta){
-            transectaActiva = transecta;
-            if(parseInt(reanudacion) == 0){
-                var visita = new Y.Visita({fecha:Date.now()});
-                visita.save(transecta.get("id"));
-                transecta.get("visitas").push(visita);
-                metrosRestantes = CANTIDAD_PUNTOS * transectaActiva.get("distanciaEntrePuntos");
-            }else{
-                valorJustgage = transecta.get("visitas")[transecta.get("visitas").length-1].get("puntos").length;
-                console.log("valor Justgage ="+valorJustgage);
-                metrosRestantes = (CANTIDAD_PUNTOS - valorJustgage) * transectaActiva.get("distanciaEntrePuntos");
-                $.mvc.route("/aplicacion/activarCampania/"+encodeURIComponent(transectaActiva.get("nombreCampania"))+"/"+transectaActiva.get("fechaCampania")+"/1");
-
-            }
-            activarBrujulaSeguimiento(transectaActiva.get("sentido"));
-            activarSubPagina("#mainsub","Pagina Principal");
-             $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
-
-            justgageTransecta = new JustGage({ id: "justgageTransecta",value: valorJustgage.toString(),min: 0,max: 100,title: "Progreso Transecta", symbol:"%",label:"Completado",levelColors:["#02cb28"],titleFontColor:"white",labelFontColor:"white",valueFontColor:"white"});
-            $("#indicadorDistancia").css({height:($("#justgageTransecta").offset().height)+"px"});
-
-            $("#metrosRestantes").empty();
-            $("#metrosRestantes").append(metrosRestantes);
-
-            ocultarMascara();
-            if (transecta.get("visitas").length != 1 && transecta.get("visitas")[transecta.get("visitas").length-1].get("puntos").length == 0){
-
-                if(parseInt(reanudacion)==0)
-                    ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
-
-                $.mvc.route("/aplicacion/guiarPrimerPunto/"+transecta.get("visitas")[0].get("puntos")[0].get("coordenadas"));
-            }else{
-                 if(parseInt(reanudacion)==0)
-                    $.mvc.route("aplicacion/crearPunto");
-            }
-
-
-        });*/
-//intervaloRefreshJustgage = setInterval(refrescarJustgage,2000);
     },
 
     crearPunto:function(){
@@ -965,6 +924,7 @@ objetoBrujulaTransecta.vueltas = 0;
                     },50);
                     destinoFinal = true;
                     dist = -1;
+                    r.detener();
                     /*$.ui.hideModal();
                     Gps.pararGps();
                     setTimeout(function(){r.detener()},100);
@@ -1018,8 +978,8 @@ objetoBrujulaTransecta.vueltas = 0;
 
     sincronizacion:function(){
         activarSubPagina("#sincronizacion","Sincronización");
-        $("#mainSincronizacion").html($.template('js/vista/sincronizacion.tpl',{}));
-        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Configuración");});
+        $("#mainSincronizacion").html($.template('js/vista/sincronizacion.tpl',{"conf":configuracion}));
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Miscelánea");});
 
     },
 
@@ -1031,10 +991,18 @@ objetoBrujulaTransecta.vueltas = 0;
         }
         $("#dispositivos").empty();
         var ipServidorExterno = $("#servidorExterno").val();
-        if(ipServidorExterno != ""){
+        buscarRedConIP(ipServidorExterno,function(infoServidor){
+            var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+encodeURI(infoServidor.nombrePC)+'/'+infoServidor.infoAdicional.especies+'/'+infoServidor.infoAdicional.familias+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+                      $("#dispositivos").removeClass("oculto");
+                      $("#noServidores").addClass("oculto");
+                      $("#dispositivos").append($servidor);
+                      ocultarMascara();
+        });
+        
+        /*if(ipServidorExterno != ""){
             $.ajax({
               type: "POST",
-              url: "http://"+ipServidorExterno+":8000/quienSos/",
+              url: "http://"+ipServidorExterno+":"+configuracion.puerto+"/quienSos/",
               data: {'nombre':'pepito'},
               success: function(data){
                   var infoServidor = JSON.parse(data);
@@ -1047,18 +1015,7 @@ objetoBrujulaTransecta.vueltas = 0;
                   }
                 }
             });
-        }
-
-     //   buscarEnRed(1);
-        //setTimeout(function(){
-          //  var lis = $("#dispositivos").find("li");
-        //    ocultarMascara();
-          //  if(lis.length == 0){
-            //    buscarEnRed(0);
-              //  setTimeout(function(){ocultarMascara()},20000);
-            //}
-
-     //   },10000);
+        }*/
     },
 
     sincronizar:function(direccion,nombrePCCodificado,cantidadEspecies,cantidadFamilias){
@@ -1070,21 +1027,44 @@ objetoBrujulaTransecta.vueltas = 0;
         sincronizarElementoSimple(servidor,"forma","FormaBiologica","Forma Biológica",function(s){formasBiologicas.push(s)},function(){formasBiologicas=[]});
         sincronizarElementoSimple(servidor,"tipo","TipoBiologico","Tipo Biológico",function(s){tiposBiologicos.push(s)},function(){tiposBiologicos=[]});
         sincronizarElementoSimple(servidor,"estado","EstadoDeConservacion","Estado De Conservación",function(s){estadosDeConservacion.push(s)},function(){estadosDeConservacion=[]});
+        campaniasASincronizar = [];
         Y.Familia.sincronizar(servidor,function(){
             console.log("termino la familia y comienza ...");
             Y.Especie.sincronizar(servidor,function(){
                 console.log("termino la especie y termino");
                 campañas.map(function(c){
                     Y.Campania.obtenerCampaniaCompleta(c.nombre,c.fecha,function(campania){
+                        
+                        campaniasASincronizar.push(campania);
                         campania.sincronizar(servidor);
+                        
                     });
                 })
             });
         });
 
+    },
+    
+    configuracion:function(){
+        activarSubPagina("#configuracion","Configuración");
+        $("#mainConfiguracion").html($.template('js/vista/configuracion.tpl',{"conf":configuracion}));
+        activarBotonAtras(function(){activarSubPagina("#uib_page_3","Miscelánea");});
+
+    },
+
+    guardarConfiguracion:function(){
+        var puerto = $("#mainConfiguracion").find("#puertoServidor").val();
+        var direccion = $("#mainConfiguracion").find("#direccionServidor").val();
+        if(puerto.length != 0 && direccion.length != 0){
+            configuracion.servidor = direccion;
+            configuracion.puerto = puerto;
+            localStorage.setItem('conf', JSON.stringify(configuracion));
+            activarSubPagina("#uib_page_3","Miscelánea");
+            mensajeExitoso("Configuración Almacenada");
+        }else{
+            mensajeError("Hay campos vacios");
+        }
     }
-
-
 
 
 
