@@ -4,8 +4,6 @@
     {{ for(var j=0; j<it.transecta.get('visitas').length;j++){ }}
     <div class="sliderVisita">
         <div class="headerVisita">
-    <div class="botonNavegacion izquierda" name="sliderIzquierda"></div>
-    <div class="botonNavegacion derecha" name="sliderDerecha"></div>
             <div id="infoVisita">
                 <div class="numeroVisita"> {{=(j+1)+"/"+it.transecta.get('visitas').length}} </div>
                 <p>Ambiente de Transecta: {{=it.transecta.get('ambiente')}}</p>
@@ -64,8 +62,6 @@
 
         <div id="visita{{=it.visitas[j].get('fecha')}}"  class="contenedorPuntosVisita">
             <div id="contenedorImagenes0" class="sliderPuntosVisita">
-<div class="botonNavegacion izquierda" name="sliderIzquierda"></div>
-<div class="botonNavegacion derecha" name="sliderDerecha"></div>
 
                 {{ if(it.transecta.get('visitas')[j].get('puntos').length == 0){ }}
 
@@ -80,8 +76,6 @@
                     {{if( contador == 9){ contador=0;}}
                         </div>
                         <div class="sliderPuntosVisita" id="contenedorImagenes{{=i}}">
-                            <div class="botonNavegacion izquierda" name="sliderIzquierda"></div>
-                            <div class="botonNavegacion derecha" name="sliderDerecha"></div>
                     {{ } contador++; }}
 
 

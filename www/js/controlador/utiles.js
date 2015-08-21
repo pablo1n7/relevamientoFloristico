@@ -505,6 +505,7 @@ var Slider = function(idSlider,claseHijos,ancho,callback){
 
 
     this.izquierda = function(){
+this.cantidadContenedores = $("#"+this.id).find("."+this.objetosMoviles).length;
         if(this.indice < this.cantidadContenedores-1){
             this.indice++;
             var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
@@ -519,6 +520,7 @@ var Slider = function(idSlider,claseHijos,ancho,callback){
 
     this.derecha = function(){
         if(this.indice > 0){
+this.cantidadContenedores = $("#"+this.id).find("."+this.objetosMoviles).length;
             this.indice--;
             var contenedores =  $("#"+this.id).find("."+this.objetosMoviles);
             var cont1 = $(contenedores[this.indice+1]);
@@ -561,12 +563,7 @@ var Slider = function(idSlider,claseHijos,ancho,callback){
         });
 
         
-//        var botonIzquierda = $("#"+_this.id).find("[name|=sliderDerecha]")[0];
-//        var botonDerecha = $("#"+_this.id).find("[name|=sliderDerecha]")[0];
-        
-/*        var botonIzquierda = $($("#"+_this.id).find("."+_this.objetosMoviles)).find("[name|=sliderIzquierda]")[0];
-        var botonDerecha = $($("#"+_this.id).find("."+_this.objetosMoviles)).find("[name|=sliderIzquierda]")[0];*/
-        var botonDerecha = [];
+/*        var botonDerecha = [];
         var botonIzquierda = [];
         var arregloObjetos = $("#"+_this.id).find("."+_this.objetosMoviles);
         for(var i = 0;i < arregloObjetos.length ;i++){
@@ -574,7 +571,6 @@ var Slider = function(idSlider,claseHijos,ancho,callback){
             botonIzquierda.push($(arregloObjetos[i]).find("[name|=sliderIzquierda]")[0]);
         }
         
-//        var alto = $($(botonDerecha).parent()).offset().height;
         var alto = $($(botonDerecha[0]).parent()).offset().height;
         $(botonDerecha).css({"height":alto+"px"});
         $(botonIzquierda).css({"height":alto+"px"});
@@ -593,7 +589,7 @@ var Slider = function(idSlider,claseHijos,ancho,callback){
             setTimeout(function(){
                 $("body").removeClass("desenlazar");
             },500);
-        });
+        });*/
         
     };
 
