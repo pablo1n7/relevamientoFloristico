@@ -146,5 +146,16 @@ Y.add('tipoEjemplarModelo',function(Y){
             });
         });
     };
+    
+    Y.TipoEjemplar.sincronizar = function(servidor,callback){
+        console.log("ACAAAAAAAAAAAAAAAAAAAAAAA");
+        for(var i=0; i< tipoEjemplares.length;i++){
+            console.log("no se si llego aca");
+            if(tipoEjemplares[i].get("id_servidor")==null)
+                return tipoEjemplares[i].sincronizar(servidor,function(servidor){Y.TipoEjemplar.sincronizar(servidor,callback);});
+        }
+        console.log("nunca llego aca");
+        callback(servidor);
+    };
 
 }, '0.0.1', { requires: ['model','propiedadModelo']});

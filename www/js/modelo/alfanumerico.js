@@ -5,6 +5,10 @@ Y.add('alfanumericoModelo',function(Y){
                 var $input = $("<input/>");
                 $input.attr({'placeholder':'a,b,cd...',"type":"text"});
                 return $input;
+            },
+            normalizar:function(){
+                var tipo = {idPadre:this.get("idPadre"),id:this.get("idPadre"),tipo:"alfanumerico"};
+                return tipo;
             }
 
 

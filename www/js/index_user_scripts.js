@@ -12,7 +12,13 @@
             /*activate_subpage("#mainsub");
             desactivarBotonesHeader();
             */
-             activarSubPagina("#mainsub","Inicio");
+             
+             if(transectaActiva != null)
+                activarSubPagina("#mainsub",transectaActiva.get("ambiente"));
+             else
+                activarSubPagina("#mainsub","Inicio");
+                 
+             
 
 
         });

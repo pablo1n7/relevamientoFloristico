@@ -124,6 +124,7 @@ Y.add('transectaModelo',function(Y){
 
     Y.Transecta.obtenerTransectas = function(nombre,fecha,callback,callbackDeVacio){
         var q = "select * from Transecta where nombreCampania='"+nombre+"' and fechaCampania="+fecha+";"
+        var arregloTransectas = [];
         db.transaction(function (t) {
             t.executeSql(q, null, function (t, data) {
                 for (var i = 0; i < data.rows.length; i++) {
@@ -136,11 +137,28 @@ Y.add('transectaModelo',function(Y){
                     //    })
 
                     //}(transecta,callback))
+                    arregloTransectas.push(transecta);
 
-                    callback(transecta);
+            
                 };
+                 var controlarTransectas = function(coleccionTransectas,totalTransectas,callback){
+                    console.warn("Indiada 3.1!");
+                    console.warn("Total: "+totalTransectas);
+                    console.warn("Tamaño arreglo: "+coleccionTransectas.length);
+                    if(coleccionTransectas.length < totalTransectas){
+                        setTimeout(function(){
+                            controlarTransectas(coleccionTransectas,totalTransectas,callback);
+                        },2000);
+                    }else{
+                        console.log("Finalizando Indiada 3.1");
+                        callback(coleccionTransectas);
+                    }
+                };
+                
                 if (data.rows.length == 0){
                     callbackDeVacio();
+                }else{
+                    controlarTransectas(arregloTransectas,data.rows.length,callback);
                 }
             });
         });

@@ -5,6 +5,10 @@ Y.add('numericoModelo',function(Y){
                 var $input = $("<input/>");
                 $input.attr({'value':'0','placeholder':'0,1,2...',"type":"number","patron": "^(-?[0-9]+)$", "mensaje":"" });
                 return $input;
+            },
+            normalizar:function(){
+                var tipo = {idPadre:this.get("idPadre"),id:this.get("idPadre"),tipo:"numerico"};
+                return tipo;
             }
         },{
             ATTRS:{

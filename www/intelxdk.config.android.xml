@@ -4,9 +4,16 @@
 <!--To change the contents of this file, see the documentation on the intelxdk.config.additions.xml file.-->
 <intelxdk:version value="1.0"/>
 <intelxdk:cordova-cli version="4.1.2"/>
-<name>relevamientoFloristico2</name>
+<name>LeafLab</name>
 <content src="index.html"/>
 <access origin="*"/>
+<icon platform="android" src="img/splash/icon36.png" density="ldpi" width="36" height="36"/>
+<icon platform="android" src="img/splash/icon48.png" density="mdpi" width="48" height="48"/>
+<icon platform="android" src="img/splash/icon72.png" density="hdpi" width="72" height="72"/>
+<icon platform="android" src="img/splash/icon96.png" density="xhdpi" width="96" height="96"/>
+<splash platform="android" src="img/splash/leafLab470.png" density="mdpi" width="320" height="470" orientation="portrait"/>
+<splash platform="android" src="img/splash/leafLab480.png" density="hdpi" width="480" height="640" orientation="portrait"/>
+<splash platform="android" src="img/splash/leafLab720.png" density="xhdpi" width="720" height="960" orientation="portrait"/>
 <intelxdk:plugin intelxdk:name="Device" intelxdk:value="org.apache.cordova.device" intelxdk:version="0.2.13"/>
 <intelxdk:plugin intelxdk:name="SplashScreen" intelxdk:value="org.apache.cordova.splashscreen" intelxdk:version="0.3.5"/>
 <intelxdk:plugin intelxdk:name="Compass" intelxdk:value="org.apache.cordova.device-orientation" intelxdk:version="0.3.10"/>
@@ -24,4 +31,6 @@
 <preference name="android-targetSdkVersion" value="19"/>
 <preference name="android-installLocation" value="auto"/>
 <preference name="Fullscreen" value="true"/>
+<preference name="Orientation" value="portrait"/>
+<preference name="splashscreen" value="splash"/>
 <!--creationInfo:{"src":"","projectTypeName":"com.intel.xdk.projecttype.jsapp"}--></widget>

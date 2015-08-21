@@ -2,7 +2,7 @@ $.mvc.controller.create("aplicacion", {
     views:["js/vista/main.tpl",'js/vista/cargarEjemplar.tpl','js/vista/crearTipoEjemplar.tpl','js/vista/listaTipoEjemplar.tpl','js/vista/verTipoEjemplar.tpl','js/vista/listaFamilias.tpl','js/vista/crearFamilia.tpl','js/vista/listaEspecies.tpl','js/vista/crearEspecie.tpl','js/vista/verEspecie.tpl','js/vista/crearPlanta.tpl','js/vista/listaCampania.tpl','js/vista/crearCampania.tpl','js/vista/campaniaActiva.tpl','js/vista/crearTransecta.tpl','js/vista/crearPunto.tpl','js/vista/recolectarPunto.tpl','js/vista/seguimientoTransecta.tpl','js/vista/vistaPuntos.tpl','js/vista/vistaPuntosVacio.tpl','js/vista/relevarRecolectable.tpl','js/vista/guiarPrimerPunto.tpl','js/vista/sincronizacion.tpl','js/vista/configuracion.tpl'], //These are the views we will use with the controller
     init:function(){
 
-        CANTIDAD_PUNTOS = 11;
+        CANTIDAD_PUNTOS = 100;
         DISTANCIA_ACEPTABLE =10;
         especies = [];
         campañas = [];
@@ -48,7 +48,7 @@ $.mvc.controller.create("aplicacion", {
             $("body").addClass("desenlazar");
             setTimeout(function(){
                 $("body").removeClass("desenlazar");
-            },100);
+            },300);
         });
     },
     default:function(){
@@ -188,14 +188,14 @@ $.mvc.controller.create("aplicacion", {
     },
 
     seleccionarEjemplar: function(numeroId){
-        $("#item"+numeroId).html($.template('js/vista/cargarEjemplar.tpl',{tipoEjemplares:campañaActiva.get("tipoEjemplares"),numeroId:numeroId}));
+        $("#item"+numeroId).html($.template('js/vista/cargarEjemplar.tpl',{tipoEjemplares:tipoEjemplares,numeroId:numeroId}));
         $.mvc.route("aplicacion/crearEjemplar/"+numeroId);
     },
 
     crearEjemplar:function(numeroId){
         console.log("Funcion Crear ejemplar");
         var indexTipoEjemplar = $("#selectTipoEjemplares"+numeroId).get(0).selectedIndex;
-        var seleccion = campañaActiva.get("tipoEjemplares")[indexTipoEjemplar];
+        var seleccion = tipoEjemplares[indexTipoEjemplar];
         var ejemplar = new Y.Ejemplar({"tipoEjemplar":seleccion});
         ejemplar.crearCampos(seleccion.get("campos"));
         $("#ejemplar"+numeroId).empty();
@@ -393,18 +393,9 @@ $.mvc.controller.create("aplicacion", {
         var nombreCampania = $("#nombreCampaña").val();
         var descripcion=$("#descripcionCampaña").val();
 
-        var tiposSeleccionados = ($("#contenedorListaTipos").find("[type|=checkbox]")).get().filter(function(x){return x.checked});
-        var idTipos = tiposSeleccionados.map(function(x){return x.value});
-         idTipos.push("1");
+  
         campania = new Y.Campania({"nombre":nombreCampania,"descripcion":descripcion,"fecha":Date.now()});
-        for(var i = 0; i< idTipos.length ;i++){
-            var tipoEjemplar = (tipoEjemplares.filter(function(tipo){return tipo.get("id")==idTipos[i]}))[0];
-            campania.get("tipoEjemplares").push(tipoEjemplar);
-        }
-
-
-
-         mostrarMascara('Guardando...');
+        mostrarMascara('Guardando...');
         campania.save(function(){
             ocultarMascara();
             mensajeExitoso("Campaña Creada");
@@ -430,7 +421,7 @@ $.mvc.controller.create("aplicacion", {
             }
 
             $("#mainCampañas").html($.template('js/vista/campaniaActiva.tpl',{campania:campañaActiva}));
-            toogleAlto("#contenedorTipos",$("#contenedorTipos").offset().height+"px");
+           // toogleAlto("#contenedorTipos",$("#contenedorTipos").offset().height+"px");
 
 
         });
@@ -696,7 +687,7 @@ objetoBrujulaTransecta.vueltas = 0;
 
                 }
                 activarBrujulaSeguimiento(transectaActiva.get("sentido"));
-                activarSubPagina("#mainsub","Pagina Principal");
+                activarSubPagina("#mainsub",transectaActiva.get("ambiente"));
                  $("#mainSeguimiento").html($.template('js/vista/seguimientoTransecta.tpl'));
 
                 refrescarGraficoPie(valorJustgage,"porcentajeTransecta");
@@ -724,7 +715,7 @@ objetoBrujulaTransecta.vueltas = 0;
 
         if(transectaActiva.get("visitas").length == 0 || transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length != CANTIDAD_PUNTOS){
             $("#mainCrearPunto").html($.template('js/vista/crearPunto.tpl',{}));
-            mostrarModal("#crearPunto","fade","Recolectar Punto",function(){
+            mostrarModal("#crearPunto","fade","Recolectar Punto #"+(transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length+1),function(){
                 eliminarImagenes("#datosPlantas");
             });
         }else{
@@ -1028,22 +1019,40 @@ objetoBrujulaTransecta.vueltas = 0;
         sincronizarElementoSimple(servidor,"tipo","TipoBiologico","Tipo Biológico",function(s){tiposBiologicos.push(s)},function(){tiposBiologicos=[]});
         sincronizarElementoSimple(servidor,"estado","EstadoDeConservacion","Estado De Conservación",function(s){estadosDeConservacion.push(s)},function(){estadosDeConservacion=[]});
         campaniasASincronizar = [];
-        Y.Familia.sincronizar(servidor,function(){
+        Y.TipoEjemplar.sincronizar(servidor,function(servidor){
+            
+            Y.Familia.sincronizar(servidor,function(){
+                console.log("termino la familia y comienza ...");
+                Y.Especie.sincronizar(servidor,function(){
+                    console.log("termino la especie y termino");
+                    campañas.map(function(c){
+                        Y.Campania.obtenerCampaniaCompleta(c.nombre,c.fecha,function(campania){
+                            campaniasASincronizar.push(campania);
+                            campania.sincronizar(servidor);
+
+                        });
+                    })
+                });
+            });
+            
+            
+        });
+        /*Y.Familia.sincronizar(servidor,function(){
             console.log("termino la familia y comienza ...");
             Y.Especie.sincronizar(servidor,function(){
                 console.log("termino la especie y termino");
                 campañas.map(function(c){
                     Y.Campania.obtenerCampaniaCompleta(c.nombre,c.fecha,function(campania){
-                        
                         campaniasASincronizar.push(campania);
                         campania.sincronizar(servidor);
                         
                     });
                 })
             });
-        });
-
+        });*/
     },
+    
+     
     
     configuracion:function(){
         activarSubPagina("#configuracion","Configuración");

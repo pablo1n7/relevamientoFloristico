@@ -42,10 +42,6 @@ Y.add('tipoPropiedadModelo',function(Y){
                 }else{
                     callback();
                 };
-            },
-            normalizar:function(){
-                var tipo = {idPadre:this.get("idPadre"),id:this.get("idPadre"),tipo:"simple"};
-                return tipo;
             }
         /*sincronizar:function(servidor,callback){
             var _this = this;
