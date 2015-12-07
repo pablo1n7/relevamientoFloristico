@@ -859,62 +859,62 @@ function ocultarMascara(){
 
 }
 
-function ordenarEspecies(especiesPredominante,ultimaVisita){
+function ordenarEspecies(ultimaVisita,inicializar){
+    
+    var inicializar = inicializar || 0;
+    
+    if( ultimaVisita.get("puntos").length == 0 || inicializar==1 ){
+  //      var nombreEspecies = [];
+        var q = "select * from TransectaEspecie where idTransecta="+transectaActiva.get("id")+";";
+        db.transaction(function (t) {
+            t.executeSql(q, null, function (t, data) {
+//                for (var i = 0; i < data.rows.length; i++) {
+                for (var i = (data.rows.length-1); i >= 0; i--) {
+//                    nombreEspecies.push(data.rows.item(i).nombreEspecie);
+                    especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == data.rows.item(i).nombreEspecie})[0]),1)[0]);
+                };
+                ordenarDinamicaEspecies(ultimaVisita);
+//                for(var i=nombreEspecies.length-1; i>=0 ;i--){
+//                    especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == nombreEspecies[i]})[0]),1)[0]);
+  //              }
+            });
+            
+        });
+        
+    
+    }
+    else{
+        ordenarDinamicaEspecies(ultimaVisita);
+    }
+
+}
+
+function ordenarDinamicaEspecies(ultimaVisita){
     diccionarioEspecies ={};
-    for (var i = 0; i< ultimaVisita.get("puntos").length; i++ ){
+    for (var i = ultimaVisita.get("puntos").length-1; i>=0 ; i-- ){
         var plantasPunto = ultimaVisita.get("puntos")[i].get("items").filter(function(item){ return item.name == "Planta" });
         plantasPunto.map(function(planta,indice){
             if(diccionarioEspecies.hasOwnProperty(planta.get("especie").get("nombre")))
-                diccionarioEspecies[planta.get("especie").get("nombre")] = diccionarioEspecies[planta.get("especie").get("nombre")] +1;
+                diccionarioEspecies[planta.get("especie").get("nombre")] = parseInt(diccionarioEspecies[planta.get("especie").get("nombre")]) +1;
             else
                 diccionarioEspecies[planta.get("especie").get("nombre")] = 1;
         });
     }
-    
-    arregloObjetos=[];
+
+    diccionarioEspecies["No Definido"] = -1;
+    especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == "No Definido"})[0]),1)[0]);
+    var arregloObjetos=[];
     var claves =Object.keys(diccionarioEspecies);
     for(var i = 0; i < claves.length;  i++ ){
         arregloObjetos.push({"nombre":claves[i],"valor":diccionarioEspecies[claves[i]]});
     }
 
-    arregloObjetos.sort(function(c,d){ return c.valor < d.valor });
+    arregloObjetos.sort(function(c,d){ return d.valor - c.valor });
     var cantidad = (3 >= arregloObjetos.length)?arregloObjetos.length:3;
-    for(var i=cantidad-1; i>=0 ;i--){
+        for(var i=cantidad-1; i>=0 ;i--){
+//    for(var i=0; i<=(cantidad-1);i++){
         especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == arregloObjetos[i].nombre})[0]),1)[0]);
     }
-
-
-
-}
-
-function ordenarEspecies1(especiesPredominante,ultimaVisita){
-    diccionarioEspecies ={};
-    Y.Planta.obtenerPlantasVisita(ultimaVisita.get("idTransecta"),ultimaVisita.get("fecha"),function(plantas){
-        plantas.map(function(planta,indice){
-            if(diccionarioEspecies.hasOwnProperty(planta.get("especie")))
-                diccionarioEspecies[planta.get("especie")] = diccionarioEspecies[planta.get("especie")] +1;
-            else
-                diccionarioEspecies[planta.get("especie")] = 1;
-        });
-
-
-        arregloObjetos=[];
-        var claves =Object.keys(diccionarioEspecies);
-        for(var i = 0; i < claves.length;  i++ ){
-            arregloObjetos.push({"nombre":claves[i],"valor":diccionarioEspecies[claves[i]]});
-        }
-
-        arregloObjetos.sort(function(c,d){ return c.valor < d.valor });
-        var cantidad = (3 >arregloObjetos.length)?arregloObjetos.length:4;
-        for(var i=cantidad-1; i>=0 ;i--){
-            especies.unshift(especies.splice(especies.indexOf(especies.filter(function(e){return e.get("nombre") == arregloObjetos[i].nombre})[0]),1)[0]);
-        }
-
-
-
-
-    });
-
 }
 
 
@@ -974,6 +974,7 @@ function verificarVisitas(){
                                 mensajeConfirmacion("Reanudar Visita","Hay una Visita pendiente, desea continuarla?",
                                     function(){console.log("reanudo");
                                                $.mvc.route("aplicacion/activarTransecta/"+transectaAActivar+"/1");
+                                              // ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1]);
                                     },function(){
                                         console.log("cancelo");
                                         mostrarMascara("Eliminando visita, por favor espere");

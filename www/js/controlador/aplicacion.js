@@ -700,10 +700,13 @@ objetoBrujulaTransecta.vueltas = 0;
                 if (transectaActiva.get("visitas").length != 1 && transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1].get("puntos").length == 0){
 
 //                    if(parseInt(reanudacion)!==0)
-                    ordenarEspecies(especies,transectaActiva.get("visitas")[transectaActiva.get("visitas").length-2]);
+                    ordenarEspecies(transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1],1);
 
                     $.mvc.route("/aplicacion/guiarPrimerPunto/"+transectaActiva.get("visitas")[0].get("puntos")[0].get("coordenadas"));
                 }else{
+                    
+                    ordenarEspecies(transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1],1);
+                    
                      if(parseInt(reanudacion)==0)
                         $.mvc.route("aplicacion/crearPunto");
                 }
@@ -776,6 +779,7 @@ objetoBrujulaTransecta.vueltas = 0;
         $("#metrosRestantes").empty();
         $("#metrosRestantes").append(transectaActiva.get("distanciaEntrePuntos")*(CANTIDAD_PUNTOS-cantPuntos));
         mensajeExitoso("Punto Recolectado");
+        ordenarDinamicaEspecies(transectaActiva.get("visitas")[transectaActiva.get("visitas").length-1]);
         arregloImgResiduales = [];
 
     },

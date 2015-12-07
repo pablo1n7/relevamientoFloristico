@@ -241,7 +241,7 @@ _bsn.AutoSuggest.prototype.getSuggestions = function (val)
 			//if ((this.aSuggestions[i].value.substr(0,val.length).toLowerCase() == val.toLowerCase())&& (arr.length<3))
 			//	arr.push( this.aSuggestions[i] );
             var re = new RegExp(val,'i');
-            if (this.aSuggestions[i].value.match(re) != null && (arr.length<3))
+            if (this.aSuggestions[i].value.match(re) != null && (arr.length<4))
 				arr.push( this.aSuggestions[i] );
 		}
 
@@ -416,6 +416,9 @@ document.getElementsByTagName("body")[0].appendChild(div);
 	div.style.left 		= pos.x + "px";
 //	div.style.top 		= ( pos.y + this.fld.offsetHeight + this.oP.offsety ) + "px";
 	div.style.top 		= "100px";
+    if(device.platform != "Android"){
+        div.style.top = "190px";
+    };
 	div.style.width 	= this.fld.offsetWidth + "px";
 
 

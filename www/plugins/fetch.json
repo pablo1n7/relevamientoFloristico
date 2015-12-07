@@ -1,0 +1,42 @@
+{
+    "intel.xdk.camera": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/01org/cordova-plugin-intel-xdk-camera.git",
+            "subdir": ".",
+            "ref": "r1.1.5"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "intel.xdk.device": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/01org/cordova-plugin-intel-xdk-device.git",
+            "subdir": ".",
+            "ref": "r1.1.12"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "intel.xdk.geolocation": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/01org/cordova-plugin-intel-xdk-geolocation.git",
+            "subdir": ".",
+            "ref": "r1.1.0"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "intel.xdk.player": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/01org/cordova-plugin-intel-xdk-player.git",
+            "subdir": ".",
+            "ref": "r1.1.0"
+        },
+        "is_top_level": true,
+        "variables": {}
+    }
+}

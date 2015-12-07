@@ -12,7 +12,7 @@
 
 
     Toques
-    <input name="toquesPlanta" type="number" placeholder="toques" {{ if(it.conToques != 0){  }}
+    <input name="toquesPlanta" type="number" onfocus="this.value=''" placeholder="toques" {{ if(it.conToques != 0){  }}
      value="0" disabled {{ } else{ }} value="1" {{ if(it.numeroId == 1){  }} patron="^([1-9][0-9]*)$"  {{ } else{ }} patron="^([0-9]+)$"{{ } }} mensaje="" {{ } }}>
     <br>
     <br>

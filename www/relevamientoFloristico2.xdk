@@ -1,12 +1,12 @@
 {
   "project": {
-    "projectSettingsVersion": "1.2",
+    "projectSettingsVersion": "2.0.0",
     "creationData": {
       "type": "Import",
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "",
       "projectGuid": "ffe5f990-4860-45b1-be7f-e5714465ed1d",
-      "lastModifiedDate": 1440108685665,
+      "lastModifiedDate": 1448295791691,
       "creationDate": 1437487061628
     },
     "sourceDirectory": "",
@@ -16,26 +16,50 @@
     "startFile": "index.html",
     "projectTags": [],
     "projectFiles": {},
-    "projectDirectories": {},
+    "projectDirectories": {
+      "xdk": {
+        "settings": {
+          "project": {
+            "XDK-generated": "true"
+          }
+        }
+      }
+    },
     "libraries": [],
     "cordovaPlugins": [
       {
         "id": "org.apache.cordova.device",
         "version": "0.2.13",
-        "selectedState": "Auto",
+        "selectedState": "Included",
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.device",
+        "permissions": {},
+        "topLevel": true,
+        "checksum": "87180a02",
+        "gitref": "",
+        "name": "Device",
+        "description": "Cordova Device Plugin"
       },
       {
         "id": "org.apache.cordova.splashscreen",
         "version": "0.3.5",
-        "selectedState": "Auto",
+        "selectedState": "Included",
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.splashscreen",
+        "permissions": {},
+        "topLevel": true,
+        "checksum": "ae76b446",
+        "gitref": "",
+        "name": "Splashscreen",
+        "description": "Cordova Splashscreen Plugin"
       },
       {
         "id": "org.apache.cordova.device-orientation",
@@ -44,7 +68,20 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.device-orientation",
+        "permissions": {
+          "android:name": [
+            "android.permission.ACCESS_COARSE_LOCATION",
+            "android.permission.ACCESS_FINE_LOCATION"
+          ]
+        },
+        "topLevel": true,
+        "checksum": "cf4d3a65",
+        "gitref": "",
+        "name": "Device Orientation",
+        "description": "Cordova Device Orientation Plugin"
       },
       {
         "id": "org.apache.cordova.file-transfer",
@@ -53,7 +90,19 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.file-transfer",
+        "permissions": {
+          "android:name": [
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+          ]
+        },
+        "topLevel": true,
+        "checksum": "ef15dbf7",
+        "gitref": "",
+        "name": "File Transfer",
+        "description": "Cordova File Transfer Plugin"
       },
       {
         "id": "org.apache.cordova.file",
@@ -62,7 +111,19 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.file",
+        "permissions": {
+          "android:name": [
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+          ]
+        },
+        "topLevel": false,
+        "checksum": "143330fa",
+        "gitref": "",
+        "name": "File",
+        "description": "Cordova File Plugin"
       },
       {
         "id": "org.apache.cordova.geolocation",
@@ -71,7 +132,20 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.geolocation",
+        "permissions": {
+          "android:name": [
+            "android.permission.ACCESS_COARSE_LOCATION",
+            "android.permission.ACCESS_FINE_LOCATION"
+          ]
+        },
+        "topLevel": true,
+        "checksum": "72943108",
+        "gitref": "",
+        "name": "Geolocation",
+        "description": "Cordova Geolocation Plugin"
       },
       {
         "id": "intel.xdk.camera",
@@ -79,7 +153,22 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "repo",
+        "origin": "https://github.com/01org/cordova-plugin-intel-xdk-camera.git",
+        "gitref": "r1.1.5",
+        "subdir": ".",
+        "permissions": {
+          "android:name": [
+            "android.permission.CAMERA",
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+          ]
+        },
+        "topLevel": true,
+        "checksum": "c8ea9882",
+        "version": "1.1.5",
+        "name": "Intel XDK Camera",
+        "description": "Intel XDK Camera Plugin"
       },
       {
         "id": "org.apache.cordova.camera",
@@ -88,7 +177,19 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.camera",
+        "permissions": {
+          "android:name": [
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+          ]
+        },
+        "topLevel": true,
+        "checksum": "3bfcc0aa",
+        "gitref": "",
+        "name": "Camera",
+        "description": "Cordova Camera Plugin"
       },
       {
         "id": "intel.xdk.device",
@@ -96,7 +197,25 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "repo",
+        "origin": "https://github.com/01org/cordova-plugin-intel-xdk-device.git",
+        "gitref": "r1.1.12",
+        "subdir": ".",
+        "permissions": {
+          "android:name": [
+            "android.permission.ACCESS_WIFI_STATE",
+            "android.permission.READ_PHONE_STATE",
+            "android.permission.WAKE_LOCK",
+            "android.permission.CAMERA",
+            "android.permission.FLASHLIGHT"
+          ]
+        },
+        "topLevel": true,
+        "checksum": "1a0d6390",
+        "version": "1.1.12",
+        "name": "Intel XDK Device",
+        "description": "Intel XDK Device Plugin"
       },
       {
         "id": "org.apache.cordova.media",
@@ -105,7 +224,22 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.media",
+        "permissions": {
+          "android:name": [
+            "android.permission.RECORD_AUDIO",
+            "android.permission.MODIFY_AUDIO_SETTINGS",
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_PHONE_STATE"
+          ]
+        },
+        "topLevel": true,
+        "checksum": "e06f1af9",
+        "gitref": "",
+        "name": "Media",
+        "description": "Cordova Media Plugin"
       },
       {
         "id": "intel.xdk.geolocation",
@@ -113,7 +247,22 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "repo",
+        "origin": "https://github.com/01org/cordova-plugin-intel-xdk-geolocation.git",
+        "gitref": "r1.1.0",
+        "subdir": ".",
+        "permissions": {
+          "android:name": [
+            "android.permission.ACCESS_FINE_LOCATION",
+            "android.permission.ACCESS_COARSE_LOCATION"
+          ]
+        },
+        "topLevel": true,
+        "checksum": "4cbab80e",
+        "version": "1.1.0",
+        "name": "Intel XDK Geolocation",
+        "description": "Intel XDK Geolocation Plugin"
       },
       {
         "id": "intel.xdk.player",
@@ -121,7 +270,17 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "repo",
+        "origin": "https://github.com/01org/cordova-plugin-intel-xdk-player.git",
+        "gitref": "r1.1.0",
+        "subdir": ".",
+        "permissions": {},
+        "topLevel": true,
+        "checksum": "3ba728c",
+        "version": "1.1.0",
+        "name": "Intel XDK Player",
+        "description": "Intel XDK Player Plugin"
       },
       {
         "id": "org.apache.cordova.battery-status",
@@ -130,7 +289,15 @@
         "data": {},
         "paramvals": {},
         "dependsOn": [],
-        "dependedBy": []
+        "dependedBy": [],
+        "originType": "cordova.io",
+        "origin": "org.apache.cordova.battery-status",
+        "permissions": {},
+        "topLevel": true,
+        "checksum": "90f67bd1",
+        "gitref": "",
+        "name": "Battery",
+        "description": "Cordova Battery Plugin"
       }
     ],
     "serviceMethods": [],
@@ -149,11 +316,14 @@
         "isActive_": true,
         "appName_": "LeafLab",
         "appID_": "not.yet.specified",
-        "appAccess_": [
-          {
-            "origin": "*"
-          }
-        ],
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [
+            "*"
+          ],
+          "intents": [],
+          "navigation": []
+        },
         "icons_": [
           {
             "relPath": "img/splash/icon36.png",
@@ -222,11 +392,14 @@
         "isActive_": true,
         "appName_": "relevamientoFloristico2",
         "appID_": "not.yet.specified",
-        "appAccess_": [
-          {
-            "origin": "*"
-          }
-        ],
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [
+            "*"
+          ],
+          "intents": [],
+          "navigation": []
+        },
         "icons_": [],
         "splashes_": [],
         "addlPermissions_": "",
@@ -242,16 +415,20 @@
         "name_": "iOS",
         "preferences_": {
           "ios-target": "6",
-          "ios-configuration": "adhoc"
+          "ios-configuration": "adhoc",
+          "Fullscreen": true
         },
         "isActive_": true,
         "appName_": "relevamientoFloristico2",
         "appID_": "not.yet.specified",
-        "appAccess_": [
-          {
-            "origin": "*"
-          }
-        ],
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [
+            "*"
+          ],
+          "intents": [],
+          "navigation": []
+        },
         "icons_": [],
         "splashes_": [],
         "addlPermissions_": "",
@@ -268,11 +445,14 @@
         "isActive_": true,
         "appName_": "relevamientoFloristico2",
         "appID_": "not.yet.specified",
-        "appAccess_": [
-          {
-            "origin": "*"
-          }
-        ],
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [
+            "*"
+          ],
+          "intents": [],
+          "navigation": []
+        },
         "icons_": [],
         "splashes_": [],
         "addlPermissions_": "",
@@ -288,11 +468,14 @@
         "isActive_": false,
         "appName_": "relevamientoFloristico2",
         "appID_": "not.yet.specified",
-        "appAccess_": [
-          {
-            "origin": "*"
-          }
-        ],
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [
+            "*"
+          ],
+          "intents": [],
+          "navigation": []
+        },
         "icons_": [],
         "splashes_": [],
         "addlPermissions_": "",
@@ -307,11 +490,14 @@
         "isActive_": false,
         "appName_": "relevamientoFloristico2",
         "appID_": "not.yet.specified",
-        "appAccess_": [
-          {
-            "origin": "*"
-          }
-        ],
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [
+            "*"
+          ],
+          "intents": [],
+          "navigation": []
+        },
         "icons_": [],
         "splashes_": [],
         "addlPermissions_": "",
@@ -326,11 +512,14 @@
         "isActive_": false,
         "appName_": "relevamientoFloristico2",
         "appID_": "not.yet.specified",
-        "appAccess_": [
-          {
-            "origin": "*"
-          }
-        ],
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [
+            "*"
+          ],
+          "intents": [],
+          "navigation": []
+        },
         "icons_": [],
         "splashes_": [],
         "addlPermissions_": "",
@@ -345,17 +534,45 @@
         "isActive_": false,
         "appName_": "relevamientoFloristico2",
         "appID_": "not.yet.specified",
-        "appAccess_": [
-          {
-            "origin": "*"
-          }
-        ],
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [
+            "*"
+          ],
+          "intents": [],
+          "navigation": []
+        },
         "icons_": [],
         "splashes_": [],
         "addlPermissions_": "",
         "excludedLibraries_": "",
         "appVersion_": "0.0.1"
+      },
+      "WP81": {
+        "platform_": "wp81",
+        "runtime_": "Cordova 3.x",
+        "name_": "WP81",
+        "preferences_": {},
+        "isActive_": true,
+        "appName_": "relevamientoFloristico2",
+        "appID_": "not.yet.specified",
+        "appAccess_": {
+          "mode": "legacy",
+          "network": [],
+          "intents": [],
+          "navigation": []
+        },
+        "icons_": [],
+        "splashes_": [],
+        "addlPermissions_": "",
+        "excludedLibraries_": "",
+        "appVersion_": "0.0.0.1",
+        "cordovaCLIVersion_": "5.1.1"
       }
-    }
+    },
+    "testDirectory": "test"
+  },
+  "editorTab": {
+    "showLiveDevelopmentTasksPanel": false
   }
 }

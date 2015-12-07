@@ -14,7 +14,11 @@
         "org.apache.cordova.camera": {},
         "org.apache.cordova.file-transfer": {},
         "org.apache.cordova.media": {},
-        "org.apache.cordova.battery-status": {}
+        "org.apache.cordova.battery-status": {},
+        "intel.xdk.camera": {},
+        "intel.xdk.device": {},
+        "intel.xdk.geolocation": {},
+        "intel.xdk.player": {}
     },
     "dependent_plugins": {
         "org.apache.cordova.file": {}
