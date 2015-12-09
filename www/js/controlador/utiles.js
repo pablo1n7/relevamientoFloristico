@@ -79,6 +79,7 @@ function mostrarModal(div,efecto,titulo,callback){
     $("#crearPuntoScroller").scroller().scrollToTop("0ms");
     $("#flechaSeguimiento").addClass("esconder");
     setTimeout(function(){asignarFuncionCierreModal(callback);}, 500);
+    agregarAyuda("#modalContainer",diccionarioAyuda["#modalContainer"]);
 
 
 }
@@ -89,6 +90,12 @@ function activarModoAyuda(contexto,diccionario){
     $("#divAyuda").bind("doubleTap",function(){
         $("#divAyuda").remove();
     });
+    
+     $("#divAyuda").click(function(e){
+        e.stopPropagation();
+    });
+    
+
     var referenciaTop = $("#header").offset().height;
     if(contexto == "#modalContainer")
         referenciaTop = 43;
@@ -111,7 +118,8 @@ function activarModoAyuda(contexto,diccionario){
                 var $ayudaElemento = $("<div class='icon question'> </div>");
                 $ayudaElemento.css(posicion);
                 $ayudaElemento.css({"position":"absolute", "color":"rgba(82,155,234,255)"});
-                $ayudaElemento.click(function(){
+                $ayudaElemento.click(function(e){
+                    e.stopPropagation();
                     lanzarTooltip(diccionario[elemento],$(this).offset());
                 });
                 $("#divAyuda").append($ayudaElemento);
@@ -140,6 +148,7 @@ function borrarMensajeAyuda(){
 function agregarAyuda(contexto,diccionario){
     console.log(contexto);
     var $contexto = $(contexto);
+    $contexto.unbind("doubleTap");
     $contexto.doubleTap(function(){activarModoAyuda(contexto,diccionario)});
 }
 
@@ -988,7 +997,7 @@ function verificarVisitas(){
                                 buscarRedConIP(configuracion.servidor,function(infoServidor){
                                     mensajeConfirmacion("Sincronización","Se encontró activo el servidor: '"+infoServidor.nombrePC+"'. Desea acceder a la pantalla de sincronización?",function(){
                                         $.mvc.route("/aplicacion/sincronizacion");
-                                        var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+encodeURI(infoServidor.nombrePC)+'/'+infoServidor.infoAdicional.especies+'/'+infoServidor.infoAdicional.familias+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+                                        var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a name="botonSincronizar" class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+encodeURI(infoServidor.nombrePC)+'/'+infoServidor.infoAdicional.especies+'/'+infoServidor.infoAdicional.familias+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
                                         $("#dispositivos").removeClass("oculto");
                                         $("#noServidores").addClass("oculto");
                                         $("#dispositivos").append($servidor);
@@ -1097,6 +1106,7 @@ function comprobandoHardware(){
         if(contadorHardware == 2){
             clearInterval(intervaloComprobacion);
             $("#mascaraPopUpComprobacion").remove();
+            activarSubPagina("#mainsub","Inicio");
             verificarVisitas();
         }
         },2000);

@@ -1,6 +1,6 @@
-<div class="input-group">
+<div name="nombreEspecie" class="input-group">
     <span>Nombre</span>
-    <input name="nombreEspecie" id="nombreEspecie" type="text" placeholder="Ej: Chuquiraga avellanedae" patron="^([a-zñáéíóú]+)([a-zñáéíóú.0-9 ]+)$" mensaje="Nota: El nombre debe comenzar con letra y no puede estar vacio">
+    <input id="nombreEspecie" type="text" placeholder="Ej: Chuquiraga avellanedae" patron="^([a-zñáéíóú]+)([a-zñáéíóú.0-9 ]+)$" mensaje="Nota: El nombre debe comenzar con letra y no puede estar vacio">
 
 </div>
 

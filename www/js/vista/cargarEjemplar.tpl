@@ -54,6 +54,6 @@
                                   });
 
                                   ">
-        <div class="icon camera iconoCamara">
+        <div name="camara" class="icon camera iconoCamara">
 </div>
 

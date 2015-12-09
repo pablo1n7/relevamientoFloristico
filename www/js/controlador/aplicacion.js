@@ -50,6 +50,8 @@ $.mvc.controller.create("aplicacion", {
                 $("body").removeClass("desenlazar");
             },300);
         });
+        
+        
     },
     default:function(){
         
@@ -97,11 +99,11 @@ $.mvc.controller.create("aplicacion", {
 
          Y.Propiedad.obtenerPropiedades(callback);
          mostrarModal("#seleccionarPropiedad","fade","Seleccionar",function(){});
-         $("#modalContainer").unbind("doubleTap");
+       //  $("#modalContainer").unbind("doubleTap");
          if($("#propiedades").length == 0){
             $("#propiedades").append("No se encuentran propiedades para listar");
          }
-         agregarAyuda("#modalContainer",{"seleccionarPropiedad":{titulo:"Boton Selección",mensaje:"Boton que confirma la adición de las propiedades seleccionadas de la lista."},"propiedades":{titulo:"Lista de Propiedades",mensaje:"Pantalla de seleccion de propiedades existentes. En esta pantalla, puede probar el funcionamiento de las propiedades ya creadas, para un mejor criterio de selección. Seleccione tocando en el cuadro de la izquierda de la propiedad que desea agregar"}});
+         //agregarAyuda("#modalContainer",diccionarioAyuda["#modalContainer"]);
     },
 
     cargarPropiedadesSeleccionadas: function(){
@@ -981,13 +983,13 @@ objetoBrujulaTransecta.vueltas = 0;
 
     buscarServidor:function(){
         if(campañaActiva != null){
-            mensajeAviso('Campaña Activa','Debe desactivar la Campaña antes de poder sincronizar.<br>Para esto,valla al menú de "Campaña" y presione el botón "Desactivar" ubicado en la esquina superior izquierda');
+            mensajeAviso('Campaña Activa','Debe desactivar la Campaña antes de poder sincronizar.<br>Para esto,valla al menú de "Campaña" y presione el botón "Desactivar" ubicado en la esquina superior derecha');
             return;
         }
         $("#dispositivos").empty();
         var ipServidorExterno = $("#servidorExterno").val();
         buscarRedConIP(ipServidorExterno,function(infoServidor){
-            var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+encodeURI(infoServidor.nombrePC)+'/'+infoServidor.infoAdicional.especies+'/'+infoServidor.infoAdicional.familias+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
+            var $servidor = $('<li class="widget servidor"><a class="anchorServidor"><i class="fa fa-cloud"></i>'+infoServidor.nombrePC+'<div><a name="botonSincronizar" class="botonActivar" href="/aplicacion/sincronizar/'+infoServidor.ip+'/'+encodeURI(infoServidor.nombrePC)+'/'+infoServidor.infoAdicional.especies+'/'+infoServidor.infoAdicional.familias+'"><i class="fa fa-retweet logoSincronizar" ></i></a></div> </a></li>');
                       $("#dispositivos").removeClass("oculto");
                       $("#noServidores").addClass("oculto");
                       $("#dispositivos").append($servidor);

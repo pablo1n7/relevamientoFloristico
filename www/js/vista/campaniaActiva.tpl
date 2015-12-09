@@ -6,7 +6,7 @@
 <div class="input-group transectasCampActiva">
     Transectas Asociadas
     <div id="contenedorTransectas" class="widget-container content-area vertical-col">
-            <ul id="listaTransectas" class="list widget uib_w_10 d-margins">
+            <ul id="listaTransectas" name="listaTransectasCampaña" class="list widget uib_w_10 d-margins">
             {{for(var i=0; i<= it.campania.get("transectas").length-1;i++){ }}
                 <li class="widget">
                     <a href='/aplicacion/activarTransecta/{{=it.campania.get('transectas')[i].get('id')}}'>

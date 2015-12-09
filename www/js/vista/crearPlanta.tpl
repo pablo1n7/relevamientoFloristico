@@ -4,7 +4,7 @@
         <i class="fa fa-eye iconoVerFoto"></i>
     </div>
     <div class="widget-container content-area horiz-area wrapping-col right">
-        <span class="icon close" onclick="eliminarRecolectable(this);"></span>
+        <span name="eliminarAdjunto" class="icon close" onclick="eliminarRecolectable(this);"></span>
     </div>
     <div class="headerElemento headerPlanta">
         Planta
@@ -34,7 +34,7 @@
     }}
     <input name="especie" id="autocompletado{{=it.numeroId}}" type="text" placeholder="Especie" patron="{{=texto}}" mensaje="">
 
-<div class="icon picture verFotoEspecie" onclick="verImagenEspecie(this.previousSibling)"></div>
+<div name="fotoEspecie" class="icon picture verFotoEspecie" onclick="verImagenEspecie(this.previousSibling)"></div>
     <div name="imgUrl" class="oculto"></div>
     <div class="divFoto" onclick="
                                   _this=this;
@@ -74,7 +74,7 @@
                                   });
 
                                   ">
-        <div class="icon camera iconoCamara">
+        <div name="camara" class="icon camera iconoCamara">
 
         </div>
     </div>

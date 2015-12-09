@@ -6,7 +6,7 @@
                 Estado de la aguja: {{=it.estadoPunto}}
             </div>
             <br>
-            <div class="input-group">
+            <div class="input-group" name="divTipoSuelo">
                 <div class="headerElemento headerSuelo">Suelo</div>
                 <select id="tipoSuelo" name="tipoSuelo">
                     {{for(var i = 0; i<it.suelos.length; i++){ }}
@@ -24,10 +24,10 @@
 
             {{if(it.opcion == 0){ }}
 
-        <a id="botonAgregarPlanta" name="agregarPropiedad" class="icon add botonTipo2" href="/aplicacion/cargarFormularioPlanta/1/0" >Añadir Planta</a>
+        <a id="botonAgregarPlanta" name="agregarPlanta" class="icon add botonTipo2" href="/aplicacion/cargarFormularioPlanta/1/0" >Añadir Planta</a>
         <br>
             {{ } }}
-        <a id="botonAgregarItem" name="agregarPropiedadExistente" href="/aplicacion/cargarFormularioItem/1" class="icon add botonTipo2" >Añadir Item</a>
+        <a id="botonAgregarItem" name="agregarItem" href="/aplicacion/cargarFormularioItem/1" class="icon add botonTipo2" >Añadir Item</a>
         <div class="divBoton">
             <a name="crearPunto" class="anchorBoton" href="/aplicacion/almacenarPunto">Almacenar Punto</a>
         </div>

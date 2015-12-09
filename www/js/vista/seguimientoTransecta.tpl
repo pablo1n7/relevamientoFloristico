@@ -13,7 +13,7 @@
     <div id="flechaSeguimiento" class="flecha">
     </div>
 </div>
-<div id="justgageTransecta" class="justgagePersonalizado">
+<div id="justgageTransecta" name="justgageTransecta" class="justgagePersonalizado">
     <div id="indicadorDistancia" class="tabulado bordeDashedDifuminado">
         <div>
             Fin De Transecta

@@ -3,7 +3,7 @@
 <div>
     {{ for(var j=0; j<it.transecta.get('visitas').length;j++){ }}
     <div class="sliderVisita">
-        <div class="headerVisita">
+        <div name="infoVisita" class="headerVisita">
             <div id="infoVisita">
                 <div class="numeroVisita"> {{=(j+1)+"/"+it.transecta.get('visitas').length}} </div>
                 <p>Ambiente de Transecta: {{=it.transecta.get('ambiente')}}</p>
@@ -21,7 +21,7 @@
 
 
 
-<div style="width:100%;overflow:hidden;">
+<div name="imgVisita" style="width:100%;overflow:hidden;">
         <div id="imagenesvisita{{=it.transecta.get('visitas')[j].get('fecha')}}" class="imagenesVisita" style="width:100%">
 
         {{ if(it.transecta.get('visitas')[j].get('imagenes').length == 0){ }}
@@ -43,7 +43,7 @@
 
 
 
-<div style="width:100%;overflow:hidden;">
+<div name="adjuntoVisita" style="width:100%;overflow:hidden;">
         <div id="adjuntosAvisita{{=it.transecta.get('visitas')[j].get('fecha')}}" class="imagenesVisita" style="width:100%">
         {{ if(it.transecta.get('visitas')[j].get('items').length == 0){ }}
             <div id="" style="text-align:center; margin: 10px;"> No hay Items asociados</div>
@@ -60,7 +60,7 @@
 </div>
 
 
-        <div id="visita{{=it.visitas[j].get('fecha')}}"  class="contenedorPuntosVisita">
+        <div name="puntosVisita" id="visita{{=it.visitas[j].get('fecha')}}"  class="contenedorPuntosVisita">
             <div id="contenedorImagenes0" class="sliderPuntosVisita">
 
                 {{ if(it.transecta.get('visitas')[j].get('puntos').length == 0){ }}
